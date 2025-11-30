@@ -1,0 +1,114 @@
+'use server';
+
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+
+export async function createStockAdjustment(formData: FormData) {
+    const session = await auth();
+
+    if (!session?.user || !session.user.organizationId) {
+        throw new Error('Unauthorized');
+    }
+
+    const productId = formData.get('productId') as string;
+    const warehouseId = formData.get('warehouseId') as string;
+    const adjustmentType = formData.get('adjustmentType') as 'increase' | 'decrease';
+    const quantity = parseInt(formData.get('quantity') as string);
+    const reason = formData.get('reason') as string;
+    const notes = formData.get('notes') as string;
+
+    if (!productId || !warehouseId || !adjustmentType || !quantity || !reason) {
+        throw new Error('Missing required fields');
+    }
+
+    // Validate product and warehouse ownership
+    const product = await prisma.product.findFirst({
+        where: {
+            id: productId,
+            organizationId: session.user.organizationId,
+            deletedAt: null,
+        },
+    });
+
+    const warehouse = await prisma.warehouse.findFirst({
+        where: {
+            id: warehouseId,
+            organizationId: session.user.organizationId,
+            deletedAt: null,
+        },
+    });
+
+    if (!product || !warehouse) {
+        throw new Error('Product or warehouse not found');
+    }
+
+    // Create adjustment and movement in transaction
+    await prisma.$transaction(async (tx) => {
+        // Create adjustment record
+        await tx.stockAdjustment.create({
+            data: {
+                productId,
+                warehouseId,
+                adjustmentType,
+                quantity,
+                reason: reason as any,
+                notes: notes || null,
+                organizationId: session.user.organizationId!,
+                createdById: session.user.id,
+            },
+        });
+
+        // Create inventory movement
+        const movementQuantity = adjustmentType === 'increase' ? quantity : -quantity;
+        await tx.inventoryMovement.create({
+            data: {
+                productId,
+                warehouseId,
+                movementType: 'ADJUST',
+                quantity: movementQuantity,
+                referenceType: 'StockAdjustment',
+                referenceId: 'ADJ',
+                notes: `${reason}: ${notes || 'No notes'}`,
+                createdById: session.user.id,
+            },
+        });
+
+        // Update or create inventory item
+        const existingItem = await tx.inventoryItem.findUnique({
+            where: {
+                productId_warehouseId: {
+                    productId,
+                    warehouseId,
+                },
+            },
+        });
+
+        if (existingItem) {
+            const newQuantity = existingItem.quantityOnHand + movementQuantity;
+            await tx.inventoryItem.update({
+                where: { id: existingItem.id },
+                data: {
+                    quantityOnHand: newQuantity,
+                    availableQty: newQuantity - existingItem.allocatedQty,
+                },
+            });
+        } else {
+            await tx.inventoryItem.create({
+                data: {
+                    productId,
+                    warehouseId,
+                    quantityOnHand: movementQuantity,
+                    allocatedQty: 0,
+                    availableQty: movementQuantity,
+                },
+            });
+        }
+    });
+
+    revalidatePath('/adjustments');
+    revalidatePath('/dashboard');
+    revalidatePath('/inventory');
+    redirect('/adjustments');
+}
