@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { StatsCard } from '@/components/shared/stats-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Package, DollarSign, ShoppingCart, AlertTriangle } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
@@ -92,10 +93,10 @@ export default async function DashboardPage() {
         return (
             <div className="flex items-center justify-center h-96">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+                    <h2 className="text-2xl font-bold text-foreground mb-2">
                         Super Admin Dashboard
                     </h2>
-                    <p className="text-slate-600 dark:text-slate-400">
+                    <p className="text-muted-foreground">
                         Select an organization to view its dashboard
                     </p>
                 </div>
@@ -110,10 +111,10 @@ export default async function DashboardPage() {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                <h1 className="text-3xl font-bold text-foreground">
                     Dashboard
                 </h1>
-                <p className="text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-muted-foreground mt-1">
                     Welcome back, {session.user.name}
                 </p>
             </div>
@@ -157,7 +158,7 @@ export default async function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         {stats.lowStockItems.length === 0 ? (
-                            <p className="text-sm text-slate-600 dark:text-slate-400 text-center py-4">
+                            <p className="text-sm text-muted-foreground text-center py-4">
                                 All items are well stocked!
                             </p>
                         ) : (
@@ -165,22 +166,22 @@ export default async function DashboardPage() {
                                 {stats.lowStockItems.map((item) => (
                                     <div
                                         key={item.id}
-                                        className="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-900/10 rounded-lg"
+                                        className="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-900/10 rounded-lg border border-orange-200 dark:border-orange-900/30"
                                     >
                                         <div>
-                                            <p className="font-medium text-slate-900 dark:text-slate-100">
+                                            <p className="font-medium text-foreground">
                                                 {item.product.name}
                                             </p>
-                                            <p className="text-sm text-slate-600 dark:text-slate-400">
+                                            <p className="text-sm text-muted-foreground">
                                                 {item.warehouse.name}
                                             </p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-bold text-orange-600 dark:text-orange-400">
+                                            <Badge variant="destructive" className="mb-1">
                                                 {item.quantityOnHand} {item.product.unit}
-                                            </p>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400">
-                                                Threshold: {item.product.lowStockThreshold}
+                                            </Badge>
+                                            <p className="text-xs text-muted-foreground">
+                                                Min: {item.product.lowStockThreshold}
                                             </p>
                                         </div>
                                     </div>
@@ -197,7 +198,7 @@ export default async function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         {recentChanges.length === 0 ? (
-                            <p className="text-sm text-slate-600 dark:text-slate-400 text-center py-4">
+                            <p className="text-sm text-muted-foreground text-center py-4">
                                 No recent changes
                             </p>
                         ) : (
@@ -205,29 +206,29 @@ export default async function DashboardPage() {
                                 {recentChanges.map((change) => (
                                     <div
                                         key={change.id}
-                                        className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg"
+                                        className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border"
                                     >
                                         <div className="flex-1">
-                                            <p className="font-medium text-slate-900 dark:text-slate-100">
+                                            <p className="font-medium text-foreground">
                                                 {change.product.name}
                                             </p>
-                                            <p className="text-sm text-slate-600 dark:text-slate-400">
+                                            <p className="text-sm text-muted-foreground">
                                                 {change.warehouse.name} • {change.createdBy.name}
                                             </p>
                                         </div>
                                         <div className="text-right">
                                             <p
                                                 className={`font-bold ${change.quantity > 0
-                                                        ? 'text-green-600 dark:text-green-400'
-                                                        : 'text-red-600 dark:text-red-400'
+                                                    ? 'text-emerald-600 dark:text-emerald-400'
+                                                    : 'text-red-600 dark:text-red-400'
                                                     }`}
                                             >
                                                 {change.quantity > 0 ? '+' : ''}
                                                 {change.quantity}
                                             </p>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                            <Badge variant="outline" className="text-xs mt-1">
                                                 {change.movementType}
-                                            </p>
+                                            </Badge>
                                         </div>
                                     </div>
                                 ))}

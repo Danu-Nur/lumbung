@@ -33,14 +33,14 @@ export function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="fixed left-0 top-0 h-screen w-64 glass-sidebar flex flex-col z-40">
+        <aside className="fixed left-0 top-0 h-screen w-64 bg-card border-r border-border flex flex-col z-40">
             {/* Logo */}
-            <div className="p-6 border-b border-slate-200 dark:border-slate-700">
+            <div className="p-6 border-b border-border">
                 <Link href="/dashboard" className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
-                        <Package className="w-5 h-5 text-white" />
+                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <Package className="w-5 h-5 text-primary-foreground" />
                     </div>
-                    <span className="text-xl font-bold text-gradient">Inventory Pro</span>
+                    <span className="text-xl font-bold text-foreground">Inventory Pro</span>
                 </Link>
             </div>
 
@@ -54,10 +54,10 @@ export function Sidebar() {
                             href={item.href}
                             className={cn(
                                 'flex items-center space-x-3 px-4 py-3 rounded-lg transition-all',
-                                'hover:bg-white/50 dark:hover:bg-slate-800/50',
+                                'hover:bg-muted',
                                 isActive
-                                    ? 'bg-primary-500/10 text-primary-700 dark:text-primary-400 font-medium'
-                                    : 'text-slate-700 dark:text-slate-300'
+                                    ? 'bg-primary/10 text-primary font-medium'
+                                    : 'text-muted-foreground hover:text-foreground'
                             )}
                         >
                             <item.icon className="w-5 h-5" />
@@ -68,8 +68,8 @@ export function Sidebar() {
             </nav>
 
             {/* Footer */}
-            <div className="p-4 border-t border-slate-200 dark:border-slate-700">
-                <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
+            <div className="p-4 border-t border-border">
+                <p className="text-xs text-muted-foreground text-center">
                     © 2025 Inventory Pro
                 </p>
             </div>

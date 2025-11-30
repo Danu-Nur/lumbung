@@ -146,6 +146,8 @@ inventory-pro/
 └── types/                     # TypeScript types
 ```
 
+
+
 ## 🗄️ Database Schema
 
 ### Core Entities
@@ -352,3 +354,131 @@ For issues and questions:
 ---
 
 Built with ❤️ using Next.js, Prisma, and PostgreSQL
+
+```
+lumbung
+├─ app
+│  ├─ (auth)
+│  │  ├─ layout.tsx
+│  │  ├─ login
+│  │  │  └─ page.tsx
+│  │  └─ register
+│  │     └─ page.tsx
+│  ├─ (dashboard)
+│  │  ├─ adjustments
+│  │  │  ├─ new
+│  │  │  │  └─ page.tsx
+│  │  │  └─ page.tsx
+│  │  ├─ customers
+│  │  │  └─ page.tsx
+│  │  ├─ dashboard
+│  │  │  └─ page.tsx
+│  │  ├─ inventory
+│  │  │  ├─ new
+│  │  │  │  └─ page.tsx
+│  │  │  ├─ page.tsx
+│  │  │  └─ [id]
+│  │  │     └─ page.tsx
+│  │  ├─ layout.tsx
+│  │  ├─ purchase-orders
+│  │  │  ├─ page.tsx
+│  │  │  └─ [id]
+│  │  │     └─ page.tsx
+│  │  ├─ sales-orders
+│  │  │  ├─ new
+│  │  │  │  ├─ new-sales-order-form.tsx
+│  │  │  │  └─ page.tsx
+│  │  │  ├─ page.tsx
+│  │  │  └─ [id]
+│  │  │     ├─ invoice
+│  │  │     │  └─ page.tsx
+│  │  │     └─ page.tsx
+│  │  ├─ settings
+│  │  │  └─ page.tsx
+│  │  ├─ suppliers
+│  │  │  └─ page.tsx
+│  │  ├─ transfers
+│  │  │  ├─ page.tsx
+│  │  │  └─ [id]
+│  │  │     └─ page.tsx
+│  │  └─ warehouses
+│  │     └─ page.tsx
+│  ├─ api
+│  │  └─ auth
+│  │     ├─ register
+│  │     │  └─ route.ts
+│  │     └─ [...nextauth]
+│  │        └─ route.ts
+│  ├─ favicon.ico
+│  ├─ globals.css
+│  ├─ layout.tsx
+│  └─ page.tsx
+├─ components
+│  ├─ layout
+│  │  ├─ ambient-background.tsx
+│  │  ├─ sidebar.tsx
+│  │  ├─ theme-toggle.tsx
+│  │  └─ topbar.tsx
+│  ├─ shared
+│  │  └─ stats-card.tsx
+│  └─ ui
+│     ├─ badge.tsx
+│     ├─ button.tsx
+│     ├─ card.tsx
+│     ├─ input.tsx
+│     ├─ label.tsx
+│     ├─ table.tsx
+│     └─ textarea.tsx
+├─ components.json
+├─ emails
+├─ eslint.config.mjs
+├─ features
+│  ├─ adjustments
+│  │  └─ actions.ts
+│  ├─ auth
+│  ├─ customers
+│  ├─ dashboard
+│  ├─ inventory
+│  │  └─ actions.ts
+│  ├─ purchase-orders
+│  │  └─ actions.ts
+│  ├─ sales-orders
+│  │  └─ actions.ts
+│  ├─ suppliers
+│  ├─ transfers
+│  │  └─ actions.ts
+│  ├─ users
+│  └─ warehouses
+├─ lib
+│  ├─ auth.ts
+│  ├─ email.ts
+│  ├─ prisma.ts
+│  ├─ rbac.ts
+│  └─ utils.ts
+├─ middleware.ts
+├─ next.config.ts
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.mjs
+├─ prisma
+│  ├─ migrations
+│  │  ├─ 20251129050733_init
+│  │  │  └─ migration.sql
+│  │  └─ migration_lock.toml
+│  ├─ schema.prisma
+│  └─ seed.ts
+├─ prisma.config.ts
+├─ public
+│  ├─ file.svg
+│  ├─ globe.svg
+│  ├─ next.svg
+│  ├─ vercel.svg
+│  └─ window.svg
+├─ README.md
+├─ tailwind.config.ts
+├─ TEST_SCENARIOS.md
+├─ tsconfig.json
+└─ types
+   └─ next-auth.d.ts
+
+```

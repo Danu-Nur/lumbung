@@ -11,13 +11,13 @@ export function Topbar() {
     const [showDropdown, setShowDropdown] = useState(false);
 
     return (
-        <header className="h-16 glass-panel border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6">
+        <header className="h-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border flex items-center justify-between px-6 sticky top-0 z-30">
             {/* Organization Name */}
             <div>
-                <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                <h1 className="text-lg font-semibold text-foreground">
                     {session?.user?.organizationName || 'Inventory Pro'}
                 </h1>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-muted-foreground">
                     {session?.user?.roleName || 'Guest'}
                 </p>
             </div>
@@ -32,20 +32,20 @@ export function Topbar() {
                     <div className="relative">
                         <button
                             onClick={() => setShowDropdown(!showDropdown)}
-                            className="flex items-center space-x-3 px-3 py-2 rounded-lg glass-panel hover:bg-white/20 dark:hover:bg-slate-800/50 transition-colors"
+                            className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-muted transition-colors"
                         >
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
-                                <User className="w-4 h-4 text-white" />
+                            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                                <User className="w-4 h-4 text-primary-foreground" />
                             </div>
                             <div className="text-left hidden md:block">
-                                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                                <p className="text-sm font-medium text-foreground">
                                     {session.user.name}
                                 </p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                <p className="text-xs text-muted-foreground">
                                     {session.user.email}
                                 </p>
                             </div>
-                            <ChevronDown className="w-4 h-4 text-slate-500" />
+                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
                         </button>
 
                         {/* Dropdown */}
@@ -55,11 +55,11 @@ export function Topbar() {
                                     className="fixed inset-0 z-40"
                                     onClick={() => setShowDropdown(false)}
                                 />
-                                <div className="absolute right-0 mt-2 w-48 glass-panel rounded-lg shadow-lg z-50">
+                                <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg z-50">
                                     <div className="p-2">
                                         <button
                                             onClick={() => signOut({ callbackUrl: '/login' })}
-                                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                                         >
                                             <LogOut className="w-4 h-4" />
                                             <span>Logout</span>

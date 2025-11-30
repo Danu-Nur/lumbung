@@ -1,6 +1,5 @@
 import { Sidebar } from '@/components/layout/sidebar';
 import { Topbar } from '@/components/layout/topbar';
-import { AmbientBackground } from '@/components/layout/ambient-background';
 
 export default function DashboardLayout({
     children,
@@ -8,8 +7,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="min-h-screen">
-            <AmbientBackground />
+        <div className="min-h-screen bg-muted/40">
             <Sidebar />
             <div className="ml-64">
                 <Topbar />

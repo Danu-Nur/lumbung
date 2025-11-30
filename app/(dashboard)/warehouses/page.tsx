@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Warehouse as WarehouseIcon, Package } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Warehouse as WarehouseIcon } from 'lucide-react';
 import Link from 'next/link';
 
 async function getWarehouses(organizationId: string) {
@@ -39,10 +40,10 @@ export default async function WarehousesPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                    <h1 className="text-3xl font-bold text-foreground">
                         Warehouses
                     </h1>
-                    <p className="text-slate-600 dark:text-slate-400 mt-1">
+                    <p className="text-muted-foreground mt-1">
                         Manage your warehouse locations
                     </p>
                 </div>
@@ -58,8 +59,8 @@ export default async function WarehousesPage() {
             {warehouses.length === 0 ? (
                 <Card>
                     <CardContent className="text-center py-12">
-                        <WarehouseIcon className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                        <p className="text-slate-600 dark:text-slate-400 mb-4">
+                        <WarehouseIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-muted-foreground mb-4">
                             No warehouses yet
                         </p>
                         <Link href="/warehouses/new">
@@ -88,41 +89,36 @@ export default async function WarehousesPage() {
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <CardTitle>{warehouse.name}</CardTitle>
-                                                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                                                <p className="text-sm text-muted-foreground mt-1">
                                                     {warehouse.code}
                                                 </p>
                                             </div>
-                                            <div
-                                                className={`px-2 py-1 rounded-full text-xs font-medium ${warehouse.isActive
-                                                        ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                                                    }`}
-                                            >
+                                            <Badge variant={warehouse.isActive ? 'default' : 'secondary'}>
                                                 {warehouse.isActive ? 'Active' : 'Inactive'}
-                                            </div>
+                                            </Badge>
                                         </div>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="space-y-3">
                                             {warehouse.address && (
-                                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                                <p className="text-sm text-muted-foreground">
                                                     📍 {warehouse.city || warehouse.address}
                                                 </p>
                                             )}
-                                            <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-slate-700">
+                                            <div className="flex items-center justify-between pt-3 border-t border-border">
                                                 <div>
-                                                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                                                    <p className="text-xs text-muted-foreground">
                                                         Products
                                                     </p>
-                                                    <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                                                    <p className="text-lg font-bold text-foreground">
                                                         {totalProducts}
                                                     </p>
                                                 </div>
                                                 <div>
-                                                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                                                    <p className="text-xs text-muted-foreground">
                                                         Total Stock
                                                     </p>
-                                                    <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                                                    <p className="text-lg font-bold text-foreground">
                                                         {totalStock}
                                                     </p>
                                                 </div>
