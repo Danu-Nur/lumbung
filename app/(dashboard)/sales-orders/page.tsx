@@ -6,6 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Plus, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 
 async function getSalesOrders(organizationId: string) {
     return await prisma.salesOrder.findMany({
@@ -37,10 +46,10 @@ export default async function SalesOrdersPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                    <h1 className="text-3xl font-bold text-foreground">
                         Sales Orders
                     </h1>
-                    <p className="text-slate-600 dark:text-slate-400 mt-1">
+                    <p className="text-muted-foreground mt-1">
                         Manage customer orders
                     </p>
                 </div>
@@ -59,8 +68,8 @@ export default async function SalesOrdersPage() {
                 <CardContent>
                     {orders.length === 0 ? (
                         <div className="text-center py-12">
-                            <ShoppingCart className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                            <p className="text-slate-600 dark:text-slate-400 mb-4">
+                            <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                            <p className="text-muted-foreground mb-4">
                                 No sales orders yet
                             </p>
                             <Link href="/sales-orders/new">
@@ -71,82 +80,65 @@ export default async function SalesOrdersPage() {
                             </Link>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead>
-                                    <tr className="border-b border-slate-200 dark:border-slate-700">
-                                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Order #
-                                        </th>
-                                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Customer
-                                        </th>
-                                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Date
-                                        </th>
-                                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Status
-                                        </th>
-                                        <th className="text-right py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Total
-                                        </th>
-                                        <th className="text-right py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Items
-                                        </th>
-                                        <th className="text-right py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {orders.map((order) => (
-                                        <tr
-                                            key={order.id}
-                                            className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-                                        >
-                                            <td className="py-3 px-4 font-medium text-slate-900 dark:text-slate-100">
-                                                {order.orderNumber}
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-slate-600 dark:text-slate-400">
-                                                {order.customer.name}
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-slate-600 dark:text-slate-400">
-                                                {formatDate(order.orderDate)}
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                <span
-                                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.status === 'DRAFT'
-                                                            ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
-                                                            : order.status === 'CONFIRMED'
-                                                                ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                                                                : order.status === 'FULFILLED'
-                                                                    ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                                                                    : order.status === 'INVOICED'
-                                                                        ? 'bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
-                                                                        : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-                                                        }`}
-                                                >
-                                                    {order.status}
-                                                </span>
-                                            </td>
-                                            <td className="py-3 px-4 text-right font-semibold text-slate-900 dark:text-slate-100">
-                                                {formatCurrency(Number(order.total))}
-                                            </td>
-                                            <td className="py-3 px-4 text-right text-sm text-slate-600 dark:text-slate-400">
-                                                {order.items.length}
-                                            </td>
-                                            <td className="py-3 px-4 text-right">
-                                                <Link href={`/sales-orders/${order.id}`}>
-                                                    <Button variant="outline" size="sm">
-                                                        View
-                                                    </Button>
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Order #</TableHead>
+                                    <TableHead>Customer</TableHead>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead className="text-right">Total</TableHead>
+                                    <TableHead className="text-right">Items</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {orders.map((order) => (
+                                    <TableRow key={order.id}>
+                                        <TableCell className="font-medium">
+                                            {order.orderNumber}
+                                        </TableCell>
+                                        <TableCell>
+                                            {order.customer.name}
+                                        </TableCell>
+                                        <TableCell>
+                                            {formatDate(order.orderDate)}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={
+                                                    order.status === 'DRAFT' ? 'secondary' :
+                                                        order.status === 'CONFIRMED' ? 'default' :
+                                                            order.status === 'FULFILLED' ? 'outline' : // Greenish usually
+                                                                order.status === 'INVOICED' ? 'outline' :
+                                                                    'destructive'
+                                                }
+                                                className={
+                                                    order.status === 'FULFILLED' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 hover:bg-green-100' :
+                                                        order.status === 'INVOICED' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100 hover:bg-purple-100' :
+                                                            ''
+                                                }
+                                            >
+                                                {order.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right font-medium">
+                                            {formatCurrency(Number(order.total))}
+                                        </TableCell>
+                                        <TableCell className="text-right text-muted-foreground">
+                                            {order.items.length}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <Link href={`/sales-orders/${order.id}`}>
+                                                <Button variant="outline" size="sm">
+                                                    View
+                                                </Button>
+                                            </Link>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
                     )}
                 </CardContent>
             </Card>

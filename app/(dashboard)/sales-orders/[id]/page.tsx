@@ -29,15 +29,16 @@ async function getSalesOrder(orderId: string, organizationId: string) {
 export default async function SalesOrderDetailPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
     const session = await auth();
+    const { id } = await params;
 
     if (!session?.user || !session.user.organizationId) {
         redirect('/login');
     }
 
-    const order = await getSalesOrder(params.id, session.user.organizationId);
+    const order = await getSalesOrder(id, session.user.organizationId);
 
     if (!order) {
         notFound();
@@ -179,12 +180,12 @@ export default async function SalesOrderDetailPage({
                         <CardContent>
                             <span
                                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${order.status === 'DRAFT'
-                                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
-                                        : order.status === 'CONFIRMED'
-                                            ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                                            : order.status === 'FULFILLED'
-                                                ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                                                : 'bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
+                                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
+                                    : order.status === 'CONFIRMED'
+                                        ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                                        : order.status === 'FULFILLED'
+                                            ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                                            : 'bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
                                     }`}
                             >
                                 {order.status}

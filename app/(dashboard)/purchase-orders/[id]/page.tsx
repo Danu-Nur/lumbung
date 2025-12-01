@@ -29,15 +29,16 @@ async function getPurchaseOrder(orderId: string, organizationId: string) {
 export default async function PurchaseOrderDetailPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
     const session = await auth();
+    const { id } = await params;
 
     if (!session?.user || !session.user.organizationId) {
         redirect('/login');
     }
 
-    const order = await getPurchaseOrder(params.id, session.user.organizationId);
+    const order = await getPurchaseOrder(id, session.user.organizationId);
 
     if (!order) {
         notFound();
@@ -130,10 +131,10 @@ export default async function PurchaseOrderDetailPage({
                                                 <td className="text-right py-3 px-4">
                                                     <span
                                                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item.receivedQty === item.quantity
-                                                                ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                                                                : item.receivedQty > 0
-                                                                    ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400'
-                                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                                            ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                                                            : item.receivedQty > 0
+                                                                ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400'
+                                                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                                                             }`}
                                                     >
                                                         {item.receivedQty}/{item.quantity}
@@ -174,12 +175,12 @@ export default async function PurchaseOrderDetailPage({
                         <CardContent>
                             <span
                                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${order.status === 'DRAFT'
-                                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
-                                        : order.status === 'SENT'
-                                            ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                                            : order.status === 'COMPLETED'
-                                                ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                                                : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
+                                    : order.status === 'SENT'
+                                        ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                                        : order.status === 'COMPLETED'
+                                            ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                                            : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
                                     }`}
                             >
                                 {order.status}

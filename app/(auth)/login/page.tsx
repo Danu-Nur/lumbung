@@ -70,12 +70,11 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background px-4">
-
-            <div className="absolute top-4 right-4">
+        <>
+            <div className="absolute top-4 right-4 z-50">
                 <ThemeToggle />
             </div>
-            <div className="w-full max-w-md space-y-8">
+            <div className="w-full space-y-8">
                 <div className="text-center space-y-6">
                     <div className="flex justify-center items-center gap-3">
                         <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
@@ -175,39 +174,68 @@ export default function LoginPage() {
                             </div>
 
                             <div className="grid gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => copyToClipboard('admin@demowarehouse.com', 'email')}
-                                    className="flex items-center justify-between p-4 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-left"
-                                >
-                                    <div>
-                                        <div className="font-medium">Admin Email</div>
-                                        <div className="text-sm text-muted-foreground">
-                                            admin@demowarehouse.com
+                                {/* Motor Admin */}
+                                <div className="space-y-3 p-4 rounded-lg bg-muted/50">
+                                    <p className="text-sm font-semibold">Motor Admin</p>
+                                    <button type="button" onClick={() => copyToClipboard('admin@majumotor.com', 'motor-email')}
+                                        className="w-full flex items-center justify-between p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-left">
+                                        <div>
+                                            <div className="font-medium">Email</div>
+                                            <div className="text-sm text-muted-foreground">admin@majumotor.com</div>
                                         </div>
-                                    </div>
-                                    {copiedField === 'email' ? (
-                                        <Check className="w-5 h-5 text-green-600" />
-                                    ) : (
-                                        <Copy className="w-5 h-5 text-muted-foreground" />
-                                    )}
-                                </button>
+                                        {copiedField === 'motor-email' ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+                                    </button>
+                                    <button type="button" onClick={() => copyToClipboard('admin123', 'motor-pass')}
+                                        className="w-full flex items-center justify-between p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-left">
+                                        <div>
+                                            <div className="font-medium">Password</div>
+                                            <div className="text-sm text-muted-foreground">admin123</div>
+                                        </div>
+                                        {copiedField === 'motor-pass' ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+                                    </button>
+                                </div>
 
-                                <button
-                                    type="button"
-                                    onClick={() => copyToClipboard('admin123', 'password')}
-                                    className="flex items-center justify-between p-4 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-left"
-                                >
-                                    <div>
-                                        <div className="font-medium">Password</div>
-                                        <div className="text-sm text-muted-foreground">admin123</div>
-                                    </div>
-                                    {copiedField === 'password' ? (
-                                        <Check className="w-5 h-5 text-green-600" />
-                                    ) : (
-                                        <Copy className="w-5 h-5 text-muted-foreground" />
-                                    )}
-                                </button>
+                                {/* Mobil Admin */}
+                                <div className="space-y-3 p-4 rounded-lg bg-muted/50">
+                                    <p className="text-sm font-semibold">Mobil Admin</p>
+                                    <button type="button" onClick={() => copyToClipboard('admin@otojaya.com', 'mobil-email')}
+                                        className="w-full flex items-center justify-between p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-left">
+                                        <div>
+                                            <div className="font-medium">Email</div>
+                                            <div className="text-sm text-muted-foreground">admin@otojaya.com</div>
+                                        </div>
+                                        {copiedField === 'mobil-email' ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+                                    </button>
+                                    <button type="button" onClick={() => copyToClipboard('admin123', 'mobil-pass')}
+                                        className="w-full flex items-center justify-between p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-left">
+                                        <div>
+                                            <div className="font-medium">Password</div>
+                                            <div className="text-sm text-muted-foreground">admin123</div>
+                                        </div>
+                                        {copiedField === 'mobil-pass' ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+                                    </button>
+                                </div>
+
+                                {/* Original Demo (opsional dipertahankan) */}
+                                <div className="space-y-3 p-4 rounded-lg bg-muted/50">
+                                    <p className="text-sm font-semibold">Warehouse Demo</p>
+                                    <button type="button" onClick={() => copyToClipboard('admin@demowarehouse.com', 'email')}
+                                        className="w-full flex items-center justify-between p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-left">
+                                        <div>
+                                            <div className="font-medium">Email</div>
+                                            <div className="text-sm text-muted-foreground">admin@demowarehouse.com</div>
+                                        </div>
+                                        {copiedField === 'email' ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+                                    </button>
+                                    <button type="button" onClick={() => copyToClipboard('admin123', 'password')}
+                                        className="w-full flex items-center justify-between p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors text-left">
+                                        <div>
+                                            <div className="font-medium">Password</div>
+                                            <div className="text-sm text-muted-foreground">admin123</div>
+                                        </div>
+                                        {copiedField === 'password' ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </CardContent>
@@ -222,6 +250,6 @@ export default function LoginPage() {
                     </CardFooter>
                 </Card>
             </div>
-        </div>
+        </>
     );
 }

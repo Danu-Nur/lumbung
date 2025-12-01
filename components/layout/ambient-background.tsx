@@ -1,6 +1,8 @@
-export function AmbientBackground() {
+import { cn } from "@/lib/utils";
+
+export function AmbientBackground({ className }: { className?: string }) {
     return (
-        <div className="fixed inset-0 -z-20 overflow-hidden pointer-events-none">
+        <div className={cn("fixed inset-0 -z-20 overflow-hidden pointer-events-none", className)}>
             <div className="blob w-96 h-96 bg-primary-300 dark:bg-primary-900 top-0 left-0 animate-blob"></div>
             <div
                 className="blob w-96 h-96 bg-secondary-300 dark:bg-secondary-900 bottom-0 right-0 animate-blob"

@@ -25,15 +25,16 @@ async function getSalesOrder(orderId: string, organizationId: string) {
 export default async function InvoicePage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
     const session = await auth();
+    const { id } = await params;
 
     if (!session?.user || !session.user.organizationId) {
         redirect('/login');
     }
 
-    const order = await getSalesOrder(params.id, session.user.organizationId);
+    const order = await getSalesOrder(id, session.user.organizationId);
 
     if (!order) {
         notFound();

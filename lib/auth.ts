@@ -2,9 +2,10 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
-import type { User } from '@prisma/client';
+import { authConfig } from './auth.config';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    ...authConfig,
     providers: [
         Credentials({
             name: 'credentials',
@@ -47,10 +48,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 }
 
                 // Update last login
-                await prisma.user.update({
-                    where: { id: user.id },
-                    data: { lastLoginAt: new Date() },
-                });
+                // Note: This side effect is fine in Node environment
+                try {
+                    await prisma.user.update({
+                        where: { id: user.id },
+                        data: { lastLoginAt: new Date() },
+                    });
+                } catch (error) {
+                    console.error("Failed to update last login", error);
+                }
 
                 return {
                     id: user.id,
@@ -64,33 +70,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
         }),
     ],
-    callbacks: {
-        async jwt({ token, user }) {
-            if (user) {
-                token.id = user.id;
-                token.roleId = user.roleId;
-                token.roleName = user.roleName;
-                token.organizationId = user.organizationId;
-                token.organizationName = user.organizationName;
-            }
-            return token;
-        },
-        async session({ session, token }) {
-            if (session.user) {
-                session.user.id = token.id as string;
-                session.user.roleId = token.roleId as string;
-                session.user.roleName = token.roleName as string;
-                session.user.organizationId = token.organizationId as string | null;
-                session.user.organizationName = token.organizationName as string | null;
-            }
-            return session;
-        },
-    },
-    pages: {
-        signIn: '/login',
-    },
-    session: {
-        strategy: 'jwt',
-    },
-    secret: process.env.NEXTAUTH_SECRET,
 });

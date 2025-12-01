@@ -6,6 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Plus, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 
 async function getPurchaseOrders(organizationId: string) {
     return await prisma.purchaseOrder.findMany({
@@ -33,10 +42,10 @@ export default async function PurchaseOrdersPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                    <h1 className="text-3xl font-bold text-foreground">
                         Purchase Orders
                     </h1>
-                    <p className="text-slate-600 dark:text-slate-400 mt-1">
+                    <p className="text-muted-foreground mt-1">
                         Manage supplier orders
                     </p>
                 </div>
@@ -55,8 +64,8 @@ export default async function PurchaseOrdersPage() {
                 <CardContent>
                     {orders.length === 0 ? (
                         <div className="text-center py-12">
-                            <ShoppingBag className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                            <p className="text-slate-600 dark:text-slate-400 mb-4">
+                            <ShoppingBag className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                            <p className="text-muted-foreground mb-4">
                                 No purchase orders yet
                             </p>
                             <Link href="/purchase-orders/new">
@@ -67,74 +76,59 @@ export default async function PurchaseOrdersPage() {
                             </Link>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead>
-                                    <tr className="border-b border-slate-200 dark:border-slate-700">
-                                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            PO #
-                                        </th>
-                                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Supplier
-                                        </th>
-                                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Date
-                                        </th>
-                                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Status
-                                        </th>
-                                        <th className="text-right py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Total
-                                        </th>
-                                        <th className="text-right py-3 px-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {orders.map((order) => (
-                                        <tr
-                                            key={order.id}
-                                            className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-                                        >
-                                            <td className="py-3 px-4 font-medium text-slate-900 dark:text-slate-100">
-                                                {order.poNumber}
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-slate-600 dark:text-slate-400">
-                                                {order.supplier.name}
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-slate-600 dark:text-slate-400">
-                                                {formatDate(order.orderDate)}
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                <span
-                                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.status === 'DRAFT'
-                                                            ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
-                                                            : order.status === 'SENT'
-                                                                ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                                                                : order.status === 'COMPLETED'
-                                                                    ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                                                                    : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-                                                        }`}
-                                                >
-                                                    {order.status}
-                                                </span>
-                                            </td>
-                                            <td className="py-3 px-4 text-right font-semibold text-slate-900 dark:text-slate-100">
-                                                {formatCurrency(Number(order.total))}
-                                            </td>
-                                            <td className="py-3 px-4 text-right">
-                                                <Link href={`/purchase-orders/${order.id}`}>
-                                                    <Button variant="outline" size="sm">
-                                                        View
-                                                    </Button>
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>PO #</TableHead>
+                                    <TableHead>Supplier</TableHead>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead className="text-right">Total</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {orders.map((order) => (
+                                    <TableRow key={order.id}>
+                                        <TableCell className="font-medium">
+                                            {order.poNumber}
+                                        </TableCell>
+                                        <TableCell>
+                                            {order.supplier.name}
+                                        </TableCell>
+                                        <TableCell>
+                                            {formatDate(order.orderDate)}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={
+                                                    order.status === 'DRAFT' ? 'secondary' :
+                                                        order.status === 'SENT' ? 'default' :
+                                                            order.status === 'COMPLETED' ? 'outline' : // Greenish
+                                                                'destructive'
+                                                }
+                                                className={
+                                                    order.status === 'COMPLETED' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 hover:bg-green-100' :
+                                                        ''
+                                                }
+                                            >
+                                                {order.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right font-medium">
+                                            {formatCurrency(Number(order.total))}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <Link href={`/purchase-orders/${order.id}`}>
+                                                <Button variant="outline" size="sm">
+                                                    View
+                                                </Button>
+                                            </Link>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
                     )}
                 </CardContent>
             </Card>

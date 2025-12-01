@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { updateProduct, deleteProduct } from '@/features/inventory/actions';
@@ -39,15 +40,16 @@ async function getCategories(organizationId: string) {
 export default async function ProductDetailPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
     const session = await auth();
+    const { id } = await params;
 
     if (!session?.user || !session.user.organizationId) {
         redirect('/login');
     }
 
-    const product = await getProduct(params.id, session.user.organizationId);
+    const product = await getProduct(id, session.user.organizationId);
 
     if (!product) {
         notFound();
@@ -80,7 +82,7 @@ export default async function ProductDetailPage({
                     </div>
                 </div>
                 <form action={deleteProduct.bind(null, product.id)}>
-                    <Button type="submit" variant="danger" size="sm">
+                    <Button type="submit" variant="destructive" size="sm">
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete
                     </Button>
@@ -97,26 +99,35 @@ export default async function ProductDetailPage({
                         <CardContent>
                             <form action={updateProduct.bind(null, product.id)} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <Input
-                                        label="Product Name"
-                                        name="name"
-                                        defaultValue={product.name}
-                                        required
-                                    />
-                                    <Input
-                                        label="SKU"
-                                        name="sku"
-                                        defaultValue={product.sku}
-                                        required
-                                    />
+                                    <div className="space-y-2">
+                                        <Label htmlFor="name">Product Name</Label>
+                                        <Input
+                                            id="name"
+                                            name="name"
+                                            defaultValue={product.name}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="sku">SKU</Label>
+                                        <Input
+                                            id="sku"
+                                            name="sku"
+                                            defaultValue={product.sku}
+                                            required
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <Input
-                                        label="Barcode"
-                                        name="barcode"
-                                        defaultValue={product.barcode || ''}
-                                    />
+                                    <div className="space-y-2">
+                                        <Label htmlFor="barcode">Barcode</Label>
+                                        <Input
+                                            id="barcode"
+                                            name="barcode"
+                                            defaultValue={product.barcode || ''}
+                                        />
+                                    </div>
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                                             Category
@@ -136,11 +147,14 @@ export default async function ProductDetailPage({
                                     </div>
                                 </div>
 
-                                <Input
-                                    label="Description"
-                                    name="description"
-                                    defaultValue={product.description || ''}
-                                />
+                                <div className="space-y-2">
+                                    <Label htmlFor="description">Description</Label>
+                                    <Input
+                                        id="description"
+                                        name="description"
+                                        defaultValue={product.description || ''}
+                                    />
+                                </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>
@@ -160,30 +174,39 @@ export default async function ProductDetailPage({
                                             <option value="meter">Meter</option>
                                         </select>
                                     </div>
-                                    <Input
-                                        label="Selling Price"
-                                        name="sellingPrice"
-                                        type="number"
-                                        step="0.01"
-                                        defaultValue={Number(product.sellingPrice)}
-                                        required
-                                    />
-                                    <Input
-                                        label="Cost Price"
-                                        name="costPrice"
-                                        type="number"
-                                        step="0.01"
-                                        defaultValue={Number(product.costPrice)}
-                                        required
-                                    />
+                                    <div className="space-y-2">
+                                        <Label htmlFor="sellingPrice">Selling Price</Label>
+                                        <Input
+                                            id="sellingPrice"
+                                            name="sellingPrice"
+                                            type="number"
+                                            step="0.01"
+                                            defaultValue={Number(product.sellingPrice)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="costPrice">Cost Price</Label>
+                                        <Input
+                                            id="costPrice"
+                                            name="costPrice"
+                                            type="number"
+                                            step="0.01"
+                                            defaultValue={Number(product.costPrice)}
+                                            required
+                                        />
+                                    </div>
                                 </div>
 
-                                <Input
-                                    label="Low Stock Threshold"
-                                    name="lowStockThreshold"
-                                    type="number"
-                                    defaultValue={product.lowStockThreshold}
-                                />
+                                <div className="space-y-2">
+                                    <Label htmlFor="lowStockThreshold">Low Stock Threshold</Label>
+                                    <Input
+                                        id="lowStockThreshold"
+                                        name="lowStockThreshold"
+                                        type="number"
+                                        defaultValue={product.lowStockThreshold}
+                                    />
+                                </div>
 
                                 <div className="flex justify-end pt-4">
                                     <Button type="submit">

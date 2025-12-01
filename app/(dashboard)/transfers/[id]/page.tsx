@@ -29,15 +29,16 @@ async function getTransfer(transferId: string, organizationId: string) {
 export default async function TransferDetailPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
     const session = await auth();
+    const { id } = await params;
 
     if (!session?.user || !session.user.organizationId) {
         redirect('/login');
     }
 
-    const transfer = await getTransfer(params.id, session.user.organizationId);
+    const transfer = await getTransfer(id, session.user.organizationId);
 
     if (!transfer) {
         notFound();
@@ -128,12 +129,12 @@ export default async function TransferDetailPage({
                         <CardContent>
                             <span
                                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${transfer.status === 'DRAFT'
-                                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
-                                        : transfer.status === 'IN_TRANSIT'
-                                            ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                                            : transfer.status === 'COMPLETED'
-                                                ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                                                : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
+                                    : transfer.status === 'IN_TRANSIT'
+                                        ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                                        : transfer.status === 'COMPLETED'
+                                            ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                                            : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
                                     }`}
                             >
                                 {transfer.status}
