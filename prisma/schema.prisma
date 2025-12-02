@@ -390,7 +390,7 @@ enum SalesOrderStatus {
 model SalesOrder {
   id             String            @id @default(cuid())
   orderNumber    String            @unique
-  customerId     String
+  customerId     String?
   warehouseId    String            // Fulfillment warehouse
   status         SalesOrderStatus  @default(DRAFT)
   orderDate      DateTime          @default(now())
@@ -404,7 +404,7 @@ model SalesOrder {
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
-  customer     Customer     @relation(fields: [customerId], references: [id])
+  customer     Customer?    @relation(fields: [customerId], references: [id])
   warehouse    Warehouse    @relation(fields: [warehouseId], references: [id])
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdBy    User         @relation("SalesOrderCreatedBy", fields: [createdById], references: [id])

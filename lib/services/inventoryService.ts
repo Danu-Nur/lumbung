@@ -126,4 +126,45 @@ export const inventoryService = {
         });
         return item;
     },
+
+    /**
+     * Get paginated inventory list
+     */
+    async getInventory(organizationId: string, page: number = 1, pageSize: number = 10, search: string = '') {
+        const skip = (page - 1) * pageSize;
+
+        const where: Prisma.ProductWhereInput = {
+            organizationId,
+            deletedAt: null,
+            OR: search
+                ? [
+                    { name: { contains: search, mode: 'insensitive' } },
+                    { sku: { contains: search, mode: 'insensitive' } },
+                ]
+                : undefined,
+        };
+
+        const [products, total] = await prisma.$transaction([
+            prisma.product.findMany({
+                where,
+                include: {
+                    category: true,
+                    inventoryItems: {
+                        include: {
+                            warehouse: true,
+                        },
+                    },
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: pageSize,
+            }),
+            prisma.product.count({
+                where,
+            }),
+        ]);
+
+        return { products, total };
+    },
 };
+

@@ -18,15 +18,25 @@ export async function createPurchaseOrder(formData: FormData) {
     const notes = formData.get('notes') as string;
     const itemsJson = formData.get('items') as string;
 
+    if (!supplierId || !warehouseId || !itemsJson) {
+        throw new Error('Missing required fields');
+    }
+
     const items = JSON.parse(itemsJson) as Array<{
         productId: string;
         quantity: number;
         unitCost: number;
     }>;
 
-    const subtotal = items.reduce((sum, item) => sum + (item.quantity * item.unitCost), 0);
-    const total = subtotal;
+    if (items.length === 0) {
+        throw new Error('Order must have at least one item');
+    }
 
+    // Calculate totals
+    const subtotal = items.reduce((sum, item) => sum + (item.quantity * item.unitCost), 0);
+    const total = subtotal; // Assuming no tax/discount for now as per schema defaults
+
+    // Create order in transaction
     const order = await prisma.$transaction(async (tx) => {
         const poNumber = generateOrderNumber('PO');
 
@@ -45,15 +55,16 @@ export async function createPurchaseOrder(formData: FormData) {
             },
         });
 
+        // Create line items
         for (const item of items) {
+            const lineTotal = item.quantity * item.unitCost;
             await tx.purchaseOrderItem.create({
                 data: {
                     purchaseOrderId: purchaseOrder.id,
                     productId: item.productId,
                     quantity: item.quantity,
-                    unitCost: item.unitCost, // Cost snapshot
-                    lineTotal: item.quantity * item.unitCost,
-                    receivedQty: 0,
+                    unitCost: item.unitCost,
+                    lineTotal,
                 },
             });
         }
@@ -73,22 +84,16 @@ export async function receivePurchaseOrder(orderId: string) {
     }
 
     await prisma.$transaction(async (tx) => {
-        const order = await tx.purchaseOrder.findFirst({
-            where: {
-                id: orderId,
-                organizationId: session.user.organizationId!,
-            },
-            include: {
-                items: true,
-            },
+        const order = await tx.purchaseOrder.findUnique({
+            where: { id: orderId },
+            include: { items: true },
         });
 
-        if (!order || order.status !== 'SENT') {
-            throw new Error('Invalid order status');
-        }
+        if (!order) throw new Error('Order not found');
 
-        // Create movements and update stock
+        // Update inventory for each item
         for (const item of order.items) {
+            // Create IN movement
             await tx.inventoryMovement.create({
                 data: {
                     productId: item.productId,
@@ -97,11 +102,12 @@ export async function receivePurchaseOrder(orderId: string) {
                     quantity: item.quantity,
                     referenceType: 'PurchaseOrder',
                     referenceId: order.id,
-                    notes: `PO ${order.poNumber}`,
+                    notes: `Purchase Order ${order.poNumber}`,
                     createdById: session.user.id,
                 },
             });
 
+            // Update inventory item
             const inventoryItem = await tx.inventoryItem.findUnique({
                 where: {
                     productId_warehouseId: {
@@ -112,36 +118,53 @@ export async function receivePurchaseOrder(orderId: string) {
             });
 
             if (inventoryItem) {
-                const newQuantity = inventoryItem.quantityOnHand + item.quantity;
                 await tx.inventoryItem.update({
                     where: { id: inventoryItem.id },
                     data: {
-                        quantityOnHand: newQuantity,
-                        availableQty: newQuantity - inventoryItem.allocatedQty,
+                        quantityOnHand: { increment: item.quantity },
+                        availableQty: { increment: item.quantity },
                     },
                 });
             } else {
+                // Create new inventory item if it doesn't exist
                 await tx.inventoryItem.create({
                     data: {
                         productId: item.productId,
                         warehouseId: order.warehouseId,
                         quantityOnHand: item.quantity,
-                        allocatedQty: 0,
                         availableQty: item.quantity,
                     },
                 });
             }
 
+            // Update received quantity on line item
             await tx.purchaseOrderItem.update({
                 where: { id: item.id },
                 data: { receivedQty: item.quantity },
             });
         }
 
+        // Update order status
         await tx.purchaseOrder.update({
             where: { id: orderId },
             data: { status: 'COMPLETED' },
         });
+    });
+
+    revalidatePath('/purchase-orders');
+    revalidatePath(`/purchase-orders/${orderId}`);
+}
+
+export async function updatePurchaseOrderStatus(orderId: string, status: string) {
+    const session = await auth();
+
+    if (!session?.user || !session.user.organizationId) {
+        throw new Error('Unauthorized');
+    }
+
+    await prisma.purchaseOrder.update({
+        where: { id: orderId },
+        data: { status: status as any },
     });
 
     revalidatePath('/purchase-orders');

@@ -355,79 +355,151 @@ For issues and questions:
 
 Built with ❤️ using Next.js, Prisma, and PostgreSQL
 
+
 ```
 lumbung
 ├─ app
-│  ├─ (auth)
-│  │  ├─ layout.tsx
-│  │  ├─ login
-│  │  │  └─ page.tsx
-│  │  └─ register
-│  │     └─ page.tsx
-│  ├─ (dashboard)
-│  │  ├─ adjustments
-│  │  │  ├─ new
-│  │  │  │  └─ page.tsx
-│  │  │  └─ page.tsx
-│  │  ├─ customers
-│  │  │  └─ page.tsx
-│  │  ├─ dashboard
-│  │  │  └─ page.tsx
-│  │  ├─ inventory
-│  │  │  ├─ new
-│  │  │  │  └─ page.tsx
-│  │  │  ├─ page.tsx
-│  │  │  └─ [id]
-│  │  │     └─ page.tsx
-│  │  ├─ layout.tsx
-│  │  ├─ purchase-orders
-│  │  │  ├─ page.tsx
-│  │  │  └─ [id]
-│  │  │     └─ page.tsx
-│  │  ├─ sales-orders
-│  │  │  ├─ new
-│  │  │  │  ├─ new-sales-order-form.tsx
-│  │  │  │  └─ page.tsx
-│  │  │  ├─ page.tsx
-│  │  │  └─ [id]
-│  │  │     ├─ invoice
-│  │  │     │  └─ page.tsx
-│  │  │     └─ page.tsx
-│  │  ├─ settings
-│  │  │  └─ page.tsx
-│  │  ├─ suppliers
-│  │  │  └─ page.tsx
-│  │  ├─ transfers
-│  │  │  ├─ page.tsx
-│  │  │  └─ [id]
-│  │  │     └─ page.tsx
-│  │  └─ warehouses
-│  │     └─ page.tsx
 │  ├─ api
-│  │  └─ auth
-│  │     ├─ register
-│  │     │  └─ route.ts
-│  │     └─ [...nextauth]
-│  │        └─ route.ts
+│  │  ├─ auth
+│  │  │  ├─ register
+│  │  │  │  └─ route.ts
+│  │  │  └─ [...nextauth]
+│  │  │     └─ route.ts
+│  │  ├─ categories
+│  │  │  ├─ route.ts
+│  │  │  └─ [id]
+│  │  │     └─ route.ts
+│  │  ├─ products
+│  │  │  └─ [id]
+│  │  │     ├─ default-supplier
+│  │  │     │  └─ route.ts
+│  │  │     ├─ update-cost-price
+│  │  │     │  └─ route.ts
+│  │  │     └─ update-selling-price
+│  │  │        └─ route.ts
+│  │  ├─ purchase-orders
+│  │  │  └─ [id]
+│  │  │     └─ receive
+│  │  │        └─ route.ts
+│  │  └─ sales-orders
+│  │     ├─ route.ts
+│  │     └─ [id]
+│  │        └─ fulfill
+│  │           └─ route.ts
 │  ├─ favicon.ico
 │  ├─ globals.css
-│  ├─ layout.tsx
-│  └─ page.tsx
+│  └─ [locale]
+│     ├─ (auth)
+│     │  ├─ layout.tsx
+│     │  ├─ login
+│     │  │  └─ page.tsx
+│     │  └─ register
+│     │     └─ page.tsx
+│     ├─ (dashboard)
+│     │  ├─ adjustments
+│     │  │  ├─ new
+│     │  │  │  └─ page.tsx
+│     │  │  ├─ page.tsx
+│     │  │  └─ [id]
+│     │  │     └─ page.tsx
+│     │  ├─ categories
+│     │  │  └─ page.tsx
+│     │  ├─ customers
+│     │  │  └─ page.tsx
+│     │  ├─ dashboard
+│     │  │  └─ page.tsx
+│     │  ├─ help
+│     │  │  └─ page.tsx
+│     │  ├─ inventory
+│     │  │  ├─ new
+│     │  │  │  └─ page.tsx
+│     │  │  ├─ page.tsx
+│     │  │  └─ [id]
+│     │  │     └─ page.tsx
+│     │  ├─ layout.tsx
+│     │  ├─ purchase-orders
+│     │  │  ├─ new
+│     │  │  │  ├─ new-purchase-order-form.tsx
+│     │  │  │  └─ page.tsx
+│     │  │  ├─ page.tsx
+│     │  │  └─ [id]
+│     │  │     └─ page.tsx
+│     │  ├─ sales-orders
+│     │  │  ├─ new
+│     │  │  │  ├─ new-sales-order-form.tsx
+│     │  │  │  └─ page.tsx
+│     │  │  ├─ page.tsx
+│     │  │  └─ [id]
+│     │  │     ├─ invoice
+│     │  │     │  ├─ invoice-content.tsx
+│     │  │     │  └─ page.tsx
+│     │  │     └─ page.tsx
+│     │  ├─ settings
+│     │  │  ├─ organization-form.tsx
+│     │  │  ├─ page.tsx
+│     │  │  ├─ user-dialog.tsx
+│     │  │  └─ users-table.tsx
+│     │  ├─ suppliers
+│     │  │  └─ page.tsx
+│     │  ├─ transfers
+│     │  │  ├─ new
+│     │  │  │  ├─ new-transfer-form.tsx
+│     │  │  │  └─ page.tsx
+│     │  │  ├─ page.tsx
+│     │  │  └─ [id]
+│     │  │     └─ page.tsx
+│     │  └─ warehouses
+│     │     ├─ new
+│     │     │  ├─ new-warehouse-form.tsx
+│     │     │  └─ page.tsx
+│     │     ├─ page.tsx
+│     │     └─ [id]
+│     │        ├─ edit-warehouse-form.tsx
+│     │        └─ page.tsx
+│     ├─ layout.tsx
+│     └─ page.tsx
 ├─ components
+│  ├─ categories
+│  │  ├─ category-actions.tsx
+│  │  └─ category-dialog.tsx
+│  ├─ customers
+│  │  ├─ customer-actions.tsx
+│  │  └─ customer-dialog.tsx
+│  ├─ inventory
+│  │  ├─ category-selector.tsx
+│  │  └─ delete-product-button.tsx
 │  ├─ layout
 │  │  ├─ ambient-background.tsx
 │  │  ├─ sidebar.tsx
 │  │  ├─ theme-toggle.tsx
 │  │  └─ topbar.tsx
 │  ├─ shared
+│  │  ├─ help-sheet.tsx
+│  │  ├─ language-switcher.tsx
+│  │  ├─ page-header.tsx
+│  │  ├─ page-help.tsx
+│  │  ├─ pagination.tsx
 │  │  └─ stats-card.tsx
+│  ├─ suppliers
+│  │  ├─ supplier-actions.tsx
+│  │  └─ supplier-dialog.tsx
 │  └─ ui
+│     ├─ accordion.tsx
+│     ├─ alert-dialog.tsx
 │     ├─ badge.tsx
 │     ├─ button.tsx
 │     ├─ card.tsx
+│     ├─ dialog.tsx
+│     ├─ form.tsx
 │     ├─ input.tsx
 │     ├─ label.tsx
+│     ├─ scroll-area.tsx
+│     ├─ select.tsx
+│     ├─ separator.tsx
+│     ├─ sheet.tsx
+│     ├─ switch.tsx
 │     ├─ table.tsx
+│     ├─ tabs.tsx
 │     └─ textarea.tsx
 ├─ components.json
 ├─ emails
@@ -436,7 +508,10 @@ lumbung
 │  ├─ adjustments
 │  │  └─ actions.ts
 │  ├─ auth
+│  ├─ categories
+│  │  └─ actions.ts
 │  ├─ customers
+│  │  └─ actions.ts
 │  ├─ dashboard
 │  ├─ inventory
 │  │  └─ actions.ts
@@ -444,18 +519,34 @@ lumbung
 │  │  └─ actions.ts
 │  ├─ sales-orders
 │  │  └─ actions.ts
+│  ├─ settings
+│  │  └─ actions.ts
 │  ├─ suppliers
+│  │  └─ actions.ts
 │  ├─ transfers
 │  │  └─ actions.ts
 │  ├─ users
 │  └─ warehouses
+│     └─ actions.ts
+├─ i18n
+│  └─ request.ts
 ├─ lib
+│  ├─ auth.config.ts
 │  ├─ auth.ts
 │  ├─ email.ts
 │  ├─ prisma.ts
 │  ├─ rbac.ts
+│  ├─ services
+│  │  ├─ categoryService.ts
+│  │  ├─ inventoryService.ts
+│  │  ├─ pricingService.ts
+│  │  ├─ productService.ts
+│  │  ├─ purchaseOrderService.ts
+│  │  └─ salesOrderService.ts
 │  └─ utils.ts
-├─ middleware.ts
+├─ messages
+│  ├─ en.json
+│  └─ id.json
 ├─ next.config.ts
 ├─ package-lock.json
 ├─ package.json
@@ -464,10 +555,17 @@ lumbung
 │  ├─ migrations
 │  │  ├─ 20251129050733_init
 │  │  │  └─ migration.sql
+│  │  ├─ 20251201031558_init_inventory_price_history
+│  │  │  └─ migration.sql
+│  │  ├─ 20251201033403_init_inventory_price_history_and_supplier_link
+│  │  │  └─ migration.sql
+│  │  ├─ 20251201065449_make_customer_optional
+│  │  │  └─ migration.sql
 │  │  └─ migration_lock.toml
 │  ├─ schema.prisma
 │  └─ seed.ts
 ├─ prisma.config.ts
+├─ proxy.ts
 ├─ public
 │  ├─ file.svg
 │  ├─ globe.svg

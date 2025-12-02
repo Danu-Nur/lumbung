@@ -1,0 +1,260 @@
+{
+    "common": {
+        "buttons": {
+            "save": "Save",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "edit": "Edit",
+            "add": "Add",
+            "help": "Help",
+            "view": "View",
+            "back": "Back",
+            "search": "Search",
+            "print": "Print",
+            "confirm": "Confirm",
+            "fulfill": "Fulfill",
+            "login": "Login",
+            "register": "Register",
+            "logout": "Logout"
+        },
+        "table": {
+            "noData": "No data found",
+            "actions": "Actions",
+            "name": "Name",
+            "description": "Description",
+            "status": "Status",
+            "date": "Date",
+            "total": "Total"
+        },
+        "nav": {
+            "dashboard": "Dashboard",
+            "inventory": "Inventory",
+            "categories": "Categories",
+            "suppliers": "Suppliers",
+            "customers": "Customers",
+            "sales": "Sales Orders",
+            "purchases": "Purchase Orders",
+            "transfers": "Transfers",
+            "adjustments": "Adjustments",
+            "warehouses": "Warehouses",
+            "settings": "Settings"
+        },
+        "pagination": {
+            "showing": "Showing {from} to {to} of {total} entries",
+            "rowsPerPage": "Rows per page",
+            "pageOf": "Page {current} of {total}",
+            "first": "Go to first page",
+            "previous": "Go to previous page",
+            "next": "Go to next page",
+            "last": "Go to last page"
+        },
+        "topbar": {
+            "defaultOrg": "Inventory Pro",
+            "guest": "Guest",
+            "logout": "Logout",
+            "profile": "Profile"
+        },
+        "help": {
+            "title": "Guide: {title}",
+            "description": "Explanation and usage of this page."
+        },
+        "sidebar": {
+            "logo": "Inventory Pro",
+            "footer": "© 2025 Inventory Pro",
+            "toggleMenu": "Toggle Menu",
+            "navMenu": "Navigation Menu",
+            "mobileNavDesc": "Mobile navigation menu for Inventory Pro"
+        },
+        "statsCard": {
+            "fromLastMonth": "from last month"
+        }
+    },
+    "inventory": {
+        "title": "Inventory",
+        "description": "Manage your product inventory across warehouses",
+        "columns": {
+            "product": "Product",
+            "sku": "SKU",
+            "category": "Category",
+            "sellingPrice": "Selling Price",
+            "totalStock": "Total Stock"
+        },
+        "help": {
+            "title": "Inventory Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "This page displays real-time stock levels for each item across all warehouses."
+            },
+            "columns": {
+                "heading": "Column Explanation",
+                "product": "Product Name and SKU",
+                "warehouse": "Storage Location",
+                "available": "Available Stock",
+                "ordered": "Ordered Stock",
+                "minStock": "Minimum Stock Level"
+            }
+        }
+    },
+    "categories": {
+        "title": "Categories",
+        "description": "Manage your product categories",
+        "columns": {
+            "name": "Name",
+            "description": "Description"
+        },
+        "help": {
+            "title": "Category Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "Categories are used to group products for better organization and reporting."
+            }
+        }
+    },
+    "suppliers": {
+        "title": "Suppliers",
+        "description": "Manage your supplier database",
+        "columns": {
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "city": "City"
+        },
+        "help": {
+            "title": "Supplier Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "This page lists all suppliers you purchase goods from."
+            }
+        }
+    },
+    "customers": {
+        "title": "Customers",
+        "description": "Manage your customer database",
+        "columns": {
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "city": "City"
+        },
+        "help": {
+            "title": "Customer Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "This page lists all customers who purchase goods from you."
+            }
+        }
+    },
+    "settings": {
+        "title": "Settings",
+        "description": "Manage your organization and user settings",
+        "sections": {
+            "organization": "Organization Details",
+            "email": "Email Notifications",
+            "users": "Team Members"
+        },
+        "help": {
+            "title": "Settings Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "Configure your company profile and manage user access."
+            }
+        }
+    },
+    "sales": {
+        "title": "Sales Orders",
+        "description": "Manage customer orders",
+        "columns": {
+            "orderNumber": "Order #",
+            "customer": "Customer",
+            "date": "Date",
+            "status": "Status",
+            "total": "Total",
+            "items": "Items"
+        },
+        "help": {
+            "title": "Sales Order Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "Manage your sales orders here."
+            }
+        }
+    },
+    "purchases": {
+        "title": "Purchase Orders",
+        "description": "Manage supplier orders",
+        "columns": {
+            "orderNumber": "Order #",
+            "supplier": "Supplier",
+            "date": "Date",
+            "status": "Status",
+            "total": "Total",
+            "items": "Items"
+        },
+        "help": {
+            "title": "Purchase Order Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "Manage your purchase orders here."
+            }
+        }
+    },
+    "warehouses": {
+        "title": "Warehouses",
+        "description": "Manage your warehouses",
+        "columns": {
+            "name": "Name",
+            "code": "Code",
+            "location": "Location",
+            "items": "Items",
+            "status": "Status"
+        },
+        "help": {
+            "title": "Warehouse Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "Manage your warehouse locations."
+            }
+        }
+    },
+    "transfers": {
+        "title": "Stock Transfers",
+        "description": "Transfer inventory between warehouses",
+        "columns": {
+            "reference": "Reference",
+            "from": "From",
+            "to": "To",
+            "date": "Date",
+            "status": "Status",
+            "items": "Items"
+        },
+        "help": {
+            "title": "Transfer Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "Manage stock transfers between warehouses."
+            }
+        }
+    },
+    "adjustments": {
+        "title": "Stock Adjustments",
+        "description": "Correct stock levels manually",
+        "columns": {
+            "reference": "Reference",
+            "date": "Date",
+            "product": "Product",
+            "warehouse": "Warehouse",
+            "type": "Type",
+            "quantity": "Quantity",
+            "reason": "Reason",
+            "by": "By",
+            "status": "Status"
+        },
+        "help": {
+            "title": "Adjustment Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "Manually adjust stock levels for shrinkage, damage, or corrections."
+            }
+        }
+    }
+}

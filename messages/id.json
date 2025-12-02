@@ -1,0 +1,260 @@
+{
+    "common": {
+        "buttons": {
+            "save": "Simpan",
+            "cancel": "Batal",
+            "delete": "Hapus",
+            "edit": "Ubah",
+            "add": "Tambah",
+            "help": "Panduan",
+            "view": "Lihat",
+            "back": "Kembali",
+            "search": "Cari",
+            "print": "Cetak",
+            "confirm": "Konfirmasi",
+            "fulfill": "Penuhi",
+            "login": "Masuk",
+            "register": "Daftar",
+            "logout": "Keluar"
+        },
+        "table": {
+            "noData": "Belum ada data",
+            "actions": "Aksi",
+            "name": "Nama",
+            "description": "Deskripsi",
+            "status": "Status",
+            "date": "Tanggal",
+            "total": "Total"
+        },
+        "nav": {
+            "dashboard": "Dashboard",
+            "inventory": "Inventaris",
+            "categories": "Kategori",
+            "suppliers": "Pemasok",
+            "customers": "Pelanggan",
+            "sales": "Penjualan",
+            "purchases": "Pembelian",
+            "transfers": "Transfer",
+            "adjustments": "Penyesuaian",
+            "warehouses": "Gudang",
+            "settings": "Pengaturan"
+        },
+        "pagination": {
+            "showing": "Menampilkan {from} sampai {to} dari {total} entri",
+            "rowsPerPage": "Baris per halaman",
+            "pageOf": "Halaman {current} dari {total}",
+            "first": "Ke halaman pertama",
+            "previous": "Ke halaman sebelumnya",
+            "next": "Ke halaman selanjutnya",
+            "last": "Ke halaman terakhir"
+        },
+        "topbar": {
+            "defaultOrg": "Inventory Pro",
+            "guest": "Tamu",
+            "logout": "Keluar",
+            "profile": "Profil"
+        },
+        "help": {
+            "title": "Panduan: {title}",
+            "description": "Penjelasan dan cara penggunaan halaman ini."
+        },
+        "sidebar": {
+            "logo": "Inventory Pro",
+            "footer": "© 2025 Inventory Pro",
+            "toggleMenu": "Buka Menu",
+            "navMenu": "Menu Navigasi",
+            "mobileNavDesc": "Menu navigasi mobile untuk Inventory Pro"
+        },
+        "statsCard": {
+            "fromLastMonth": "dari bulan lalu"
+        }
+    },
+    "inventory": {
+        "title": "Inventaris",
+        "description": "Kelola stok produk Anda di seluruh gudang",
+        "columns": {
+            "product": "Produk",
+            "sku": "SKU",
+            "category": "Kategori",
+            "sellingPrice": "Harga Jual",
+            "totalStock": "Total Stok"
+        },
+        "help": {
+            "title": "Panduan Inventaris",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Halaman ini menampilkan jumlah stok setiap barang di setiap gudang secara real-time."
+            },
+            "columns": {
+                "heading": "Penjelasan Kolom",
+                "product": "Nama Produk dan SKU",
+                "warehouse": "Lokasi Penyimpanan",
+                "available": "Stok Tersedia",
+                "ordered": "Stok Dipesan",
+                "minStock": "Batas Minimum Stok"
+            }
+        }
+    },
+    "categories": {
+        "title": "Kategori",
+        "description": "Kelola kategori produk Anda",
+        "columns": {
+            "name": "Nama",
+            "description": "Deskripsi"
+        },
+        "help": {
+            "title": "Panduan Kategori",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Kategori digunakan untuk mengelompokkan produk agar lebih rapi dan mudah dicari."
+            }
+        }
+    },
+    "suppliers": {
+        "title": "Pemasok",
+        "description": "Kelola database pemasok Anda",
+        "columns": {
+            "name": "Nama",
+            "email": "Email",
+            "phone": "Telepon",
+            "city": "Kota"
+        },
+        "help": {
+            "title": "Panduan Pemasok",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Halaman ini berisi daftar pemasok tempat Anda membeli barang."
+            }
+        }
+    },
+    "customers": {
+        "title": "Pelanggan",
+        "description": "Kelola database pelanggan Anda",
+        "columns": {
+            "name": "Nama",
+            "email": "Email",
+            "phone": "Telepon",
+            "city": "Kota"
+        },
+        "help": {
+            "title": "Panduan Pelanggan",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Halaman ini berisi daftar pelanggan yang membeli barang dari Anda."
+            }
+        }
+    },
+    "settings": {
+        "title": "Pengaturan",
+        "description": "Kelola pengaturan organisasi dan pengguna",
+        "sections": {
+            "organization": "Detail Organisasi",
+            "email": "Notifikasi Email",
+            "users": "Anggota Tim"
+        },
+        "help": {
+            "title": "Panduan Pengaturan",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Konfigurasi profil perusahaan dan kelola akses pengguna."
+            }
+        }
+    },
+    "sales": {
+        "title": "Penjualan",
+        "description": "Kelola pesanan pelanggan",
+        "columns": {
+            "orderNumber": "No. Pesanan",
+            "customer": "Pelanggan",
+            "date": "Tanggal",
+            "status": "Status",
+            "total": "Total",
+            "items": "Item"
+        },
+        "help": {
+            "title": "Panduan Penjualan",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Kelola pesanan penjualan Anda di sini."
+            }
+        }
+    },
+    "purchases": {
+        "title": "Pembelian",
+        "description": "Kelola pesanan ke pemasok",
+        "columns": {
+            "orderNumber": "No. Pesanan",
+            "supplier": "Pemasok",
+            "date": "Tanggal",
+            "status": "Status",
+            "total": "Total",
+            "items": "Item"
+        },
+        "help": {
+            "title": "Panduan Pembelian",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Kelola pesanan pembelian Anda di sini."
+            }
+        }
+    },
+    "warehouses": {
+        "title": "Gudang",
+        "description": "Kelola gudang Anda",
+        "columns": {
+            "name": "Nama",
+            "code": "Kode",
+            "location": "Lokasi",
+            "items": "Item",
+            "status": "Status"
+        },
+        "help": {
+            "title": "Panduan Gudang",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Kelola lokasi gudang Anda."
+            }
+        }
+    },
+    "transfers": {
+        "title": "Transfer Stok",
+        "description": "Transfer inventaris antar gudang",
+        "columns": {
+            "reference": "Referensi",
+            "from": "Dari",
+            "to": "Ke",
+            "date": "Tanggal",
+            "status": "Status",
+            "items": "Item"
+        },
+        "help": {
+            "title": "Panduan Transfer",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Kelola transfer stok antar gudang."
+            }
+        }
+    },
+    "adjustments": {
+        "title": "Penyesuaian Stok",
+        "description": "Koreksi level stok secara manual",
+        "columns": {
+            "reference": "Referensi",
+            "date": "Tanggal",
+            "product": "Produk",
+            "warehouse": "Gudang",
+            "type": "Tipe",
+            "quantity": "Jumlah",
+            "reason": "Alasan",
+            "by": "Oleh",
+            "status": "Status"
+        },
+        "help": {
+            "title": "Panduan Penyesuaian",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Sesuaikan level stok secara manual untuk penyusutan, kerusakan, atau koreksi."
+            }
+        }
+    }
+}

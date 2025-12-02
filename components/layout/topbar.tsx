@@ -2,15 +2,18 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import { ThemeToggle } from './theme-toggle';
+import { LanguageSwitcher } from '@/components/shared/language-switcher';
 import { User, LogOut, ChevronDown, HelpCircle } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { MobileSidebar } from './sidebar';
+import { useTranslations } from 'next-intl';
 
 export function Topbar() {
     const { data: session } = useSession();
     const [showDropdown, setShowDropdown] = useState(false);
+    const t = useTranslations('common.topbar');
 
     return (
         <header className="h-14 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-30">
@@ -21,10 +24,10 @@ export function Topbar() {
                 {/* Organization Name */}
                 <div>
                     <h1 className="text-lg font-semibold text-foreground">
-                        {session?.user?.organizationName || 'Inventory Pro'}
+                        {session?.user?.organizationName || t('defaultOrg')}
                     </h1>
                     <p className="text-xs text-muted-foreground hidden sm:block">
-                        {session?.user?.roleName || 'Guest'}
+                        {session?.user?.roleName || t('guest')}
                     </p>
                 </div>
             </div>
@@ -37,6 +40,9 @@ export function Topbar() {
                         <HelpCircle className="w-5 h-5 text-muted-foreground" />
                     </button>
                 </Link>
+
+                {/* Language Switcher */}
+                <LanguageSwitcher />
 
                 {/* Theme Toggle */}
                 <ThemeToggle />
@@ -76,7 +82,7 @@ export function Topbar() {
                                             className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                                         >
                                             <LogOut className="w-4 h-4" />
-                                            <span>Logout</span>
+                                            <span>{t('logout')}</span>
                                         </button>
                                     </div>
                                 </div>

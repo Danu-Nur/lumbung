@@ -112,3 +112,72 @@ export async function createStockAdjustment(formData: FormData) {
     revalidatePath('/inventory');
     redirect('/adjustments');
 }
+
+export async function reverseStockAdjustment(adjustmentId: string) {
+    const session = await auth();
+    if (!session?.user || !session.user.organizationId) throw new Error('Unauthorized');
+
+    await prisma.$transaction(async (tx) => {
+        const originalAdjustment = await tx.stockAdjustment.findUnique({
+            where: { id: adjustmentId },
+        });
+
+        if (!originalAdjustment) throw new Error('Adjustment not found');
+
+        // Create reversal adjustment
+        const reversalType = originalAdjustment.adjustmentType === 'increase' ? 'decrease' : 'increase';
+        const reversalQuantity = originalAdjustment.quantity;
+
+        await tx.stockAdjustment.create({
+            data: {
+                productId: originalAdjustment.productId,
+                warehouseId: originalAdjustment.warehouseId,
+                adjustmentType: reversalType,
+                quantity: reversalQuantity,
+                reason: 'CORRECTION',
+                notes: `Reversal of adjustment ${originalAdjustment.id}`,
+                organizationId: session.user.organizationId!,
+                createdById: session.user.id,
+            },
+        });
+
+        // Create reversal movement
+        const movementQuantity = reversalType === 'increase' ? reversalQuantity : -reversalQuantity;
+        await tx.inventoryMovement.create({
+            data: {
+                productId: originalAdjustment.productId,
+                warehouseId: originalAdjustment.warehouseId,
+                movementType: 'ADJUST',
+                quantity: movementQuantity,
+                referenceType: 'StockAdjustment',
+                referenceId: 'ADJ-REV',
+                notes: `Reversal of adjustment ${originalAdjustment.id}`,
+                createdById: session.user.id,
+            },
+        });
+
+        // Update inventory
+        const existingItem = await tx.inventoryItem.findUnique({
+            where: {
+                productId_warehouseId: {
+                    productId: originalAdjustment.productId,
+                    warehouseId: originalAdjustment.warehouseId,
+                },
+            },
+        });
+
+        if (existingItem) {
+            const newQuantity = existingItem.quantityOnHand + movementQuantity;
+            await tx.inventoryItem.update({
+                where: { id: existingItem.id },
+                data: {
+                    quantityOnHand: newQuantity,
+                    availableQty: newQuantity - existingItem.allocatedQty,
+                },
+            });
+        }
+    });
+
+    revalidatePath('/adjustments');
+    redirect('/adjustments');
+}

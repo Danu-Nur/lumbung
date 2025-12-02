@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { generateOrderNumber } from '@/lib/utils';
 
-export async function createStockTransfer(formData: FormData) {
+export async function createTransfer(formData: FormData) {
     const session = await auth();
 
     if (!session?.user || !session.user.organizationId) {
@@ -18,14 +18,22 @@ export async function createStockTransfer(formData: FormData) {
     const notes = formData.get('notes') as string;
     const itemsJson = formData.get('items') as string;
 
+    if (!fromWarehouseId || !toWarehouseId || !itemsJson) {
+        throw new Error('Missing required fields');
+    }
+
     if (fromWarehouseId === toWarehouseId) {
-        throw new Error('Source and destination warehouses must be different');
+        throw new Error('Cannot transfer to the same warehouse');
     }
 
     const items = JSON.parse(itemsJson) as Array<{
         productId: string;
         quantity: number;
     }>;
+
+    if (items.length === 0) {
+        throw new Error('Transfer must have at least one item');
+    }
 
     const transfer = await prisma.$transaction(async (tx) => {
         const transferNumber = generateOrderNumber('TR');
@@ -59,60 +67,23 @@ export async function createStockTransfer(formData: FormData) {
     redirect('/transfers');
 }
 
-export async function completeStockTransfer(transferId: string) {
+export async function sendTransfer(transferId: string) {
     const session = await auth();
-
-    if (!session?.user || !session.user.organizationId) {
-        throw new Error('Unauthorized');
-    }
+    if (!session?.user || !session.user.organizationId) throw new Error('Unauthorized');
 
     await prisma.$transaction(async (tx) => {
-        const transfer = await tx.stockTransfer.findFirst({
-            where: {
-                id: transferId,
-                organizationId: session.user.organizationId!,
-            },
-            include: {
-                items: true,
-            },
+        const transfer = await tx.stockTransfer.findUnique({
+            where: { id: transferId },
+            include: { items: true },
         });
 
-        if (!transfer || transfer.status !== 'IN_TRANSIT') {
-            throw new Error('Invalid transfer status');
-        }
+        if (!transfer) throw new Error('Transfer not found');
+        if (transfer.status !== 'DRAFT') throw new Error('Transfer must be in DRAFT status to send');
 
-        // Create movements for both warehouses
+        // Deduct from source warehouse
         for (const item of transfer.items) {
-            // OUT from source
-            await tx.inventoryMovement.create({
-                data: {
-                    productId: item.productId,
-                    warehouseId: transfer.fromWarehouseId,
-                    movementType: 'TRANSFER_OUT',
-                    quantity: -item.quantity,
-                    referenceType: 'StockTransfer',
-                    referenceId: transfer.id,
-                    notes: `Transfer ${transfer.transferNumber}`,
-                    createdById: session.user.id,
-                },
-            });
-
-            // IN to destination
-            await tx.inventoryMovement.create({
-                data: {
-                    productId: item.productId,
-                    warehouseId: transfer.toWarehouseId,
-                    movementType: 'TRANSFER_IN',
-                    quantity: item.quantity,
-                    referenceType: 'StockTransfer',
-                    referenceId: transfer.id,
-                    notes: `Transfer ${transfer.transferNumber}`,
-                    createdById: session.user.id,
-                },
-            });
-
-            // Update source warehouse
-            const sourceItem = await tx.inventoryItem.findUnique({
+            // Check stock availability
+            const inventory = await tx.inventoryItem.findUnique({
                 where: {
                     productId_warehouseId: {
                         productId: item.productId,
@@ -121,19 +92,75 @@ export async function completeStockTransfer(transferId: string) {
                 },
             });
 
-            if (sourceItem) {
-                const newQty = sourceItem.quantityOnHand - item.quantity;
-                await tx.inventoryItem.update({
-                    where: { id: sourceItem.id },
-                    data: {
-                        quantityOnHand: newQty,
-                        availableQty: newQty - sourceItem.allocatedQty,
-                    },
-                });
+            if (!inventory || inventory.availableQty < item.quantity) {
+                throw new Error(`Insufficient stock for product ${item.productId}`);
             }
 
-            // Update destination warehouse
-            const destItem = await tx.inventoryItem.findUnique({
+            // Create OUT movement
+            await tx.inventoryMovement.create({
+                data: {
+                    productId: item.productId,
+                    warehouseId: transfer.fromWarehouseId,
+                    movementType: 'TRANSFER_OUT',
+                    quantity: -item.quantity,
+                    referenceType: 'StockTransfer',
+                    referenceId: transfer.id,
+                    notes: `Transfer Out ${transfer.transferNumber}`,
+                    createdById: session.user.id,
+                },
+            });
+
+            // Update inventory
+            await tx.inventoryItem.update({
+                where: { id: inventory.id },
+                data: {
+                    quantityOnHand: { decrement: item.quantity },
+                    availableQty: { decrement: item.quantity },
+                },
+            });
+        }
+
+        await tx.stockTransfer.update({
+            where: { id: transferId },
+            data: { status: 'IN_TRANSIT' },
+        });
+    });
+
+    revalidatePath('/transfers');
+    revalidatePath(`/transfers/${transferId}`);
+}
+
+export async function completeTransfer(transferId: string) {
+    const session = await auth();
+    if (!session?.user || !session.user.organizationId) throw new Error('Unauthorized');
+
+    await prisma.$transaction(async (tx) => {
+        const transfer = await tx.stockTransfer.findUnique({
+            where: { id: transferId },
+            include: { items: true },
+        });
+
+        if (!transfer) throw new Error('Transfer not found');
+        if (transfer.status !== 'IN_TRANSIT') throw new Error('Transfer must be IN_TRANSIT to complete');
+
+        // Add to destination warehouse
+        for (const item of transfer.items) {
+            // Create IN movement
+            await tx.inventoryMovement.create({
+                data: {
+                    productId: item.productId,
+                    warehouseId: transfer.toWarehouseId,
+                    movementType: 'TRANSFER_IN',
+                    quantity: item.quantity,
+                    referenceType: 'StockTransfer',
+                    referenceId: transfer.id,
+                    notes: `Transfer In ${transfer.transferNumber}`,
+                    createdById: session.user.id,
+                },
+            });
+
+            // Update inventory
+            const inventory = await tx.inventoryItem.findUnique({
                 where: {
                     productId_warehouseId: {
                         productId: item.productId,
@@ -142,13 +169,12 @@ export async function completeStockTransfer(transferId: string) {
                 },
             });
 
-            if (destItem) {
-                const newQty = destItem.quantityOnHand + item.quantity;
+            if (inventory) {
                 await tx.inventoryItem.update({
-                    where: { id: destItem.id },
+                    where: { id: inventory.id },
                     data: {
-                        quantityOnHand: newQty,
-                        availableQty: newQty - destItem.allocatedQty,
+                        quantityOnHand: { increment: item.quantity },
+                        availableQty: { increment: item.quantity },
                     },
                 });
             } else {
@@ -157,7 +183,6 @@ export async function completeStockTransfer(transferId: string) {
                         productId: item.productId,
                         warehouseId: transfer.toWarehouseId,
                         quantityOnHand: item.quantity,
-                        allocatedQty: 0,
                         availableQty: item.quantity,
                     },
                 });

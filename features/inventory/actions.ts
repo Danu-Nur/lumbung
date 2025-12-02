@@ -133,10 +133,11 @@ export async function deleteProduct(productId: string) {
         throw new Error('Product not found');
     }
 
-    // Soft delete
+    // Soft delete with SKU rename to allow reuse
     await prisma.product.update({
         where: { id: productId },
         data: {
+            sku: `${product.sku}_deleted_${Date.now()}`,
             deletedAt: new Date(),
             updatedById: session.user.id,
         },
