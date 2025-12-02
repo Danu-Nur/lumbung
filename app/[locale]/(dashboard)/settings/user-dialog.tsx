@@ -50,7 +50,6 @@ export function UserDialog({ roles }: UserDialogProps) {
     });
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        console.log('Manual submit triggered', values);
         const formData = new FormData();
         Object.entries(values).forEach(([key, value]) => {
             formData.append(key, value);
@@ -67,10 +66,6 @@ export function UserDialog({ roles }: UserDialogProps) {
         }
     };
 
-    const onInvalid = (errors: any) => {
-        console.log('Manual submit invalid', errors);
-    };
-
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -84,7 +79,7 @@ export function UserDialog({ roles }: UserDialogProps) {
                     <DialogTitle>Invite New User</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
-                    <div className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <FormField
                             control={form.control}
                             name="name"
@@ -146,15 +141,11 @@ export function UserDialog({ roles }: UserDialogProps) {
                             )}
                         />
                         <div className="flex justify-end">
-                            <Button
-                                type="button"
-                                onClick={form.handleSubmit(onSubmit, onInvalid)}
-                                disabled={form.formState.isSubmitting}
-                            >
+                            <Button type="submit" disabled={form.formState.isSubmitting}>
                                 {form.formState.isSubmitting ? 'Inviting...' : 'Invite User'}
                             </Button>
                         </div>
-                    </div>
+                    </form>
                 </Form>
             </DialogContent>
         </Dialog>
