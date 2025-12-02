@@ -1,7 +1,7 @@
 'use server';
 
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { customerService } from '@/lib/services/customerService';
 import { revalidatePath } from 'next/cache';
 
 export async function createCustomer(data: {
@@ -17,11 +17,9 @@ export async function createCustomer(data: {
         throw new Error('Unauthorized');
     }
 
-    const customer = await prisma.customer.create({
-        data: {
-            ...data,
-            organizationId: session.user.organizationId,
-        },
+    const customer = await customerService.createCustomer({
+        organizationId: session.user.organizationId,
+        ...data,
     });
 
     revalidatePath('/customers');
@@ -41,11 +39,9 @@ export async function updateCustomer(id: string, data: {
         throw new Error('Unauthorized');
     }
 
-    const customer = await prisma.customer.update({
-        where: {
-            id,
-            organizationId: session.user.organizationId,
-        },
+    const customer = await customerService.updateCustomer({
+        id,
+        organizationId: session.user.organizationId,
         data,
     });
 
@@ -60,17 +56,10 @@ export async function deleteCustomer(id: string) {
         throw new Error('Unauthorized');
     }
 
-    // Soft delete
-    const customer = await prisma.customer.update({
-        where: {
-            id,
-            organizationId: session.user.organizationId,
-        },
-        data: {
-            deletedAt: new Date(),
-        },
+    await customerService.deleteCustomer({
+        id,
+        organizationId: session.user.organizationId,
     });
 
     revalidatePath('/customers');
-    return customer;
 }

@@ -13,10 +13,11 @@ import {
 } from '@/components/ui/table';
 import { inventoryService } from '@/lib/services/inventoryService';
 import { Pagination } from '@/components/shared/pagination';
+import { SearchInput } from '@/components/shared/search-input';
 import { formatCurrency } from '@/lib/utils';
 import { Package, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { PageHelp } from '@/components/shared/page-help';
+import { PageHeader } from '@/components/shared/page-header';
 import { getTranslations } from 'next-intl/server';
 
 export default async function InventoryPage({
@@ -77,27 +78,26 @@ export default async function InventoryPage({
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <div>
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-                        <PageHelp title={t('help.title')} sections={helpSections} />
-                    </div>
-                    <p className="text-muted-foreground mt-1">
-                        {t('description')}
-                    </p>
-                </div>
-                <div className="flex gap-2">
-                    <Link href="/adjustments">
-                        <Button variant="outline">{tCommon('nav.adjustments')}</Button>
-                    </Link>
-                    <Link href="/inventory/new">
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" /> {tCommon('buttons.add')} {t('columns.product')}
-                        </Button>
-                    </Link>
-                </div>
-            </div>
+            <PageHeader
+                title={t('title')}
+                description={t('description')}
+                help={{
+                    title: t('help.title'),
+                    sections: helpSections,
+                }}
+                actions={
+                    <>
+                        <Link href="/adjustments">
+                            <Button variant="outline">{tCommon('nav.adjustments')}</Button>
+                        </Link>
+                        <Link href="/inventory/new">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> {tCommon('buttons.add')} {t('columns.product')}
+                            </Button>
+                        </Link>
+                    </>
+                }
+            />
 
             <Card>
                 <CardHeader>
@@ -105,6 +105,10 @@ export default async function InventoryPage({
                 </CardHeader>
 
                 <CardContent>
+                    <div className="flex items-center space-x-2 mb-4">
+                        <SearchInput placeholder={`${tCommon('buttons.search')}...`} />
+                    </div>
+
                     {products.length === 0 ? (
                         <div className="text-center py-12">
                             <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />

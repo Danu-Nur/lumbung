@@ -1,18 +1,5 @@
 import { prisma } from "@/lib/prisma";
-
-export type CreateCategoryParams = {
-    organizationId: string;
-    name: string;
-    description?: string;
-    createdById?: string;
-};
-
-export type UpdateCategoryParams = {
-    id: string;
-    organizationId: string;
-    name?: string;
-    description?: string;
-};
+import { CreateCategoryParams, UpdateCategoryParams } from "@/types/domain";
 
 export const categoryService = {
     async listCategories({

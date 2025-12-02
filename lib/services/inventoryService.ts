@@ -1,17 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { MovementType, Prisma } from "@prisma/client";
-
-export type CreateInventoryMovementParams = {
-    organizationId: string;
-    warehouseId: string;
-    productId: string;
-    movementType: MovementType;
-    quantity: number;
-    referenceType?: string;
-    referenceId?: string;
-    notes?: string;
-    createdById: string;
-};
+import { Prisma } from "@prisma/client";
+import { CreateInventoryMovementParams } from "@/types/domain";
 
 export const inventoryService = {
     /**

@@ -1,29 +1,38 @@
-'use client';
 
-import { HelpSheet } from './help-sheet';
+
+import { PageHelp } from './page-help';
+import { ReactNode } from 'react';
 
 interface PageHeaderProps {
     title: string;
     description?: string;
-    help?: React.ReactNode;
-    children?: React.ReactNode; // Actions
+    help?: {
+        title: string;
+        sections: {
+            heading: string;
+            content: ReactNode;
+        }[];
+    };
+    actions?: ReactNode;
 }
 
-export function PageHeader({ title, description, help, children }: PageHeaderProps) {
+export function PageHeader({ title, description, help, actions }: PageHeaderProps) {
     return (
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                    <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-                    {help && <HelpSheet title={title}>{help}</HelpSheet>}
+        <div className="flex items-center justify-between">
+            <div>
+                <div className="flex items-center gap-4">
+                    <h1 className="text-3xl font-bold text-foreground">
+                        {title}
+                    </h1>
+                    {help && <PageHelp title={help.title} sections={help.sections} />}
                 </div>
                 {description && (
-                    <p className="text-sm text-muted-foreground">{description}</p>
+                    <p className="text-muted-foreground mt-1">
+                        {description}
+                    </p>
                 )}
             </div>
-            <div className="flex items-center gap-2">
-                {children}
-            </div>
+            {actions && <div className="flex gap-2">{actions}</div>}
         </div>
     );
 }

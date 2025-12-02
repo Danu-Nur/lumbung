@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import { Mail } from 'lucide-react';
 import { OrganizationForm } from './organization-form';
 import { UsersTable } from './users-table';
@@ -130,7 +131,7 @@ export default async function SettingsPage() {
                                     Get notified when stock is low
                                 </p>
                             </div>
-                            <input type="checkbox" defaultChecked className="w-5 h-5" />
+                            <Switch defaultChecked />
                         </div>
                         <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
                             <div>
@@ -141,7 +142,7 @@ export default async function SettingsPage() {
                                     Get notified about new orders
                                 </p>
                             </div>
-                            <input type="checkbox" defaultChecked className="w-5 h-5" />
+                            <Switch defaultChecked />
                         </div>
                         <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
                             <div>
@@ -152,7 +153,7 @@ export default async function SettingsPage() {
                                     Receive weekly inventory reports
                                 </p>
                             </div>
-                            <input type="checkbox" className="w-5 h-5" />
+                            <Switch />
                         </div>
                     </CardContent>
                 </Card>

@@ -360,41 +360,22 @@ Built with ❤️ using Next.js, Prisma, and PostgreSQL
 lumbung
 ├─ app
 │  ├─ api
-│  │  ├─ auth
-│  │  │  ├─ register
-│  │  │  │  └─ route.ts
-│  │  │  └─ [...nextauth]
-│  │  │     └─ route.ts
-│  │  ├─ categories
-│  │  │  ├─ route.ts
-│  │  │  └─ [id]
-│  │  │     └─ route.ts
-│  │  ├─ products
-│  │  │  └─ [id]
-│  │  │     ├─ default-supplier
-│  │  │     │  └─ route.ts
-│  │  │     ├─ update-cost-price
-│  │  │     │  └─ route.ts
-│  │  │     └─ update-selling-price
-│  │  │        └─ route.ts
-│  │  ├─ purchase-orders
-│  │  │  └─ [id]
-│  │  │     └─ receive
-│  │  │        └─ route.ts
-│  │  └─ sales-orders
-│  │     ├─ route.ts
-│  │     └─ [id]
-│  │        └─ fulfill
-│  │           └─ route.ts
+│  │  └─ auth
+│  │     ├─ register
+│  │     │  └─ route.ts
+│  │     └─ [...nextauth]
+│  │        └─ route.ts
 │  ├─ favicon.ico
 │  ├─ globals.css
 │  └─ [locale]
 │     ├─ (auth)
 │     │  ├─ layout.tsx
 │     │  ├─ login
+│     │  │  ├─ login-form.tsx
 │     │  │  └─ page.tsx
 │     │  └─ register
-│     │     └─ page.tsx
+│     │     ├─ page.tsx
+│     │     └─ register-form.tsx
 │     ├─ (dashboard)
 │     │  ├─ adjustments
 │     │  │  ├─ new
@@ -459,30 +440,33 @@ lumbung
 │     ├─ layout.tsx
 │     └─ page.tsx
 ├─ components
-│  ├─ categories
-│  │  ├─ category-actions.tsx
-│  │  └─ category-dialog.tsx
-│  ├─ customers
-│  │  ├─ customer-actions.tsx
-│  │  └─ customer-dialog.tsx
-│  ├─ inventory
-│  │  ├─ category-selector.tsx
-│  │  └─ delete-product-button.tsx
+│  ├─ domain
+│  │  ├─ categories
+│  │  │  ├─ category-actions.tsx
+│  │  │  └─ category-dialog.tsx
+│  │  ├─ customers
+│  │  │  ├─ customer-actions.tsx
+│  │  │  └─ customer-dialog.tsx
+│  │  ├─ inventory
+│  │  │  ├─ category-selector.tsx
+│  │  │  └─ delete-product-button.tsx
+│  │  └─ suppliers
+│  │     ├─ supplier-actions.tsx
+│  │     └─ supplier-dialog.tsx
 │  ├─ layout
 │  │  ├─ ambient-background.tsx
 │  │  ├─ sidebar.tsx
 │  │  ├─ theme-toggle.tsx
 │  │  └─ topbar.tsx
 │  ├─ shared
+│  │  ├─ dialog-form.tsx
 │  │  ├─ help-sheet.tsx
 │  │  ├─ language-switcher.tsx
 │  │  ├─ page-header.tsx
 │  │  ├─ page-help.tsx
 │  │  ├─ pagination.tsx
+│  │  ├─ search-input.tsx
 │  │  └─ stats-card.tsx
-│  ├─ suppliers
-│  │  ├─ supplier-actions.tsx
-│  │  └─ supplier-dialog.tsx
 │  └─ ui
 │     ├─ accordion.tsx
 │     ├─ alert-dialog.tsx
@@ -495,13 +479,15 @@ lumbung
 │     ├─ label.tsx
 │     ├─ scroll-area.tsx
 │     ├─ select.tsx
-│     ├─ separator.tsx
 │     ├─ sheet.tsx
 │     ├─ switch.tsx
 │     ├─ table.tsx
 │     ├─ tabs.tsx
 │     └─ textarea.tsx
 ├─ components.json
+├─ docs
+│  ├─ REFACTOR_NOTES.md
+│  └─ TEST_SCENARIOS.md
 ├─ emails
 ├─ eslint.config.mjs
 ├─ features
@@ -538,11 +524,13 @@ lumbung
 │  ├─ rbac.ts
 │  ├─ services
 │  │  ├─ categoryService.ts
+│  │  ├─ customerService.ts
 │  │  ├─ inventoryService.ts
 │  │  ├─ pricingService.ts
 │  │  ├─ productService.ts
 │  │  ├─ purchaseOrderService.ts
-│  │  └─ salesOrderService.ts
+│  │  ├─ salesOrderService.ts
+│  │  └─ supplierService.ts
 │  └─ utils.ts
 ├─ messages
 │  ├─ en.json
@@ -573,10 +561,13 @@ lumbung
 │  ├─ vercel.svg
 │  └─ window.svg
 ├─ README.md
+├─ scripts
+│  ├─ check-users.ts
+│  └─ create-user-test.ts
 ├─ tailwind.config.ts
-├─ TEST_SCENARIOS.md
 ├─ tsconfig.json
 └─ types
+   ├─ domain.ts
    └─ next-auth.d.ts
 
 ```

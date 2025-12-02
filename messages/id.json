@@ -69,6 +69,45 @@
             "fromLastMonth": "dari bulan lalu"
         }
     },
+    "dashboard": {
+        "title": "Dashboard",
+        "welcome_back": "Selamat datang kembali",
+        "metrics": {
+            "total_products": {
+                "title": "Total Produk"
+            },
+            "total_stock_value": {
+                "title": "Total Nilai Stok"
+            },
+            "active_orders": {
+                "title": "Pesanan Aktif"
+            },
+            "low_stock_items": {
+                "title": "Item Stok Rendah"
+            }
+        },
+        "low_stock_alert": {
+            "title": "Item Stok Rendah"
+        },
+        "recent_inventory_changes": {
+            "title": "Perubahan Inventaris Terbaru"
+        },
+        "help": {
+            "title": "Dashboard Help",
+            "description": "Penjelasan dan cara penggunaan halaman ini.",
+            "overview": {
+                "heading": "Overview",
+                "content": "Dashboard memberikan gambaran umum status inventaris Anda."
+            },
+            "metrics": {
+                "heading": "Metrics",
+                "total_products": "Total Produk: Jumlah produk aktif.",
+                "total_stock_value": "Total Nilai Stok: Nilai total semua item di stok (Harga Pokok × Jumlah).",
+                "active_orders": "Pesanan Aktif: Pesanan penjualan yang sedang dalam status Draft atau Confirmed.",
+                "low_stock_items": "Item Stok Rendah: Item yang stoknya telah turun di bawah batas minimum stok."
+            }
+        }
+    },
     "inventory": {
         "title": "Inventaris",
         "description": "Kelola stok produk Anda di seluruh gudang",
@@ -77,7 +116,11 @@
             "sku": "SKU",
             "category": "Kategori",
             "sellingPrice": "Harga Jual",
-            "totalStock": "Total Stok"
+            "totalStock": "Total Stok",
+            "warehouse": "Gudang",
+            "available": "Tersedia",
+            "ordered": "Dipesan",
+            "minStock": "Stok Min"
         },
         "help": {
             "title": "Panduan Inventaris",

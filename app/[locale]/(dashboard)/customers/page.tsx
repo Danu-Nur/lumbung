@@ -13,21 +13,27 @@ import {
 } from '@/components/ui/table';
 import { Plus, Users } from 'lucide-react';
 import Link from 'next/link';
-import { CustomerDialog } from '@/components/customers/customer-dialog';
-import { CustomerActions } from '@/components/customers/customer-actions';
+import { CustomerDialog } from '@/components/domain/customers/customer-dialog';
+import { CustomerActions } from '@/components/domain/customers/customer-actions';
 
 import { PageHelp } from '@/components/shared/page-help';
 import { getTranslations } from 'next-intl/server';
+import { customerService } from '@/lib/services/customerService';
+import { SearchInput } from '@/components/shared/search-input';
+import { Pagination } from '@/components/shared/pagination';
+import { PageHeader } from '@/components/shared/page-header';
 
-async function getCustomers(organizationId: string) {
-    return await prisma.customer.findMany({
-        where: { organizationId, deletedAt: null },
-        orderBy: { createdAt: 'desc' },
-    });
-}
-
-export default async function CustomersPage() {
+export default async function CustomersPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ page?: string; pageSize?: string; q?: string }>;
+}) {
     const session = await auth();
+    const resolvedSearchParams = await searchParams;
+    const page = Number(resolvedSearchParams.page) || 1;
+    const pageSize = Number(resolvedSearchParams.pageSize) || 10;
+    const search = resolvedSearchParams.q || '';
+
     const t = await getTranslations('customers');
     const tCommon = await getTranslations('common');
 
@@ -35,7 +41,12 @@ export default async function CustomersPage() {
         redirect('/login');
     }
 
-    const customers = await getCustomers(session.user.organizationId);
+    const { customers, total, totalPages } = await customerService.listCustomers({
+        organizationId: session.user.organizationId,
+        page,
+        pageSize,
+        search,
+    });
 
     const helpSections = [
         {
@@ -56,33 +67,34 @@ export default async function CustomersPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-3xl font-bold text-foreground">
-                            {t('title')}
-                        </h1>
-                        <PageHelp title={t('help.title')} sections={helpSections} />
-                    </div>
-                    <p className="text-muted-foreground mt-1">
-                        {t('description')}
-                    </p>
-                </div>
-                <CustomerDialog
-                    trigger={
-                        <Button>
-                            <Plus className="w-4 h-4 mr-2" />
-                            {tCommon('buttons.add')} {t('title')}
-                        </Button>
-                    }
-                />
-            </div>
+            <PageHeader
+                title={t('title')}
+                description={t('description')}
+                help={{
+                    title: t('help.title'),
+                    sections: helpSections,
+                }}
+                actions={
+                    <CustomerDialog
+                        trigger={
+                            <Button>
+                                <Plus className="w-4 h-4 mr-2" />
+                                {tCommon('buttons.add')} {t('title')}
+                            </Button>
+                        }
+                    />
+                }
+            />
 
             <Card>
                 <CardHeader>
                     <CardTitle>{t('title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
+                    <div className="flex items-center space-x-2 mb-4">
+                        <SearchInput placeholder={`${tCommon('buttons.search')}...`} />
+                    </div>
+
                     {customers.length === 0 ? (
                         <div className="text-center py-12">
                             <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -99,38 +111,46 @@ export default async function CustomersPage() {
                             />
                         </div>
                     ) : (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>{t('columns.name')}</TableHead>
-                                    <TableHead>{t('columns.email')}</TableHead>
-                                    <TableHead>{t('columns.phone')}</TableHead>
-                                    <TableHead>{t('columns.city')}</TableHead>
-                                    <TableHead className="w-[100px]">{tCommon('table.actions')}</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {customers.map((customer) => (
-                                    <TableRow key={customer.id}>
-                                        <TableCell className="font-medium">
-                                            {customer.name}
-                                        </TableCell>
-                                        <TableCell className="text-muted-foreground">
-                                            {customer.email || '-'}
-                                        </TableCell>
-                                        <TableCell className="text-muted-foreground">
-                                            {customer.phone || '-'}
-                                        </TableCell>
-                                        <TableCell className="text-muted-foreground">
-                                            {customer.city || '-'}
-                                        </TableCell>
-                                        <TableCell>
-                                            <CustomerActions customer={customer} />
-                                        </TableCell>
+                        <>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>{t('columns.name')}</TableHead>
+                                        <TableHead>{t('columns.email')}</TableHead>
+                                        <TableHead>{t('columns.phone')}</TableHead>
+                                        <TableHead>{t('columns.city')}</TableHead>
+                                        <TableHead className="w-[100px]">{tCommon('table.actions')}</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {customers.map((customer) => (
+                                        <TableRow key={customer.id}>
+                                            <TableCell className="font-medium">
+                                                {customer.name}
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground">
+                                                {customer.email || '-'}
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground">
+                                                {customer.phone || '-'}
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground">
+                                                {customer.city || '-'}
+                                            </TableCell>
+                                            <TableCell>
+                                                <CustomerActions customer={customer} />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                            <Pagination
+                                currentPage={page}
+                                totalPages={totalPages}
+                                pageSize={pageSize}
+                                totalItems={total}
+                            />
+                        </>
                     )}
                 </CardContent>
             </Card>

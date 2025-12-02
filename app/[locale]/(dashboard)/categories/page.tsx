@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import { categoryService } from '@/lib/services/categoryService';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -11,13 +11,14 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Plus, Search } from 'lucide-react';
-import { CategoryDialog } from '@/components/categories/category-dialog';
-import { CategoryActions } from '@/components/categories/category-actions';
+import { Plus } from 'lucide-react';
+import { CategoryDialog } from '@/components/domain/categories/category-dialog';
+import { CategoryActions } from '@/components/domain/categories/category-actions';
 import { Pagination } from '@/components/shared/pagination';
+import { SearchInput } from '@/components/shared/search-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { PageHelp } from '@/components/shared/page-help';
+import { PageHeader } from '@/components/shared/page-header';
 import { getTranslations } from 'next-intl/server';
 
 export default async function CategoriesPage({
@@ -38,26 +39,12 @@ export default async function CategoriesPage({
         redirect('/login');
     }
 
-    const where = {
+    const { data: categories, total, totalPages } = await categoryService.listCategories({
         organizationId: session.user.organizationId,
-        deletedAt: null,
-        name: {
-            contains: search,
-            mode: 'insensitive' as const,
-        },
-    };
-
-    const [categories, total] = await prisma.$transaction([
-        prisma.category.findMany({
-            where,
-            orderBy: { createdAt: 'desc' },
-            skip: (page - 1) * pageSize,
-            take: pageSize,
-        }),
-        prisma.category.count({ where }),
-    ]);
-
-    const totalPages = Math.ceil(total / pageSize);
+        search,
+        page,
+        pageSize,
+    });
 
 
     const helpSections = [
@@ -78,24 +65,23 @@ export default async function CategoriesPage({
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <div>
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-                        <PageHelp title={t('help.title')} sections={helpSections} />
-                    </div>
-                    <p className="text-muted-foreground mt-1">
-                        {t('description')}
-                    </p>
-                </div>
-                <CategoryDialog
-                    trigger={
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" /> {tCommon('buttons.add')} {t('title')}
-                        </Button>
-                    }
-                />
-            </div>
+            <PageHeader
+                title={t('title')}
+                description={t('description')}
+                help={{
+                    title: t('help.title'),
+                    sections: helpSections,
+                }}
+                actions={
+                    <CategoryDialog
+                        trigger={
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> {tCommon('buttons.add')} {t('title')}
+                            </Button>
+                        }
+                    />
+                }
+            />
 
             <Card>
                 <CardHeader>
@@ -103,17 +89,7 @@ export default async function CategoriesPage({
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-center space-x-2 mb-4">
-                        <div className="relative flex-1 max-w-sm">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <form>
-                                <Input
-                                    name="q"
-                                    placeholder={`${tCommon('buttons.search')}...`}
-                                    className="pl-8"
-                                    defaultValue={search}
-                                />
-                            </form>
-                        </div>
+                        <SearchInput placeholder={`${tCommon('buttons.search')}...`} />
                     </div>
 
                     <div className="border rounded-md">

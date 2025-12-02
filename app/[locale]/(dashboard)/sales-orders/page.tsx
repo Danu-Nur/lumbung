@@ -70,24 +70,34 @@ export default async function SalesOrdersPage({ searchParams }: SalesOrdersPageP
             <PageHeader
                 title={t('title')}
                 description={t('description')}
-                help={
-                    <div className="space-y-4">
-                        <p>{t('help.purpose.content')}</p>
-                        <ul className="list-disc list-inside space-y-1">
-                            <li><strong>Create Order:</strong> Click "New Order" to start a sale.</li>
-                            <li><strong>View Details:</strong> Click "View" to see order items and status.</li>
-                            <li><strong>Status:</strong> Track orders from Draft to Fulfilled.</li>
-                        </ul>
-                    </div>
+                help={{
+                    title: t('help.title'),
+                    sections: [
+                        {
+                            heading: t('help.purpose.heading'),
+                            content: t('help.purpose.content'),
+                        },
+                        {
+                            heading: 'Features',
+                            content: (
+                                <ul className="list-disc list-inside space-y-1">
+                                    <li><strong>Create Order:</strong> Click "New Order" to start a sale.</li>
+                                    <li><strong>View Details:</strong> Click "View" to see order items and status.</li>
+                                    <li><strong>Status:</strong> Track orders from Draft to Fulfilled.</li>
+                                </ul>
+                            ),
+                        },
+                    ],
+                }}
+                actions={
+                    <Link href="/sales-orders/new">
+                        <Button>
+                            <Plus className="w-4 h-4 mr-2" />
+                            {tCommon('buttons.add')}
+                        </Button>
+                    </Link>
                 }
-            >
-                <Link href="/sales-orders/new">
-                    <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        {tCommon('buttons.add')}
-                    </Button>
-                </Link>
-            </PageHeader>
+            />
 
             <Card>
                 <CardHeader>

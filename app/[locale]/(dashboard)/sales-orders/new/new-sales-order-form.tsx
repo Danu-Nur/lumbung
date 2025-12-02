@@ -9,6 +9,8 @@ import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { createSalesOrder } from '@/features/sales-orders/actions';
 
+import { CustomerDialog } from '@/components/domain/customers/customer-dialog';
+
 interface LineItem {
     productId: string;
     productName: string;
@@ -22,10 +24,6 @@ interface NewSalesOrderFormProps {
     warehouses: Array<{ id: string; name: string }>;
     products: Array<{ id: string; name: string; sku: string; sellingPrice: number }>;
 }
-
-import { CustomerDialog } from '@/components/customers/customer-dialog';
-
-// ... (imports)
 
 export function NewSalesOrderForm({ customers, warehouses, products }: NewSalesOrderFormProps) {
     const router = useRouter();

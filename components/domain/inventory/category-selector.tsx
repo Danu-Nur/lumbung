@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CategoryDialog } from "@/components/categories/category-dialog";
+import { CategoryDialog } from "@/components/domain/categories/category-dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import {

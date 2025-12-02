@@ -65,24 +65,34 @@ export default async function TransfersPage({ searchParams }: TransfersPageProps
             <PageHeader
                 title={t('title')}
                 description={t('description')}
-                help={
-                    <div className="space-y-4">
-                        <p>{t('help.purpose.content')}</p>
-                        <ul className="list-disc list-inside space-y-1">
-                            <li><strong>Create Transfer:</strong> Move stock from one warehouse to another.</li>
-                            <li><strong>Send:</strong> Deduct stock from source warehouse (In Transit).</li>
-                            <li><strong>Complete:</strong> Add stock to destination warehouse.</li>
-                        </ul>
-                    </div>
+                help={{
+                    title: t('help.title'),
+                    sections: [
+                        {
+                            heading: t('help.purpose.heading'),
+                            content: t('help.purpose.content'),
+                        },
+                        {
+                            heading: 'Features',
+                            content: (
+                                <ul className="list-disc list-inside space-y-1">
+                                    <li><strong>Create Transfer:</strong> Move stock from one warehouse to another.</li>
+                                    <li><strong>Send:</strong> Deduct stock from source warehouse (In Transit).</li>
+                                    <li><strong>Complete:</strong> Add stock to destination warehouse.</li>
+                                </ul>
+                            ),
+                        },
+                    ],
+                }}
+                actions={
+                    <Link href="/transfers/new">
+                        <Button>
+                            <Plus className="w-4 h-4 mr-2" />
+                            {tCommon('buttons.add')}
+                        </Button>
+                    </Link>
                 }
-            >
-                <Link href="/transfers/new">
-                    <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        {tCommon('buttons.add')}
-                    </Button>
-                </Link>
-            </PageHeader>
+            />
 
             <Card>
                 <CardHeader>

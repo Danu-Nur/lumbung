@@ -71,24 +71,34 @@ export default async function WarehousesPage({ searchParams }: WarehousesPagePro
             <PageHeader
                 title={t('title')}
                 description={t('description')}
-                help={
-                    <div className="space-y-4">
-                        <p>{t('help.purpose.content')}</p>
-                        <ul className="list-disc list-inside space-y-1">
-                            <li><strong>Add Warehouse:</strong> Create new storage locations.</li>
-                            <li><strong>Active Status:</strong> Toggle warehouses on/off.</li>
-                            <li><strong>Inventory:</strong> View stock levels per warehouse.</li>
-                        </ul>
-                    </div>
+                help={{
+                    title: t('help.title'),
+                    sections: [
+                        {
+                            heading: t('help.purpose.heading'),
+                            content: t('help.purpose.content'),
+                        },
+                        {
+                            heading: 'Features',
+                            content: (
+                                <ul className="list-disc list-inside space-y-1">
+                                    <li><strong>Add Warehouse:</strong> Create new storage locations.</li>
+                                    <li><strong>Active Status:</strong> Toggle warehouses on/off.</li>
+                                    <li><strong>Inventory:</strong> View stock levels per warehouse.</li>
+                                </ul>
+                            ),
+                        },
+                    ],
+                }}
+                actions={
+                    <Link href="/warehouses/new">
+                        <Button>
+                            <Plus className="w-4 h-4 mr-2" />
+                            {tCommon('buttons.add')}
+                        </Button>
+                    </Link>
                 }
-            >
-                <Link href="/warehouses/new">
-                    <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        {tCommon('buttons.add')}
-                    </Button>
-                </Link>
-            </PageHeader>
+            />
 
             <Card>
                 <CardHeader>

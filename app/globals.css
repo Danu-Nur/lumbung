@@ -1,13 +1,6 @@
 /* === Tailwind core === */
 @import "tailwindcss";
 
-/* ⚠️ Aktifkan ini hanya kalau kamu SUDAH install tw-animate-css lewat npm
-   npm install -D tw-animate-css
-   lalu ubah jadi:
-   @import "tw-animate-css";
-*/
-@import "tw-animate-css";
-
 /* Plugin animate (shadcn style) */
 @plugin "tailwindcss-animate";
 

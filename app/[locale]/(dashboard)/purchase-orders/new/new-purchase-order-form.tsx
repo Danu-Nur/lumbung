@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { createPurchaseOrder } from '@/features/purchase-orders/actions';
-import { SupplierDialog } from '@/components/suppliers/supplier-dialog';
+import { SupplierDialog } from '@/components/domain/suppliers/supplier-dialog';
 
 interface LineItem {
     productId: string;

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { createProduct } from '@/features/inventory/actions';
-import { CategorySelector } from '@/components/inventory/category-selector';
+import { CategorySelector } from '@/components/domain/inventory/category-selector';
 
 async function getCategories(organizationId: string) {
     return await prisma.category.findMany({

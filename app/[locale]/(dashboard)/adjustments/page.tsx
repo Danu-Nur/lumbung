@@ -66,24 +66,34 @@ export default async function AdjustmentsPage({ searchParams }: AdjustmentsPageP
             <PageHeader
                 title={t('title')}
                 description={t('description')}
-                help={
-                    <div className="space-y-4">
-                        <p>{t('help.purpose.content')}</p>
-                        <ul className="list-disc list-inside space-y-1">
-                            <li><strong>Increase:</strong> Add stock (e.g., found items).</li>
-                            <li><strong>Decrease:</strong> Remove stock (e.g., damage, theft).</li>
-                            <li><strong>Reasons:</strong> Categorize adjustments for reporting.</li>
-                        </ul>
-                    </div>
+                help={{
+                    title: t('help.title'),
+                    sections: [
+                        {
+                            heading: t('help.purpose.heading'),
+                            content: t('help.purpose.content'),
+                        },
+                        {
+                            heading: 'Features',
+                            content: (
+                                <ul className="list-disc list-inside space-y-1">
+                                    <li><strong>Increase:</strong> Add stock (e.g., found items).</li>
+                                    <li><strong>Decrease:</strong> Remove stock (e.g., damage, theft).</li>
+                                    <li><strong>Reasons:</strong> Categorize adjustments for reporting.</li>
+                                </ul>
+                            ),
+                        },
+                    ],
+                }}
+                actions={
+                    <Link href="/adjustments/new">
+                        <Button>
+                            <Plus className="w-4 h-4 mr-2" />
+                            {tCommon('buttons.add')}
+                        </Button>
+                    </Link>
                 }
-            >
-                <Link href="/adjustments/new">
-                    <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        {tCommon('buttons.add')}
-                    </Button>
-                </Link>
-            </PageHeader>
+            />
 
             <Card>
                 <CardHeader>

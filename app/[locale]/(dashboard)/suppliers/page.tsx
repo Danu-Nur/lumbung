@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import { supplierService } from '@/lib/services/supplierService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,12 +12,13 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Plus, Building2, Search } from 'lucide-react';
-import { SupplierDialog } from '@/components/suppliers/supplier-dialog';
-import { SupplierActions } from '@/components/suppliers/supplier-actions';
+import { Plus, Building2 } from 'lucide-react';
+import { SupplierDialog } from '@/components/domain/suppliers/supplier-dialog';
+import { SupplierActions } from '@/components/domain/suppliers/supplier-actions';
 import { Pagination } from '@/components/shared/pagination';
+import { SearchInput } from '@/components/shared/search-input';
 
-import { PageHelp } from '@/components/shared/page-help';
+import { PageHeader } from '@/components/shared/page-header';
 import { getTranslations } from 'next-intl/server';
 
 export default async function SuppliersPage({
@@ -38,27 +39,12 @@ export default async function SuppliersPage({
         redirect('/login');
     }
 
-    const where = {
+    const { suppliers, total, totalPages } = await supplierService.listSuppliers({
         organizationId: session.user.organizationId,
-        deletedAt: null,
-        OR: [
-            { name: { contains: search, mode: 'insensitive' as const } },
-            { email: { contains: search, mode: 'insensitive' as const } },
-            { phone: { contains: search, mode: 'insensitive' as const } },
-        ],
-    };
-
-    const [suppliers, total] = await prisma.$transaction([
-        prisma.supplier.findMany({
-            where,
-            orderBy: { createdAt: 'desc' },
-            skip: (page - 1) * pageSize,
-            take: pageSize,
-        }),
-        prisma.supplier.count({ where }),
-    ]);
-
-    const totalPages = Math.ceil(total / pageSize);
+        page,
+        pageSize,
+        search,
+    });
 
 
     const helpSections = [
@@ -80,27 +66,24 @@ export default async function SuppliersPage({
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-3xl font-bold text-foreground">
-                            {t('title')}
-                        </h1>
-                        <PageHelp title={t('help.title')} sections={helpSections} />
-                    </div>
-                    <p className="text-muted-foreground mt-1">
-                        {t('description')}
-                    </p>
-                </div>
-                <SupplierDialog
-                    trigger={
-                        <Button>
-                            <Plus className="w-4 h-4 mr-2" />
-                            {tCommon('buttons.add')} {t('title')}
-                        </Button>
-                    }
-                />
-            </div>
+            <PageHeader
+                title={t('title')}
+                description={t('description')}
+                help={{
+                    title: t('help.title'),
+                    sections: helpSections,
+                }}
+                actions={
+                    <SupplierDialog
+                        trigger={
+                            <Button>
+                                <Plus className="w-4 h-4 mr-2" />
+                                {tCommon('buttons.add')} {t('title')}
+                            </Button>
+                        }
+                    />
+                }
+            />
 
             <Card>
                 <CardHeader>
@@ -108,17 +91,7 @@ export default async function SuppliersPage({
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-center space-x-2 mb-4">
-                        <div className="relative flex-1 max-w-sm">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <form>
-                                <Input
-                                    name="q"
-                                    placeholder={`${tCommon('buttons.search')}...`}
-                                    className="pl-8"
-                                    defaultValue={search}
-                                />
-                            </form>
-                        </div>
+                        <SearchInput placeholder={`${tCommon('buttons.search')}...`} />
                     </div>
 
                     {suppliers.length === 0 ? (

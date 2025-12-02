@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { updateProduct } from '@/features/inventory/actions';
-import { DeleteProductButton } from '@/components/inventory/delete-product-button';
+import { DeleteProductButton } from '@/components/domain/inventory/delete-product-button';
 import { formatCurrency } from '@/lib/utils';
 
 async function getProduct(productId: string, organizationId: string) {

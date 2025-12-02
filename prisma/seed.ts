@@ -31,7 +31,7 @@ async function main() {
         create: { name: 'Admin', description: 'Administrator with full access' },
     });
 
-    const staffRole = await prisma.role.upsert({
+    await prisma.role.upsert({
         where: { name: 'Staff' },
         update: {},
         create: { name: 'Staff', description: 'Staff with limited access' },
