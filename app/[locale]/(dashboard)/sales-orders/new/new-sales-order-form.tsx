@@ -9,7 +9,7 @@ import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { createSalesOrder } from '@/features/sales-orders/actions';
 
-import { CustomerDialog } from '@/components/domain/customers/customer-dialog';
+import { CustomerCreateModal } from '@/components/domain/customers/customer-create-modal';
 
 interface LineItem {
     productId: string;
@@ -87,7 +87,7 @@ export function NewSalesOrderForm({ customers, warehouses, products }: NewSalesO
 
     return (
         <>
-            <CustomerDialog
+            <CustomerCreateModal
                 open={isCustomerDialogOpen}
                 onOpenChange={setIsCustomerDialogOpen}
                 onSuccess={handleCustomerCreated}

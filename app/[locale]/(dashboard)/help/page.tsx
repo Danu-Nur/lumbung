@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { BookOpen, Box, FileText, HelpCircle, Info, Layers, ShoppingCart, Truck, Users } from "lucide-react";
+import { Box, FileText, HelpCircle, Layers, ShoppingCart, Truck, Users } from "lucide-react";
 
 export default function HelpPage() {
     return (
@@ -173,7 +173,7 @@ export default function HelpPage() {
                                 <AccordionItem value="allocated">
                                     <AccordionTrigger>Allocated Qty (Stok Terpesan)</AccordionTrigger>
                                     <AccordionContent>
-                                        Jumlah barang yang sudah dipesan pelanggan tapi belum dikirim/diambil. Stok ini "aman" dan tidak bisa dijual ke orang lain.
+                                        Jumlah barang yang sudah dipesan pelanggan tapi belum dikirim/diambil. Stok ini &quot;aman&quot; dan tidak bisa dijual ke orang lain.
                                     </AccordionContent>
                                 </AccordionItem>
                                 <AccordionItem value="available">
@@ -209,7 +209,7 @@ export default function HelpPage() {
                             <div className="space-y-2">
                                 <h4 className="font-semibold text-sm">Apakah saya bisa menghapus kategori?</h4>
                                 <p className="text-sm text-muted-foreground">
-                                    Bisa, asalkan kategori tersebut tidak memiliki produk. Jika masih ada produk, Anda harus memindahkan produk ke kategori lain atau menggunakan fitur "Force Delete" (Hapus Paksa) jika tersedia.
+                                    Bisa, asalkan kategori tersebut tidak memiliki produk. Jika masih ada produk, Anda harus memindahkan produk ke kategori lain atau menggunakan fitur &quot;Force Delete&quot; (Hapus Paksa) jika tersedia.
                                 </p>
                             </div>
                             <div className="space-y-2">
@@ -225,3 +225,5 @@ export default function HelpPage() {
         </div>
     );
 }
+
+

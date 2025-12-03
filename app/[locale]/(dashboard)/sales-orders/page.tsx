@@ -16,14 +16,28 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Pagination } from '@/components/shared/pagination';
+import { SearchInput } from '@/components/shared/search-input';
 import { PageHeader } from '@/components/shared/page-header';
 import { getTranslations } from 'next-intl/server';
+import { SalesOrderModalManager } from '@/components/domain/sales-orders/sales-order-modal-manager';
+import { SalesOrderActions } from '@/components/domain/sales-orders/sales-order-actions';
 
-async function getSalesOrders(organizationId: string, page: number = 1, pageSize: number = 10) {
+async function getSalesOrders(organizationId: string, page: number = 1, pageSize: number = 10, query: string = '') {
     const skip = (page - 1) * pageSize;
+    const where: any = {
+        organizationId,
+    };
+
+    if (query) {
+        where.OR = [
+            { orderNumber: { contains: query } },
+            { customer: { name: { contains: query } } },
+        ];
+    }
+
     const [orders, total] = await Promise.all([
         prisma.salesOrder.findMany({
-            where: { organizationId },
+            where,
             include: {
                 customer: true,
                 warehouse: true,
@@ -38,7 +52,7 @@ async function getSalesOrders(organizationId: string, page: number = 1, pageSize
             take: pageSize,
         }),
         prisma.salesOrder.count({
-            where: { organizationId },
+            where,
         }),
     ]);
 
@@ -61,41 +75,91 @@ export default async function SalesOrdersPage({ searchParams }: SalesOrdersPageP
     const params = await searchParams;
     const page = Number(params?.page) || 1;
     const pageSize = Number(params?.pageSize) || 10;
+    const query = params?.q?.toString() || '';
 
-    const { orders, total } = await getSalesOrders(session.user.organizationId, page, pageSize);
+    const [salesData, customers, warehouses, products] = await Promise.all([
+        getSalesOrders(session.user.organizationId, page, pageSize, query),
+        prisma.customer.findMany({
+            where: { organizationId: session.user.organizationId, deletedAt: null },
+            select: { id: true, name: true },
+            orderBy: { name: 'asc' },
+        }),
+        prisma.warehouse.findMany({
+            where: { organizationId: session.user.organizationId, deletedAt: null, isActive: true },
+            select: { id: true, name: true },
+            orderBy: { name: 'asc' },
+        }),
+        prisma.product.findMany({
+            where: { organizationId: session.user.organizationId, deletedAt: null },
+            select: { id: true, name: true, sku: true, sellingPrice: true },
+            orderBy: { name: 'asc' },
+        }),
+    ]);
+
+    const { orders, total } = salesData;
     const totalPages = Math.ceil(total / pageSize);
+
+    // Serialize Decimal fields for client component
+    const serializedOrders = orders.map((order) => ({
+        ...order,
+        subtotal: Number(order.subtotal),
+        tax: Number(order.tax),
+        discount: Number(order.discount),
+        total: Number(order.total),
+        items: order.items.map((item) => ({
+            ...item,
+            unitPrice: Number(item.unitPrice),
+            discount: Number(item.discount),
+            lineTotal: Number(item.lineTotal),
+            product: {
+                ...item.product,
+                sellingPrice: Number(item.product.sellingPrice),
+                costPrice: Number(item.product.costPrice),
+            },
+        })),
+    }));
 
     return (
         <div className="space-y-6">
+            <SalesOrderModalManager
+                orders={serializedOrders}
+                customers={customers}
+                warehouses={warehouses}
+                products={products.map(p => ({ ...p, sellingPrice: Number(p.sellingPrice) }))}
+            />
             <PageHeader
                 title={t('title')}
                 description={t('description')}
                 help={{
                     title: t('help.title'),
-                    sections: [
-                        {
-                            heading: t('help.purpose.heading'),
-                            content: t('help.purpose.content'),
-                        },
-                        {
-                            heading: 'Features',
-                            content: (
-                                <ul className="list-disc list-inside space-y-1">
-                                    <li><strong>Create Order:</strong> Click "New Order" to start a sale.</li>
-                                    <li><strong>View Details:</strong> Click "View" to see order items and status.</li>
-                                    <li><strong>Status:</strong> Track orders from Draft to Fulfilled.</li>
-                                </ul>
-                            ),
-                        },
-                    ],
+                    children: (
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">{t('help.purpose.heading')}</h3>
+                                <div className="text-sm text-muted-foreground">{t('help.purpose.content')}</div>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">Features</h3>
+                                <div className="text-sm text-muted-foreground">
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li><strong>Create Order:</strong> Click "New Order" to start a sale.</li>
+                                        <li><strong>View Details:</strong> Click "View" to see order items and status.</li>
+                                        <li><strong>Status:</strong> Track orders from Draft to Fulfilled.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )
                 }}
                 actions={
-                    <Link href="/sales-orders/new">
-                        <Button>
-                            <Plus className="w-4 h-4 mr-2" />
-                            {tCommon('buttons.add')}
-                        </Button>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <Link href="?modal=create">
+                            <Button>
+                                <Plus className="w-4 h-4 mr-2" />
+                                {tCommon('buttons.add')}
+                            </Button>
+                        </Link>
+                    </div>
                 }
             />
 
@@ -104,13 +168,17 @@ export default async function SalesOrdersPage({ searchParams }: SalesOrdersPageP
                     <CardTitle>{t('title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {orders.length === 0 ? (
+                    <div className="flex items-center space-x-2 mb-4">
+                        <SearchInput placeholder={`${tCommon('buttons.search')}...`} />
+                    </div>
+
+                    {serializedOrders.length === 0 ? (
                         <div className="text-center py-12">
                             <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                             <p className="text-muted-foreground mb-4">
                                 {tCommon('table.noData')}
                             </p>
-                            <Link href="/sales-orders/new">
+                            <Link href="?modal=create">
                                 <Button>
                                     <Plus className="w-4 h-4 mr-2" />
                                     {tCommon('buttons.add')}
@@ -132,7 +200,7 @@ export default async function SalesOrdersPage({ searchParams }: SalesOrdersPageP
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {orders.map((order) => (
+                                    {serializedOrders.map((order) => (
                                         <TableRow key={order.id}>
                                             <TableCell className="font-medium">
                                                 {order.orderNumber}
@@ -168,11 +236,7 @@ export default async function SalesOrdersPage({ searchParams }: SalesOrdersPageP
                                                 {order.items.length}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <Link href={`/sales-orders/${order.id}`}>
-                                                    <Button variant="outline" size="sm">
-                                                        {tCommon('buttons.view')}
-                                                    </Button>
-                                                </Link>
+                                                <SalesOrderActions order={order} />
                                             </TableCell>
                                         </TableRow>
                                     ))}

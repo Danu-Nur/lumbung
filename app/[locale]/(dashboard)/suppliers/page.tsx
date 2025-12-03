@@ -13,7 +13,8 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Plus, Building2 } from 'lucide-react';
-import { SupplierDialog } from '@/components/domain/suppliers/supplier-dialog';
+import Link from 'next/link';
+import { SupplierModalManager } from '@/components/domain/suppliers/supplier-modal-manager';
 import { SupplierActions } from '@/components/domain/suppliers/supplier-actions';
 import { Pagination } from '@/components/shared/pagination';
 import { SearchInput } from '@/components/shared/search-input';
@@ -66,22 +67,38 @@ export default async function SuppliersPage({
 
     return (
         <div className="space-y-6">
+            <SupplierModalManager suppliers={suppliers} />
             <PageHeader
                 title={t('title')}
                 description={t('description')}
                 help={{
                     title: t('help.title'),
-                    sections: helpSections,
+                    children: (
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">{t('help.purpose.heading')}</h3>
+                                <div className="text-sm text-muted-foreground">{t('help.purpose.content')}</div>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">Penjelasan Kolom</h3>
+                                <div className="text-sm text-muted-foreground">
+                                    <ul className="list-disc pl-4 space-y-2">
+                                        <li><strong>{t('columns.name')}:</strong> {t('columns.name')}</li>
+                                        <li><strong>{t('columns.email')}/{t('columns.phone')}:</strong> {t('columns.email')} / {t('columns.phone')}</li>
+                                        <li><strong>{t('columns.city')}:</strong> {t('columns.city')}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )
                 }}
                 actions={
-                    <SupplierDialog
-                        trigger={
-                            <Button>
-                                <Plus className="w-4 h-4 mr-2" />
-                                {tCommon('buttons.add')} {t('title')}
-                            </Button>
-                        }
-                    />
+                    <Link href="?modal=create">
+                        <Button>
+                            <Plus className="w-4 h-4 mr-2" />
+                            {tCommon('buttons.add')} {t('title')}
+                        </Button>
+                    </Link>
                 }
             />
 
@@ -100,14 +117,12 @@ export default async function SuppliersPage({
                             <p className="text-muted-foreground mb-4">
                                 {tCommon('table.noData')}
                             </p>
-                            <SupplierDialog
-                                trigger={
-                                    <Button>
-                                        <Plus className="w-4 h-4 mr-2" />
-                                        {tCommon('buttons.add')}
-                                    </Button>
-                                }
-                            />
+                            <Link href="?modal=create">
+                                <Button>
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    {tCommon('buttons.add')}
+                                </Button>
+                            </Link>
                         </div>
                     ) : (
                         <>

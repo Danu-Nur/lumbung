@@ -12,7 +12,8 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Plus } from 'lucide-react';
-import { CategoryDialog } from '@/components/domain/categories/category-dialog';
+import Link from 'next/link';
+import { CategoryModalManager } from '@/components/domain/categories/category-modal-manager';
 import { CategoryActions } from '@/components/domain/categories/category-actions';
 import { Pagination } from '@/components/shared/pagination';
 import { SearchInput } from '@/components/shared/search-input';
@@ -65,21 +66,36 @@ export default async function CategoriesPage({
 
     return (
         <div className="space-y-6">
+            <CategoryModalManager categories={categories} />
             <PageHeader
                 title={t('title')}
                 description={t('description')}
                 help={{
                     title: t('help.title'),
-                    sections: helpSections,
+                    children: (
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">{t('help.purpose.heading')}</h3>
+                                <div className="text-sm text-muted-foreground">{t('help.purpose.content')}</div>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">Penjelasan Kolom</h3>
+                                <div className="text-sm text-muted-foreground">
+                                    <ul className="list-disc pl-4 space-y-2">
+                                        <li><strong>{t('columns.name')}:</strong> {t('columns.name')}</li>
+                                        <li><strong>{t('columns.description')}:</strong> {t('columns.description')}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )
                 }}
                 actions={
-                    <CategoryDialog
-                        trigger={
-                            <Button>
-                                <Plus className="mr-2 h-4 w-4" /> {tCommon('buttons.add')} {t('title')}
-                            </Button>
-                        }
-                    />
+                    <Link href="?modal=create">
+                        <Button>
+                            <Plus className="mr-2 h-4 w-4" /> {tCommon('buttons.add')} {t('title')}
+                        </Button>
+                    </Link>
                 }
             />
 

@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth';
 import { productService } from '@/lib/services/productService';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
 
 export async function createProduct(formData: FormData) {
     const session = await auth();
@@ -42,7 +43,6 @@ export async function createProduct(formData: FormData) {
     });
 
     revalidatePath('/inventory');
-    redirect('/inventory');
 }
 
 export async function updateProduct(productId: string, formData: FormData) {
@@ -81,7 +81,6 @@ export async function updateProduct(productId: string, formData: FormData) {
 
     revalidatePath('/inventory');
     revalidatePath(`/inventory/${productId}`);
-    redirect('/inventory');
 }
 
 export async function deleteProduct(productId: string) {
@@ -98,5 +97,142 @@ export async function deleteProduct(productId: string) {
     });
 
     revalidatePath('/inventory');
-    redirect('/inventory');
+}
+
+export async function getProductHistory(productId: string) {
+    const session = await auth();
+    if (!session?.user || !session.user.organizationId) {
+        throw new Error('Unauthorized');
+    }
+
+    const [priceHistory, movements] = await Promise.all([
+        prisma.productPriceHistory.findMany({
+            where: { productId },
+            orderBy: { createdAt: 'desc' },
+            take: 10,
+            include: { createdBy: true }
+        }),
+        prisma.inventoryMovement.findMany({
+            where: { productId },
+            orderBy: { createdAt: 'desc' },
+            take: 10,
+            include: {
+                warehouse: true,
+            }
+        })
+    ]);
+
+    return { priceHistory, movements };
+}
+
+export async function createStockAdjustment(data: {
+    productId: string;
+    warehouseId: string;
+    type: 'increase' | 'decrease';
+    quantity: number;
+    reason: string;
+    notes?: string;
+}) {
+    const session = await auth();
+    if (!session?.user || !session.user.organizationId) {
+        throw new Error('Unauthorized');
+    }
+
+    const { productId, warehouseId, type, quantity, reason, notes } = data;
+
+    // Use a transaction to ensure data consistency
+    await prisma.$transaction(async (tx) => {
+        // 1. Create Stock Adjustment record
+        const adjustment = await tx.stockAdjustment.create({
+            data: {
+                productId,
+                warehouseId,
+                adjustmentType: type,
+                quantity,
+                reason: reason as any, // Cast to enum if needed, or ensure type matches
+                notes,
+                organizationId: session.user.organizationId!,
+                createdById: session.user.id,
+            }
+        });
+
+        // 2. Create Inventory Movement
+        await tx.inventoryMovement.create({
+            data: {
+                productId,
+                warehouseId,
+                movementType: 'ADJUST',
+                quantity: type === 'increase' ? quantity : -quantity,
+                referenceType: 'StockAdjustment',
+                referenceId: adjustment.id,
+                notes,
+                createdById: session.user.id,
+            }
+        });
+
+        // 3. Update Inventory Item
+        const inventoryItem = await tx.inventoryItem.findUnique({
+            where: {
+                productId_warehouseId: {
+                    productId,
+                    warehouseId
+                }
+            }
+        });
+
+        if (inventoryItem) {
+            await tx.inventoryItem.update({
+                where: { id: inventoryItem.id },
+                data: {
+                    quantityOnHand: {
+                        increment: type === 'increase' ? quantity : -quantity
+                    },
+                    availableQty: {
+                        increment: type === 'increase' ? quantity : -quantity
+                    }
+                }
+            });
+        } else {
+            // Create new inventory item if it doesn't exist
+            if (type === 'decrease') {
+                throw new Error('Cannot decrease stock for non-existent inventory item');
+            }
+            await tx.inventoryItem.create({
+                data: {
+                    productId,
+                    warehouseId,
+                    quantityOnHand: quantity,
+                    availableQty: quantity,
+                    allocatedQty: 0
+                }
+            });
+        }
+    });
+
+    revalidatePath('/inventory');
+}
+
+
+export async function createStockAdjustmentFromForm(formData: FormData) {
+    const productId = formData.get('productId') as string;
+    const warehouseId = formData.get('warehouseId') as string;
+    const type = formData.get('adjustmentType') as 'increase' | 'decrease';
+    const quantity = parseInt(formData.get('quantity') as string);
+    const reason = formData.get('reason') as string;
+    const notes = formData.get('notes') as string;
+
+    if (!productId || !warehouseId || !type || !quantity || !reason) {
+        throw new Error('Missing required fields');
+    }
+
+    await createStockAdjustment({
+        productId,
+        warehouseId,
+        type,
+        quantity,
+        reason,
+        notes,
+    });
+
+    redirect('/adjustments');
 }

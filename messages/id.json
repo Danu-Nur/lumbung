@@ -1,303 +1,791 @@
 {
-    "common": {
-        "buttons": {
-            "save": "Simpan",
-            "cancel": "Batal",
-            "delete": "Hapus",
-            "edit": "Ubah",
-            "add": "Tambah",
-            "help": "Panduan",
-            "view": "Lihat",
-            "back": "Kembali",
-            "search": "Cari",
-            "print": "Cetak",
-            "confirm": "Konfirmasi",
-            "fulfill": "Penuhi",
-            "login": "Masuk",
-            "register": "Daftar",
-            "logout": "Keluar"
-        },
-        "table": {
-            "noData": "Belum ada data",
-            "actions": "Aksi",
-            "name": "Nama",
-            "description": "Deskripsi",
-            "status": "Status",
-            "date": "Tanggal",
-            "total": "Total"
-        },
-        "nav": {
-            "dashboard": "Dashboard",
-            "inventory": "Inventaris",
-            "categories": "Kategori",
-            "suppliers": "Pemasok",
-            "customers": "Pelanggan",
-            "sales": "Penjualan",
-            "purchases": "Pembelian",
-            "transfers": "Transfer",
-            "adjustments": "Penyesuaian",
-            "warehouses": "Gudang",
-            "settings": "Pengaturan"
-        },
-        "pagination": {
-            "showing": "Menampilkan {from} sampai {to} dari {total} entri",
-            "rowsPerPage": "Baris per halaman",
-            "pageOf": "Halaman {current} dari {total}",
-            "first": "Ke halaman pertama",
-            "previous": "Ke halaman sebelumnya",
-            "next": "Ke halaman selanjutnya",
-            "last": "Ke halaman terakhir"
-        },
-        "topbar": {
-            "defaultOrg": "Inventory Pro",
-            "guest": "Tamu",
-            "logout": "Keluar",
-            "profile": "Profil"
-        },
-        "help": {
-            "title": "Panduan: {title}",
-            "description": "Penjelasan dan cara penggunaan halaman ini."
-        },
-        "sidebar": {
-            "logo": "Inventory Pro",
-            "footer": "© 2025 Inventory Pro",
-            "toggleMenu": "Buka Menu",
-            "navMenu": "Menu Navigasi",
-            "mobileNavDesc": "Menu navigasi mobile untuk Inventory Pro"
-        },
-        "statsCard": {
-            "fromLastMonth": "dari bulan lalu"
-        }
+  "common": {
+    "actions": {
+      "create": "Menambahkan...",
+      "createFailed": "Gagal menambahkan",
+      "createSuccess": "Berhasil dibuat",
+      "createError": "Gagal membuat",
+      "update": "Memperbarui...",
+      "updateFailed": "Gagal mengubah",
+      "updateSuccess": "Berhasil diperbarui",
+      "updateError": "Gagal memperbarui",
+      "delete": "Menghapus...",
+      "deleteFailed": "Gagal menghapus",
+      "deleteSuccess": "Berhasil dihapus",
+      "deleteConfirmTitle": "Konfirmasi Hapus",
+      "deleteConfirmDescription": "Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan.",
+      "cancel": "Membatalkan...",
+      "cancelSuccess": "Berhasil dibatalkan",
+      "cancelError": "Gagal membatalkan",
+      "cancelTitle": "Konfirmasi Pembatalan",
+      "cancelDescription": "Apakah Anda yakin ingin membatalkan {name}? Tindakan ini tidak dapat dibatalkan.",
+      "saving": "Menyimpan..."
     },
-    "dashboard": {
-        "title": "Dashboard",
-        "welcome_back": "Selamat datang kembali",
-        "metrics": {
-            "total_products": {
-                "title": "Total Produk"
-            },
-            "total_stock_value": {
-                "title": "Total Nilai Stok"
-            },
-            "active_orders": {
-                "title": "Pesanan Aktif"
-            },
-            "low_stock_items": {
-                "title": "Item Stok Rendah"
-            }
-        },
-        "low_stock_alert": {
-            "title": "Item Stok Rendah"
-        },
-        "recent_inventory_changes": {
-            "title": "Perubahan Inventaris Terbaru"
-        },
-        "help": {
-            "title": "Dashboard Help",
-            "description": "Penjelasan dan cara penggunaan halaman ini.",
-            "overview": {
-                "heading": "Overview",
-                "content": "Dashboard memberikan gambaran umum status inventaris Anda."
-            },
-            "metrics": {
-                "heading": "Metrics",
-                "total_products": "Total Produk: Jumlah produk aktif.",
-                "total_stock_value": "Total Nilai Stok: Nilai total semua item di stok (Harga Pokok × Jumlah).",
-                "active_orders": "Pesanan Aktif: Pesanan penjualan yang sedang dalam status Draft atau Confirmed.",
-                "low_stock_items": "Item Stok Rendah: Item yang stoknya telah turun di bawah batas minimum stok."
-            }
-        }
+    "buttons": {
+      "save": "Simpan",
+      "cancel": "Batal",
+      "delete": "Hapus",
+      "edit": "Ubah",
+      "add": "Tambah",
+      "help": "Panduan",
+      "view": "Lihat",
+      "back": "Kembali",
+      "search": "Cari",
+      "print": "Cetak",
+      "confirm": "Konfirmasi",
+      "fulfill": "Penuhi",
+      "login": "Masuk",
+      "register": "Daftar",
+      "logout": "Keluar",
+      "create": "Buat"
     },
-    "inventory": {
-        "title": "Inventaris",
-        "description": "Kelola stok produk Anda di seluruh gudang",
-        "columns": {
-            "product": "Produk",
-            "sku": "SKU",
-            "category": "Kategori",
-            "sellingPrice": "Harga Jual",
-            "totalStock": "Total Stok",
-            "warehouse": "Gudang",
-            "available": "Tersedia",
-            "ordered": "Dipesan",
-            "minStock": "Stok Min"
-        },
-        "help": {
-            "title": "Panduan Inventaris",
-            "purpose": {
-                "heading": "Tujuan",
-                "content": "Halaman ini menampilkan jumlah stok setiap barang di setiap gudang secara real-time."
-            },
-            "columns": {
-                "heading": "Penjelasan Kolom",
-                "product": "Nama Produk dan SKU",
-                "warehouse": "Lokasi Penyimpanan",
-                "available": "Stok Tersedia",
-                "ordered": "Stok Dipesan",
-                "minStock": "Batas Minimum Stok"
-            }
-        }
+    "table": {
+      "noData": "Belum ada data",
+      "actions": "Aksi",
+      "name": "Nama",
+      "description": "Deskripsi",
+      "status": "Status",
+      "date": "Tanggal",
+      "total": "Total"
     },
-    "categories": {
-        "title": "Kategori",
-        "description": "Kelola kategori produk Anda",
-        "columns": {
-            "name": "Nama",
-            "description": "Deskripsi"
-        },
-        "help": {
-            "title": "Panduan Kategori",
-            "purpose": {
-                "heading": "Tujuan",
-                "content": "Kategori digunakan untuk mengelompokkan produk agar lebih rapi dan mudah dicari."
-            }
-        }
+    "nav": {
+      "dashboard": "Dashboard",
+      "inventory": "Inventaris",
+      "categories": "Kategori",
+      "suppliers": "Pemasok",
+      "customers": "Pelanggan",
+      "sales": "Penjualan",
+      "purchases": "Pembelian",
+      "transfers": "Transfer",
+      "adjustments": "Penyesuaian",
+      "warehouses": "Gudang",
+      "settings": "Pengaturan"
     },
-    "suppliers": {
-        "title": "Pemasok",
-        "description": "Kelola database pemasok Anda",
-        "columns": {
-            "name": "Nama",
-            "email": "Email",
-            "phone": "Telepon",
-            "city": "Kota"
-        },
-        "help": {
-            "title": "Panduan Pemasok",
-            "purpose": {
-                "heading": "Tujuan",
-                "content": "Halaman ini berisi daftar pemasok tempat Anda membeli barang."
-            }
-        }
+    "pagination": {
+      "showing": "Menampilkan {from} sampai {to} dari {total} entri",
+      "rowsPerPage": "Baris per halaman",
+      "pageOf": "Halaman {current} dari {total}",
+      "first": "Ke halaman pertama",
+      "previous": "Ke halaman sebelumnya",
+      "next": "Ke halaman selanjutnya",
+      "last": "Ke halaman terakhir"
     },
-    "customers": {
-        "title": "Pelanggan",
-        "description": "Kelola database pelanggan Anda",
-        "columns": {
-            "name": "Nama",
-            "email": "Email",
-            "phone": "Telepon",
-            "city": "Kota"
-        },
-        "help": {
-            "title": "Panduan Pelanggan",
-            "purpose": {
-                "heading": "Tujuan",
-                "content": "Halaman ini berisi daftar pelanggan yang membeli barang dari Anda."
-            }
-        }
+    "topbar": {
+      "defaultOrg": "Inventory Pro",
+      "guest": "Tamu",
+      "logout": "Keluar",
+      "profile": "Profil"
     },
-    "settings": {
-        "title": "Pengaturan",
-        "description": "Kelola pengaturan organisasi dan pengguna",
-        "sections": {
-            "organization": "Detail Organisasi",
-            "email": "Notifikasi Email",
-            "users": "Anggota Tim"
-        },
-        "help": {
-            "title": "Panduan Pengaturan",
-            "purpose": {
-                "heading": "Tujuan",
-                "content": "Konfigurasi profil perusahaan dan kelola akses pengguna."
-            }
-        }
+    "help": {
+      "title": "Panduan: {title}",
+      "description": "Penjelasan dan cara penggunaan halaman ini.",
+      "buttonLabel": "Panduan"
     },
-    "sales": {
-        "title": "Penjualan",
-        "description": "Kelola pesanan pelanggan",
-        "columns": {
-            "orderNumber": "No. Pesanan",
-            "customer": "Pelanggan",
-            "date": "Tanggal",
-            "status": "Status",
-            "total": "Total",
-            "items": "Item"
-        },
-        "help": {
-            "title": "Panduan Penjualan",
-            "purpose": {
-                "heading": "Tujuan",
-                "content": "Kelola pesanan penjualan Anda di sini."
-            }
-        }
+    "sidebar": {
+      "logo": "Inventory Pro",
+      "footer": "© 2025 Inventory Pro",
+      "toggleMenu": "Buka Menu",
+      "navMenu": "Menu Navigasi",
+      "mobileNavDesc": "Menu navigasi mobile untuk Inventory Pro"
     },
-    "purchases": {
-        "title": "Pembelian",
-        "description": "Kelola pesanan ke pemasok",
-        "columns": {
-            "orderNumber": "No. Pesanan",
-            "supplier": "Pemasok",
-            "date": "Tanggal",
-            "status": "Status",
-            "total": "Total",
-            "items": "Item"
-        },
-        "help": {
-            "title": "Panduan Pembelian",
-            "purpose": {
-                "heading": "Tujuan",
-                "content": "Kelola pesanan pembelian Anda di sini."
-            }
-        }
-    },
-    "warehouses": {
-        "title": "Gudang",
-        "description": "Kelola gudang Anda",
-        "columns": {
-            "name": "Nama",
-            "code": "Kode",
-            "location": "Lokasi",
-            "items": "Item",
-            "status": "Status"
-        },
-        "help": {
-            "title": "Panduan Gudang",
-            "purpose": {
-                "heading": "Tujuan",
-                "content": "Kelola lokasi gudang Anda."
-            }
-        }
-    },
-    "transfers": {
-        "title": "Transfer Stok",
-        "description": "Transfer inventaris antar gudang",
-        "columns": {
-            "reference": "Referensi",
-            "from": "Dari",
-            "to": "Ke",
-            "date": "Tanggal",
-            "status": "Status",
-            "items": "Item"
-        },
-        "help": {
-            "title": "Panduan Transfer",
-            "purpose": {
-                "heading": "Tujuan",
-                "content": "Kelola transfer stok antar gudang."
-            }
-        }
-    },
-    "adjustments": {
-        "title": "Penyesuaian Stok",
-        "description": "Koreksi level stok secara manual",
-        "columns": {
-            "reference": "Referensi",
-            "date": "Tanggal",
-            "product": "Produk",
-            "warehouse": "Gudang",
-            "type": "Tipe",
-            "quantity": "Jumlah",
-            "reason": "Alasan",
-            "by": "Oleh",
-            "status": "Status"
-        },
-        "help": {
-            "title": "Panduan Penyesuaian",
-            "purpose": {
-                "heading": "Tujuan",
-                "content": "Sesuaikan level stok secara manual untuk penyusutan, kerusakan, atau koreksi."
-            }
-        }
+    "statsCard": {
+      "fromLastMonth": "dari bulan lalu"
     }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome_back": "Selamat datang kembali",
+    "metrics": {
+      "total_products": {
+        "title": "Total Produk"
+      },
+      "total_stock_value": {
+        "title": "Total Nilai Stok"
+      },
+      "active_orders": {
+        "title": "Pesanan Aktif"
+      },
+      "low_stock_items": {
+        "title": "Item Stok Rendah"
+      }
+    },
+    "widgets": {
+      "lowStock": {
+        "title": "Item Stok Rendah",
+        "empty": "Semua item aman!",
+        "viewAll": "Lihat Semua"
+      },
+      "recentChanges": {
+        "title": "Perubahan Inventaris Terbaru",
+        "empty": "Belum ada perubahan"
+      },
+      "sales": {
+        "title": "Ringkasan Penjualan",
+        "today": "Hari Ini",
+        "thisMonth": "Bulan Ini",
+        "orders": "pesanan",
+        "openOrders": "Pesanan Terbuka"
+      },
+      "purchases": {
+        "title": "Ringkasan Pembelian",
+        "today": "Hari Ini",
+        "orders": "pesanan",
+        "openOrders": "PO Terbuka"
+      },
+      "warehouses": {
+        "title": "Ringkasan Gudang",
+        "totalWarehouses": "Total Gudang",
+        "topByValue": "Teratas Berdasarkan Nilai",
+        "items": "item"
+      },
+      "transfers": {
+        "title": "Ringkasan Transfer",
+        "pendingTransfers": "Transfer Tertunda",
+        "recent": "Transfer Terbaru",
+        "empty": "Belum ada transfer"
+      },
+      "adjustments": {
+        "title": "Ringkasan Penyesuaian",
+        "empty": "Belum ada penyesuaian"
+      },
+      "customers": {
+        "title": "Ringkasan Pelanggan",
+        "totalCustomers": "Total Pelanggan",
+        "newest": "Pelanggan Terbaru"
+      },
+      "suppliers": {
+        "title": "Ringkasan Pemasok",
+        "totalSuppliers": "Total Pemasok",
+        "newest": "Pemasok Terbaru"
+      },
+      "settings": {
+        "title": "Pengaturan Cepat",
+        "organization": "Organisasi",
+        "users": "Pengguna",
+        "roles": "Peran"
+      }
+    },
+    "charts": {
+      "sales": {
+        "title": "Penjualan 7 Hari Terakhir",
+        "sales": "Penjualan"
+      },
+      "stockDistribution": {
+        "title": "Nilai Stok per Gudang",
+        "empty": "Tidak ada data stok"
+      }
+    },
+    "help": {
+      "title": "Dashboard Help",
+      "description": "Penjelasan dan cara penggunaan halaman ini.",
+      "overview": {
+        "heading": "Overview",
+        "content": "Dashboard memberikan gambaran umum status inventaris Anda."
+      },
+      "metrics": {
+        "heading": "Metrics",
+        "total_products": "Total Produk: Jumlah produk aktif.",
+        "total_stock_value": "Total Nilai Stok: Nilai total semua item di stok (Harga Pokok × Jumlah).",
+        "active_orders": "Pesanan Aktif: Pesanan penjualan yang sedang dalam status Draft atau Confirmed.",
+        "low_stock_items": "Item Stok Rendah: Item yang stoknya telah turun di bawah batas minimum stok."
+      }
+    }
+  },
+  "inventory": {
+    "title": "Inventaris",
+    "description": "Kelola stok produk Anda di seluruh gudang",
+    "columns": {
+      "product": "Produk",
+      "sku": "SKU",
+      "category": "Kategori",
+      "sellingPrice": "Harga Jual",
+      "totalStock": "Total Stok",
+      "warehouse": "Gudang",
+      "available": "Tersedia",
+      "ordered": "Dipesan",
+      "minStock": "Stok Min"
+    },
+    "help": {
+      "title": "Panduan Inventaris",
+      "purpose": {
+        "heading": "Tujuan",
+        "content": "Halaman ini menampilkan jumlah stok setiap barang di setiap gudang secara real-time."
+      },
+      "columns": {
+        "heading": "Penjelasan Kolom",
+        "product": "Nama Produk dan SKU",
+        "warehouse": "Lokasi Penyimpanan",
+        "available": "Stok Tersedia",
+        "ordered": "Stok Dipesan",
+        "minStock": "Batas Minimum Stok"
+      },
+      "buttonLabel": "Panduan"
+    },
+    "form": {
+      "createDescription": "Tambahkan produk baru ke inventaris Anda.",
+      "skuPlaceholder": "Kode Stok",
+      "editDescription": "Perbarui informasi produk.",
+      "barcodePlaceholder": "Scan atau masukkan barcode",
+      "namePlaceholder": "Nama Produk",
+      "unit": "Satuan",
+      "costPrice": "Harga Beli",
+      "units": {
+        "meter": "Meter",
+        "box": "Kotak",
+        "pcs": "Buah (pcs)",
+        "liter": "Liter",
+        "kg": "Kilogram (kg)"
+      },
+      "selectCategory": "Pilih kategori",
+      "lowStockThreshold": "Batas Stok Minimum",
+      "description": "Deskripsi",
+      "editTitle": "Ubah Produk",
+      "addCategory": "Tambah Kategori",
+      "sellingPrice": "Harga Jual",
+      "category": "Kategori",
+      "createTitle": "Buat Produk",
+      "name": "Nama",
+      "barcode": "Barcode",
+      "descriptionPlaceholder": "Deskripsi produk",
+      "sku": "SKU"
+    },
+    "show": {
+      "unit": "Satuan",
+      "lowStockThreshold": "Batas Stok Minimum",
+      "date": "Tanggal",
+      "quantity": "Jumlah",
+      "totalStock": "Total Stok",
+      "category": "Kategori",
+      "noStock": "Tidak ada stok",
+      "priceHistory": "Riwayat Harga",
+      "sellingPrice": "Harga Jual",
+      "newPrice": "Harga Baru",
+      "noHistory": "Belum ada riwayat",
+      "type": "Tipe",
+      "warehouse": "Gudang",
+      "costPrice": "Harga Beli",
+      "description": "Deskripsi",
+      "stockOverview": "Ringkasan Stok",
+      "failedToLoadHistory": "Gagal memuat riwayat",
+      "history": "Riwayat Produk",
+      "reference": "Referensi",
+      "oldPrice": "Harga Lama",
+      "stockMovements": "Pergerakan Stok"
+    },
+    "stock": {
+      "adjustmentPlaceholder": "Masukkan jumlah untuk ditambah atau dikurangi",
+      "warehouse": "Gudang",
+      "description": "Sesuaikan level stok untuk produk ini",
+      "adjustment": "Penyesuaian",
+      "title": "Kelola Stok",
+      "currentStock": "Stok Saat Ini",
+      "reasonPlaceholder": "Alasan penyesuaian",
+      "reason": "Alasan",
+      "selectWarehouse": "Pilih gudang"
+    },
+    "units":{
+      "meter": "Meter",
+      "box": "Kotak",
+      "pcs": "Buah (pcs)",
+      "liter": "Liter",
+      "kg": "Kilogram (kg)"
+    }
+  },
+  "categories": {
+    "title": "Kategori",
+    "description": "Kelola kategori produk Anda",
+    "columns": {
+      "name": "Nama",
+      "description": "Deskripsi"
+    },
+    "help": {
+      "title": "Panduan Kategori",
+      "purpose": {
+        "heading": "Tujuan",
+        "content": "Kategori digunakan untuk mengelompokkan produk agar lebih rapi dan mudah dicari."
+      },
+      "buttonLabel": "Panduan"
+    },
+    "form": {
+      "namePlaceholder": "Nama Kategori",
+      "createDescription": "Tambahkan kategori produk baru.",
+      "descriptionPlaceholder": "Deskripsi kategori",
+      "editTitle": "Ubah Kategori",
+      "createTitle": "Buat Kategori",
+      "editDescription": "Perbarui informasi kategori.",
+      "description": "Deskripsi",
+      "name": "Nama"
+    },
+    "show": {
+      "description": "Deskripsi",
+      "createdAt": "Dibuat Pada",
+      "productCount": "Produk",
+      "name": "Nama"
+    }
+  },
+  "suppliers": {
+    "title": "Pemasok",
+    "description": "Kelola database pemasok Anda",
+    "columns": {
+      "name": "Nama",
+      "email": "Email",
+      "phone": "Telepon",
+      "city": "Kota"
+    },
+    "help": {
+      "title": "Panduan Pemasok",
+      "purpose": {
+        "heading": "Tujuan",
+        "content": "Halaman ini berisi daftar pemasok tempat Anda membeli barang."
+      },
+      "buttonLabel": "Panduan"
+    },
+    "form": {
+      "namePlaceholder": "Nama Pemasok",
+      "address": "Alamat",
+      "createDescription": "Tambahkan pemasok baru ke database.",
+      "emailPlaceholder": "pemasok@contoh.com",
+      "editTitle": "Ubah Pemasok",
+      "createTitle": "Buat Pemasok",
+      "editDescription": "Perbarui informasi pemasok.",
+      "phone": "Telepon",
+      "addressPlaceholder": "Alamat lengkap",
+      "cityPlaceholder": "Nama kota",
+      "phonePlaceholder": "+62 xxx xxxx xxxx",
+      "name": "Nama",
+      "email": "Email",
+      "city": "Kota"
+    },
+    "show": {
+      "phone": "Telepon",
+      "name": "Nama",
+      "email": "Email",
+      "city": "Kota",
+      "address": "Alamat",
+      "createdAt": "Dibuat Pada"
+    }
+  },
+  "customers": {
+    "title": "Pelanggan",
+    "description": "Kelola database pelanggan Anda",
+    "columns": {
+      "name": "Nama",
+      "email": "Email",
+      "phone": "Telepon",
+      "city": "Kota"
+    },
+    "help": {
+      "title": "Panduan Pelanggan",
+      "purpose": {
+        "heading": "Tujuan",
+        "content": "Halaman ini berisi daftar pelanggan yang membeli barang dari Anda."
+      },
+      "buttonLabel": "Panduan"
+    },
+    "form": {
+      "namePlaceholder": "Nama Pelanggan",
+      "address": "Alamat",
+      "createDescription": "Tambahkan pelanggan baru ke database.",
+      "emailPlaceholder": "pelanggan@contoh.com",
+      "editTitle": "Ubah Pelanggan",
+      "createTitle": "Buat Pelanggan",
+      "editDescription": "Perbarui informasi pelanggan.",
+      "phone": "Telepon",
+      "addressPlaceholder": "Alamat lengkap",
+      "cityPlaceholder": "Nama kota",
+      "phonePlaceholder": "+62 xxx xxxx xxxx",
+      "name": "Nama",
+      "email": "Email",
+      "city": "Kota"
+    },
+    "show": {
+      "phone": "Telepon",
+      "name": "Nama",
+      "email": "Email",
+      "city": "Kota",
+      "address": "Alamat",
+      "createdAt": "Dibuat Pada"
+    }
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "description": "Kelola pengaturan organisasi dan pengguna",
+    "sections": {
+      "organization": "Detail Organisasi",
+      "email": "Notifikasi Email",
+      "users": "Anggota Tim"
+    },
+    "help": {
+      "title": "Panduan Pengaturan",
+      "purpose": {
+        "heading": "Tujuan",
+        "content": "Konfigurasi profil perusahaan dan kelola akses pengguna."
+      },
+      "buttonLabel": "Panduan"
+    },
+    "users": {
+      "invitationSent": "Undangan berhasil dikirim",
+      "namePlaceholder": "Nama Lengkap",
+      "title": "Pengguna",
+      "emailPlaceholder": "pengguna@contoh.com",
+      "inactive": "Tidak Aktif",
+      "editTitle": "Ubah Pengguna",
+      "createTitle": "Undang Pengguna",
+      "editDescription": "Perbarui informasi pengguna.",
+      "active": "Aktif",
+      "status": "Status",
+      "selectRole": "Pilih peran",
+      "role": "Peran",
+      "name": "Nama",
+      "email": "Email",
+      "createDescription": "Kirim undangan ke pengguna baru.",
+      "invitationError": "Gagal mengirim undangan"
+    },
+    "organization": {
+      "namePlaceholder": "Nama Perusahaan Anda",
+      "address": "Alamat",
+      "title": "Detail Organisasi",
+      "emailPlaceholder": "kontak@perusahaan.com",
+      "city": "Kota",
+      "name": "Nama Organisasi",
+      "updateError": "Gagal memperbarui organisasi",
+      "updateSuccess": "Organisasi berhasil diperbarui",
+      "phone": "Telepon",
+      "addressPlaceholder": "Alamat lengkap",
+      "cityPlaceholder": "Nama kota",
+      "phonePlaceholder": "+62 xxx xxxx xxxx",
+      "email": "Email"
+    }
+  },
+  "sales": {
+    "title": "Penjualan",
+    "description": "Kelola pesanan pelanggan",
+    "columns": {
+      "orderNumber": "No. Pesanan",
+      "customer": "Pelanggan",
+      "date": "Tanggal",
+      "status": "Status",
+      "total": "Total",
+      "items": "Item"
+    },
+    "help": {
+      "title": "Panduan Penjualan",
+      "purpose": {
+        "heading": "Tujuan",
+        "content": "Kelola pesanan penjualan Anda di sini."
+      }
+    },
+    "form": {
+      "createTitle": "Buat Pesanan Penjualan",
+      "createDescription": "Buat pesanan penjualan baru untuk pelanggan.",
+      "customer": "Pelanggan",
+      "walkInCustomer": "Pelanggan Langsung",
+      "warehouse": "Gudang",
+      "selectWarehouse": "Pilih gudang",
+      "notes": "Catatan",
+      "notesPlaceholder": "Tambahkan catatan di sini...",
+      "lineItems": "Item Pesanan",
+      "selectProduct": "Pilih produk untuk ditambahkan",
+      "noItems": "Belum ada item ditambahkan",
+      "subtotal": "Subtotal",
+      "discount": "Diskon",
+      "total": "Total"
+    },
+    "show": {
+      "title": "Pesanan Penjualan #{orderNumber}",
+      "invoice": "Faktur",
+      "confirm": "Konfirmasi Pesanan",
+      "fulfill": "Penuhi Pesanan",
+      "cancel": "Batalkan Pesanan",
+      "confirmSuccess": "Pesanan berhasil dikonfirmasi",
+      "fulfillSuccess": "Pesanan berhasil dipenuhi",
+      "cancelSuccess": "Pesanan berhasil dibatalkan",
+      "customer": "Pelanggan",
+      "walkInCustomer": "Pelanggan Langsung",
+      "warehouse": "Gudang",
+      "orderItems": "Item Pesanan",
+      "product": "Produk",
+      "qty": "Jml",
+      "price": "Harga",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "discount": "Diskon",
+      "notes": "Catatan"
+    }
+  },
+  "purchases": {
+    "title": "Pembelian",
+    "description": "Kelola pesanan ke pemasok",
+    "columns": {
+      "orderNumber": "No. Pesanan",
+      "supplier": "Pemasok",
+      "date": "Tanggal",
+      "status": "Status",
+      "total": "Total",
+      "items": "Item"
+    },
+    "help": {
+      "title": "Panduan Pembelian",
+      "purpose": {
+        "heading": "Tujuan",
+        "content": "Kelola pesanan pembelian Anda di sini."
+      }
+    },
+    "form": {
+      "createTitle": "Buat Pesanan Pembelian",
+      "createDescription": "Buat pesanan pembelian baru untuk pemasok.",
+      "supplier": "Pemasok",
+      "selectSupplier": "Pilih pemasok",
+      "warehouse": "Gudang",
+      "selectWarehouse": "Pilih gudang",
+      "notes": "Catatan",
+      "notesPlaceholder": "Tambahkan catatan di sini...",
+      "lineItems": "Item Pesanan",
+      "selectProduct": "Pilih produk untuk ditambahkan",
+      "noItems": "Belum ada item ditambahkan",
+      "total": "Total"
+    },
+    "show": {
+      "title": "Pesanan Pembelian #{poNumber}",
+      "sendOrder": "Kirim Pesanan",
+      "receiveItems": "Terima Barang",
+      "sendSuccess": "Pesanan berhasil dikirim",
+      "receiveSuccess": "Barang berhasil diterima",
+      "supplier": "Pemasok",
+      "warehouse": "Gudang",
+      "orderItems": "Item Pesanan",
+      "product": "Produk",
+      "qty": "Jml",
+      "cost": "Biaya",
+      "total": "Total",
+      "received": "Diterima",
+      "notes": "Catatan"
+    }
+  },
+  "warehouses": {
+    "title": "Gudang",
+    "description": "Kelola gudang Anda",
+    "columns": {
+      "name": "Nama",
+      "code": "Kode",
+      "location": "Lokasi",
+      "items": "Item",
+      "status": "Status"
+    },
+    "help": {
+      "title": "Panduan Gudang",
+      "purpose": {
+        "heading": "Tujuan",
+        "content": "Kelola lokasi gudang Anda."
+      },
+      "buttonLabel": "Panduan"
+    },
+    "form": {
+      "createDescription": "Tambahkan lokasi gudang baru.",
+      "code": "Kode",
+      "namePlaceholder": "Nama Gudang",
+      "isActive": "Aktif",
+      "createTitle": "Buat Gudang",
+      "locationPlaceholder": "Alamat lengkap",
+      "name": "Nama",
+      "codePlaceholder": "GD-001",
+      "location": "Lokasi",
+      "editTitle": "Ubah Gudang",
+      "editDescription": "Perbarui informasi gudang."
+    },
+    "show": {
+      "inactive": "Tidak Aktif",
+      "code": "Kode",
+      "location": "Lokasi",
+      "name": "Nama",
+      "createdAt": "Dibuat Pada",
+      "status": "Status",
+      "active": "Aktif"
+    }
+  },
+  "transfers": {
+    "title": "Transfer Stok",
+    "description": "Transfer inventaris antar gudang",
+    "columns": {
+      "reference": "Referensi",
+      "from": "Dari",
+      "to": "Ke",
+      "date": "Tanggal",
+      "status": "Status",
+      "items": "Item"
+    },
+    "help": {
+      "title": "Panduan Transfer",
+      "purpose": {
+        "heading": "Tujuan",
+        "content": "Kelola transfer stok antar gudang."
+      },
+      "buttonLabel": "Panduan"
+    },
+    "form": {
+      "notesPlaceholder": "Tambahkan catatan di sini...",
+      "selectDestination": "Pilih gudang tujuan",
+      "createDescription": "Transfer stok antar gudang.",
+      "editTitle": "Ubah Transfer",
+      "createTitle": "Buat Transfer",
+      "editDescription": "Perbarui informasi transfer.",
+      "selectSource": "Pilih gudang asal",
+      "lineItems": "Item Transfer",
+      "notes": "Catatan",
+      "selectProduct": "Pilih produk untuk ditambahkan",
+      "fromWarehouse": "Dari Gudang",
+      "noItems": "Belum ada item",
+      "toWarehouse": "Ke Gudang"
+    },
+    "show": {
+      "completeTransfer": "Selesaikan Transfer",
+      "notes": "Catatan",
+      "sendTransfer": "Kirim Transfer",
+      "transferItems": "Item Transfer",
+      "completeSuccess": "Transfer berhasil diselesaikan",
+      "title": "Transfer #{transferNumber}",
+      "product": "Produk",
+      "quantity": "Jumlah",
+      "sendSuccess": "Transfer berhasil dikirim",
+      "toWarehouse": "Ke Gudang",
+      "fromWarehouse": "Dari Gudang"
+    }
+  },
+  "adjustments": {
+    "title": "Penyesuaian Stok",
+    "description": "Koreksi level stok secara manual",
+    "columns": {
+      "reference": "Referensi",
+      "date": "Tanggal",
+      "product": "Produk",
+      "warehouse": "Gudang",
+      "type": "Tipe",
+      "quantity": "Jumlah",
+      "reason": "Alasan",
+      "by": "Oleh",
+      "status": "Status"
+    },
+    "help": {
+      "title": "Panduan Penyesuaian",
+      "purpose": {
+        "heading": "Tujuan",
+        "content": "Sesuaikan level stok secara manual untuk penyusutan, kerusakan, atau koreksi."
+      },
+      "buttonLabel": "Panduan"
+    },
+    "form": {
+      "selectWarehouse": "Pilih gudang",
+      "notesPlaceholder": "Tambahkan catatan di sini...",
+      "notes": "Catatan",
+      "editTitle": "Ubah Penyesuaian",
+      "createTitle": "Buat Penyesuaian",
+      "product": "Produk",
+      "editDescription": "Perbarui informasi penyesuaian.",
+      "increase": "Tambah (+)",
+      "selectReason": "Pilih alasan",
+      "type": "Tipe",
+      "reasons": {
+        "AUDIT": "Koreksi Audit",
+        "OTHER": "Lainnya",
+        "CORRECTION": "Koreksi Data",
+        "EXPIRED": "Kadaluarsa",
+        "LOST": "Hilang",
+        "DAMAGE": "Rusak",
+        "FOUND": "Ditemukan"
+      },
+      "selectProduct": "Pilih produk",
+      "quantity": "Jumlah",
+      "reason": "Alasan",
+      "warehouse": "Gudang",
+      "createDescription": "Sesuaikan level stok secara manual.",
+      "decrease": "Kurang (-)"
+    },
+    "show": {
+      "type": "Tipe",
+      "warehouse": "Gudang",
+      "notes": "Catatan",
+      "product": "Produk",
+      "reason": "Alasan",
+      "reverseAdjustment": "Batalkan Penyesuaian",
+      "createdBy": "Dibuat Oleh",
+      "title": "Detail Penyesuaian",
+      "quantity": "Jumlah",
+      "reverseSuccess": "Penyesuaian berhasil dibatalkan",
+      "details": "Detail",
+      "reverseError": "Gagal membatalkan penyesuaian"
+    }
+  },
+  "salesOrders": {
+    "form": {
+      "createTitle": "Buat Pesanan Penjualan",
+      "createDescription": "Buat pesanan penjualan baru untuk pelanggan.",
+      "editTitle": "Ubah Pesanan Penjualan",
+      "customer": "Pelanggan",
+      "walkInCustomer": "Pelanggan Langsung",
+      "warehouse": "Gudang",
+      "selectWarehouse": "Pilih gudang",
+      "notes": "Catatan",
+      "notesPlaceholder": "Tambahkan catatan di sini...",
+      "lineItems": "Item Pesanan",
+      "selectProduct": "Pilih produk untuk ditambahkan",
+      "noItems": "Belum ada item ditambahkan",
+      "subtotal": "Subtotal",
+      "discount": "Diskon",
+      "total": "Total"
+    },
+    "show": {
+      "title": "Pesanan Penjualan #{orderNumber}",
+      "invoice": "Faktur",
+      "confirm": "Konfirmasi Pesanan",
+      "fulfill": "Penuhi Pesanan",
+      "cancel": "Batalkan Pesanan",
+      "confirmSuccess": "Pesanan berhasil dikonfirmasi",
+      "fulfillSuccess": "Pesanan berhasil dipenuhi",
+      "cancelSuccess": "Pesanan berhasil dibatalkan",
+      "customer": "Pelanggan",
+      "walkInCustomer": "Pelanggan Langsung",
+      "warehouse": "Gudang",
+      "orderItems": "Item Pesanan",
+      "product": "Produk",
+      "qty": "Jml",
+      "price": "Harga",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "discount": "Diskon",
+      "notes": "Catatan"
+    }
+  },
+  "purchaseOrders": {
+    "form": {
+      "createTitle": "Buat Pesanan Pembelian",
+      "createDescription": "Buat pesanan pembelian baru untuk pemasok.",
+      "editTitle": "Ubah Pesanan Pembelian",
+      "supplier": "Pemasok",
+      "selectSupplier": "Pilih pemasok",
+      "warehouse": "Gudang",
+      "selectWarehouse": "Pilih gudang",
+      "notes": "Catatan",
+      "notesPlaceholder": "Tambahkan catatan di sini...",
+      "lineItems": "Item Pesanan",
+      "selectProduct": "Pilih produk untuk ditambahkan",
+      "noItems": "Belum ada item ditambahkan",
+      "total": "Total"
+    },
+    "show": {
+      "title": "Pesanan Pembelian #{poNumber}",
+      "sendOrder": "Kirim Pesanan",
+      "receiveItems": "Terima Barang",
+      "sendSuccess": "Pesanan berhasil dikirim",
+      "receiveSuccess": "Barang berhasil diterima",
+      "supplier": "Pemasok",
+      "warehouse": "Gudang",
+      "orderItems": "Item Pesanan",
+      "product": "Produk",
+      "qty": "Jml",
+      "cost": "Biaya",
+      "total": "Total",
+      "received": "Diterima",
+      "notes": "Catatan"
+    }
+  }
 }

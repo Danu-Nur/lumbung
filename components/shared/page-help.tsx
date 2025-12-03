@@ -1,5 +1,6 @@
-'use client';
+"use client";
 
+import { Button } from "@/components/ui/button";
 import {
     Sheet,
     SheetContent,
@@ -7,56 +8,38 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
-} from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { HelpCircle } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useTranslations } from 'next-intl';
-
-interface HelpSection {
-    heading: string;
-    content: React.ReactNode;
-}
+} from "@/components/ui/sheet";
+import { HelpCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface PageHelpProps {
     title: string;
-    sections: HelpSection[];
+    description?: string;
+    children: React.ReactNode;
 }
 
-export function PageHelp({ title, sections }: PageHelpProps) {
-    const t = useTranslations('common.help');
+export function PageHelp({ title, description, children }: PageHelpProps) {
+    const t = useTranslations("common");
 
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
                     <HelpCircle className="h-5 w-5" />
-                    {/* <span className="hidden sm:inline">Panduan</span> */}
+                    <span className="sr-only">{t("help.buttonLabel")}</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent className="w-full sm:max-w-[400px] p-0">
-                <ScrollArea className="h-full">
-                    <div className="p-6">
-                        <SheetHeader className="mb-6">
-                            <SheetTitle className="text-xl">{t('title', { title })}</SheetTitle>
-                            <SheetDescription>
-                                {t('description')}
-                            </SheetDescription>
-                        </SheetHeader>
-                        <div className="space-y-6">
-                            {sections.map((section, index) => (
-                                <div key={index} className="space-y-3">
-                                    <h3 className="font-semibold text-foreground text-lg border-b pb-2">
-                                        {section.heading}
-                                    </h3>
-                                    <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                                        {section.content}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </ScrollArea>
+            <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto">
+                <SheetHeader className="mb-6">
+                    <SheetTitle className="flex items-center gap-2">
+                        <HelpCircle className="h-5 w-5" />
+                        {title}
+                    </SheetTitle>
+                    {description && <SheetDescription>{description}</SheetDescription>}
+                </SheetHeader>
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                    {children}
+                </div>
             </SheetContent>
         </Sheet>
     );

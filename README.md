@@ -416,10 +416,7 @@ lumbung
 │     │  │     │  └─ page.tsx
 │     │  │     └─ page.tsx
 │     │  ├─ settings
-│     │  │  ├─ organization-form.tsx
-│     │  │  ├─ page.tsx
-│     │  │  ├─ user-dialog.tsx
-│     │  │  └─ users-table.tsx
+│     │  │  └─ page.tsx
 │     │  ├─ suppliers
 │     │  │  └─ page.tsx
 │     │  ├─ transfers
@@ -440,25 +437,97 @@ lumbung
 │     ├─ layout.tsx
 │     └─ page.tsx
 ├─ components
+│  ├─ common
+│  │  └─ CrudModal.tsx
+│  ├─ dashboard
+│  │  ├─ AdjustmentOverviewCard.tsx
+│  │  ├─ CustomersOverviewCard.tsx
+│  │  ├─ LowStockItemsCard.tsx
+│  │  ├─ PurchaseOverviewCard.tsx
+│  │  ├─ RecentInventoryChangesCard.tsx
+│  │  ├─ SalesChart.tsx
+│  │  ├─ SalesOverviewCard.tsx
+│  │  ├─ SettingsQuickLinksCard.tsx
+│  │  ├─ StockDistributionChart.tsx
+│  │  ├─ SuppliersOverviewCard.tsx
+│  │  ├─ TransferOverviewCard.tsx
+│  │  └─ WarehouseOverviewCard.tsx
 │  ├─ domain
+│  │  ├─ adjustments
+│  │  │  ├─ adjustment-actions.tsx
+│  │  │  ├─ adjustment-create-modal.tsx
+│  │  │  ├─ adjustment-edit-modal.tsx
+│  │  │  ├─ adjustment-modal-manager.tsx
+│  │  │  └─ adjustment-show-modal.tsx
 │  │  ├─ categories
 │  │  │  ├─ category-actions.tsx
-│  │  │  └─ category-dialog.tsx
+│  │  │  ├─ category-create-modal.tsx
+│  │  │  ├─ category-edit-modal.tsx
+│  │  │  ├─ category-modal-manager.tsx
+│  │  │  └─ category-show-modal.tsx
 │  │  ├─ customers
 │  │  │  ├─ customer-actions.tsx
-│  │  │  └─ customer-dialog.tsx
+│  │  │  ├─ customer-create-modal.tsx
+│  │  │  ├─ customer-edit-modal.tsx
+│  │  │  ├─ customer-modal-manager.tsx
+│  │  │  └─ customer-show-modal.tsx
 │  │  ├─ inventory
 │  │  │  ├─ category-selector.tsx
-│  │  │  └─ delete-product-button.tsx
-│  │  └─ suppliers
-│  │     ├─ supplier-actions.tsx
-│  │     └─ supplier-dialog.tsx
+│  │  │  ├─ delete-product-button.tsx
+│  │  │  ├─ inventory-actions.tsx
+│  │  │  ├─ inventory-create-modal.tsx
+│  │  │  ├─ inventory-dialog.tsx
+│  │  │  ├─ inventory-edit-modal.tsx
+│  │  │  ├─ inventory-modal-manager.tsx
+│  │  │  ├─ inventory-show-modal.tsx
+│  │  │  └─ inventory-stock-modal.tsx
+│  │  ├─ purchase-orders
+│  │  │  ├─ purchase-order-actions.tsx
+│  │  │  ├─ purchase-order-create-modal.tsx
+│  │  │  ├─ purchase-order-dialog.tsx
+│  │  │  ├─ purchase-order-edit-modal.tsx
+│  │  │  ├─ purchase-order-modal-manager.tsx
+│  │  │  └─ purchase-order-show-modal.tsx
+│  │  ├─ sales-orders
+│  │  │  ├─ sales-order-actions.tsx
+│  │  │  ├─ sales-order-create-modal.tsx
+│  │  │  ├─ sales-order-dialog.tsx
+│  │  │  ├─ sales-order-edit-modal.tsx
+│  │  │  ├─ sales-order-modal-manager.tsx
+│  │  │  └─ sales-order-show-modal.tsx
+│  │  ├─ settings
+│  │  │  ├─ organization-form.tsx
+│  │  │  ├─ user-create-modal.tsx
+│  │  │  ├─ user-edit-modal.tsx
+│  │  │  ├─ user-modal-manager.tsx
+│  │  │  ├─ user-show-modal.tsx
+│  │  │  └─ users-table.tsx
+│  │  ├─ suppliers
+│  │  │  ├─ supplier-actions.tsx
+│  │  │  ├─ supplier-create-modal.tsx
+│  │  │  ├─ supplier-edit-modal.tsx
+│  │  │  ├─ supplier-modal-manager.tsx
+│  │  │  └─ supplier-show-modal.tsx
+│  │  ├─ transfers
+│  │  │  ├─ transfer-actions.tsx
+│  │  │  ├─ transfer-create-modal.tsx
+│  │  │  ├─ transfer-edit-modal.tsx
+│  │  │  ├─ transfer-modal-manager.tsx
+│  │  │  └─ transfer-show-modal.tsx
+│  │  └─ warehouses
+│  │     ├─ warehouse-actions.tsx
+│  │     ├─ warehouse-create-modal.tsx
+│  │     ├─ warehouse-edit-modal.tsx
+│  │     ├─ warehouse-modal-manager.tsx
+│  │     └─ warehouse-show-modal.tsx
 │  ├─ layout
 │  │  ├─ ambient-background.tsx
 │  │  ├─ sidebar.tsx
 │  │  ├─ theme-toggle.tsx
 │  │  └─ topbar.tsx
 │  ├─ shared
+│  │  ├─ action-column.tsx
+│  │  ├─ delete-confirmation-modal.tsx
 │  │  ├─ dialog-form.tsx
 │  │  ├─ help-sheet.tsx
 │  │  ├─ language-switcher.tsx
@@ -473,6 +542,7 @@ lumbung
 │     ├─ badge.tsx
 │     ├─ button.tsx
 │     ├─ card.tsx
+│     ├─ checkbox.tsx
 │     ├─ dialog.tsx
 │     ├─ form.tsx
 │     ├─ input.tsx
@@ -480,10 +550,12 @@ lumbung
 │     ├─ scroll-area.tsx
 │     ├─ select.tsx
 │     ├─ sheet.tsx
+│     ├─ sonner.tsx
 │     ├─ switch.tsx
 │     ├─ table.tsx
 │     ├─ tabs.tsx
-│     └─ textarea.tsx
+│     ├─ textarea.tsx
+│     └─ tooltip.tsx
 ├─ components.json
 ├─ docs
 │  ├─ REFACTOR_NOTES.md
@@ -514,6 +586,8 @@ lumbung
 │  ├─ users
 │  └─ warehouses
 │     └─ actions.ts
+├─ hooks
+│  └─ use-media-query.ts
 ├─ i18n
 │  └─ request.ts
 ├─ lib
@@ -525,6 +599,7 @@ lumbung
 │  ├─ services
 │  │  ├─ categoryService.ts
 │  │  ├─ customerService.ts
+│  │  ├─ dashboardService.ts
 │  │  ├─ inventoryService.ts
 │  │  ├─ pricingService.ts
 │  │  ├─ productService.ts
@@ -532,6 +607,7 @@ lumbung
 │  │  ├─ salesOrderService.ts
 │  │  └─ supplierService.ts
 │  └─ utils.ts
+├─ lint_report.txt
 ├─ messages
 │  ├─ en.json
 │  └─ id.json
@@ -568,6 +644,7 @@ lumbung
 ├─ tsconfig.json
 └─ types
    ├─ domain.ts
-   └─ next-auth.d.ts
+   ├─ next-auth.d.ts
+   └─ serialized.ts
 
 ```

@@ -64,7 +64,7 @@ export async function createTransfer(formData: FormData) {
     });
 
     revalidatePath('/transfers');
-    redirect('/transfers');
+    return transfer;
 }
 
 export async function sendTransfer(transferId: string) {

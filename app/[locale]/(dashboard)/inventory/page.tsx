@@ -19,6 +19,9 @@ import { Package, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { PageHeader } from '@/components/shared/page-header';
 import { getTranslations } from 'next-intl/server';
+import { InventoryModalManager } from '@/components/domain/inventory/inventory-modal-manager';
+import { InventoryActions } from '@/components/domain/inventory/inventory-actions';
+import { prisma } from '@/lib/prisma';
 
 export default async function InventoryPage({
     searchParams,
@@ -48,14 +51,33 @@ export default async function InventoryPage({
         );
     }
 
-    const { products, total } = await inventoryService.getInventory(
-        session.user.organizationId,
-        page,
-        pageSize,
-        search
-    );
+    const [inventoryData, categories, warehouses] = await Promise.all([
+        inventoryService.getInventory(
+            session.user.organizationId,
+            page,
+            pageSize,
+            search
+        ),
+        prisma.category.findMany({
+            where: { organizationId: session.user.organizationId, deletedAt: null },
+            orderBy: { name: 'asc' },
+        }),
+        prisma.warehouse.findMany({
+            where: { organizationId: session.user.organizationId, deletedAt: null, isActive: true },
+            orderBy: { name: 'asc' },
+        }),
+    ]);
+
+    const { products, total } = inventoryData;
 
     const totalPages = Math.ceil(total / pageSize);
+
+    // Serialize Decimal fields for client component
+    const serializedProducts = products.map((product) => ({
+        ...product,
+        sellingPrice: Number(product.sellingPrice),
+        costPrice: Number(product.costPrice),
+    }));
 
     const helpSections = [
         {
@@ -78,19 +100,39 @@ export default async function InventoryPage({
 
     return (
         <div className="space-y-6">
+            <InventoryModalManager products={serializedProducts} categories={categories} warehouses={warehouses} />
             <PageHeader
                 title={t('title')}
                 description={t('description')}
                 help={{
                     title: t('help.title'),
-                    sections: helpSections,
+                    children: (
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">{t('help.purpose.heading')}</h3>
+                                <div className="text-sm text-muted-foreground">{t('help.purpose.content')}</div>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">{t('help.columns.heading')}</h3>
+                                <div className="text-sm text-muted-foreground">
+                                    <ul className="list-disc pl-4 space-y-2">
+                                        <li><strong>{t('help.columns.product')}:</strong> {t('columns.product')}</li>
+                                        <li><strong>{t('help.columns.warehouse')}:</strong> {t('columns.warehouse')}</li>
+                                        <li><strong>{t('help.columns.available')}:</strong> {t('columns.available')}</li>
+                                        <li><strong>{t('help.columns.ordered')}:</strong> {t('columns.ordered')}</li>
+                                        <li><strong>{t('help.columns.minStock')}:</strong> {t('columns.minStock')}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )
                 }}
                 actions={
                     <>
                         <Link href="/adjustments">
                             <Button variant="outline">{tCommon('nav.adjustments')}</Button>
                         </Link>
-                        <Link href="/inventory/new">
+                        <Link href="?modal=create">
                             <Button>
                                 <Plus className="mr-2 h-4 w-4" /> {tCommon('buttons.add')} {t('columns.product')}
                             </Button>
@@ -109,13 +151,13 @@ export default async function InventoryPage({
                         <SearchInput placeholder={`${tCommon('buttons.search')}...`} />
                     </div>
 
-                    {products.length === 0 ? (
+                    {serializedProducts.length === 0 ? (
                         <div className="text-center py-12">
                             <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                             <p className="text-muted-foreground mb-4">
                                 {tCommon('table.noData')}
                             </p>
-                            <Link href="/inventory/new">
+                            <Link href="?modal=create">
                                 <Button>
                                     <Plus className="w-4 h-4 mr-2" />
                                     {tCommon('buttons.add')}
@@ -136,7 +178,7 @@ export default async function InventoryPage({
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {products.map((product) => {
+                                    {serializedProducts.map((product) => {
                                         const totalStock = product.inventoryItems.reduce(
                                             (sum, item) => sum + item.quantityOnHand,
                                             0
@@ -172,11 +214,7 @@ export default async function InventoryPage({
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <Link href={`/inventory/${product.id}`}>
-                                                        <Button variant="outline" size="sm">
-                                                            {tCommon('buttons.view')}
-                                                        </Button>
-                                                    </Link>
+                                                    <InventoryActions product={product} warehouses={warehouses} />
                                                 </TableCell>
                                             </TableRow>
                                         );

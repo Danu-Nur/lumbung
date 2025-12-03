@@ -4,8 +4,9 @@ import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Mail } from 'lucide-react';
-import { OrganizationForm } from './organization-form';
-import { UsersTable } from './users-table';
+import { OrganizationForm } from '@/components/domain/settings/organization-form';
+import { UsersTable } from '@/components/domain/settings/users-table';
+import { UserModalManager } from '@/components/domain/settings/user-modal-manager';
 
 import { PageHelp } from '@/components/shared/page-help';
 import { getTranslations } from 'next-intl/server';
@@ -97,12 +98,22 @@ export default async function SettingsPage() {
 
     return (
         <div className="space-y-6">
+            <UserModalManager roles={roles} users={users} />
             <div>
                 <div className="flex items-center gap-4">
                     <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
                         {t('title')}
                     </h1>
-                    <PageHelp title={t('help.title')} sections={helpSections} />
+                    <PageHelp title={t('help.title')}>
+                        <div className="space-y-4">
+                            {helpSections.map((section, index) => (
+                                <div key={index}>
+                                    <h3 className="font-semibold text-base mb-1">{section.heading}</h3>
+                                    <div className="text-sm text-muted-foreground">{section.content}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </PageHelp>
                 </div>
                 <p className="text-slate-600 dark:text-slate-400 mt-1">
                     {t('description')}

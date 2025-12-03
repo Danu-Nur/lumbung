@@ -1,0 +1,658 @@
+
+> lumbung@0.1.0 lint
+> eslint
+
+
+C:\laragon\www\lumbung\app\[locale]\(auth)\register\register-form.tsx
+  59:18  warning  'err' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\adjustments\page.tsx
+  15:16  warning  'ArrowLeftRight' is defined but never used  @typescript-eslint/no-unused-vars
+  27:18  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\categories\page.tsx
+  5:10  warning  'Input' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\customers\page.tsx
+   3:10  warning  'prisma' is defined but never used    @typescript-eslint/no-unused-vars
+  19:10  warning  'PageHelp' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\help\page.tsx
+    4:10   warning  'BookOpen' is defined but never used                             @typescript-eslint/no-unused-vars
+    4:47   warning  'Info' is defined but never used                                 @typescript-eslint/no-unused-vars
+  176:121  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  176:126  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  212:185  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  212:198  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\inventory\[id]\page.tsx
+  8:21  warning  'Trash2' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\purchase-orders\[id]\page.tsx
+  6:21  warning  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\purchase-orders\new\new-purchase-order-form.tsx
+   8:10  warning  'ArrowLeft' is defined but never used        @typescript-eslint/no-unused-vars
+  27:11  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  34:49  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  59:70  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\purchase-orders\page.tsx
+   27:18  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  143:79  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  143:86  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  144:82  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  144:87  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\sales-orders\[id]\invoice\page.tsx
+  43:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\sales-orders\new\new-sales-order-form.tsx
+   8:10  warning  'ArrowLeft' is defined but never used        @typescript-eslint/no-unused-vars
+  29:11  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  36:49  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  62:70  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\sales-orders\page.tsx
+   27:18  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  145:82  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  145:92  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  146:82  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  146:87  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\settings\page.tsx
+  39:11   warning  'tCommon' is assigned a value but never used                     @typescript-eslint/no-unused-vars
+  79:68   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  79:81   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  89:110  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  89:122  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\suppliers\page.tsx
+  6:10  warning  'Input' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\transfers\new\new-transfer-form.tsx
+  24:11  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  48:70  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\transfers\page.tsx
+  26:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\warehouses\new\new-warehouse-form.tsx
+  30:11  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\app\[locale]\(dashboard)\warehouses\page.tsx
+  26:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\dashboard\SalesOverviewCard.tsx
+  2:24  warning  'TrendingUp' is defined but never used  @typescript-eslint/no-unused-vars
+  2:36  warning  'Calendar' is defined but never used    @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\components\domain\adjustments\adjustment-actions.tsx
+  7:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\adjustments\adjustment-create-modal.tsx
+   3:10  warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+  59:46  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  98:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\adjustments\adjustment-edit-modal.tsx
+  17:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\adjustments\adjustment-modal-manager.tsx
+  10:18  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  25:66  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  28:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\adjustments\adjustment-modal-manager.tsx:28:9
+  26 |
+  27 |     useEffect(() => {
+> 28 |         setCreateOpen(modal === "create");
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  29 |
+  30 |         if (id) {
+  31 |             const adjustment = adjustments.find((a) => a.id === id);  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\domain\adjustments\adjustment-show-modal.tsx
+  22:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\categories\category-actions.tsx
+  29:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\categories\category-create-modal.tsx
+   3:10  warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+  38:28  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  70:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\categories\category-edit-modal.tsx
+   3:10  warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+  81:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\categories\category-modal-manager.tsx
+  27:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\categories\category-modal-manager.tsx:27:9
+  25 |
+  26 |     useEffect(() => {
+> 27 |         setCreateOpen(modal === "create");
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  28 |
+  29 |         if (id) {
+  30 |             const category = categories.find((c) => c.id === id);  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\domain\categories\category-show-modal.tsx
+  12:10  warning  'Badge' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\components\domain\customers\customer-actions.tsx
+  29:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\customers\customer-create-modal.tsx
+  40:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  77:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\customers\customer-edit-modal.tsx
+  92:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\customers\customer-modal-manager.tsx
+  27:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\customers\customer-modal-manager.tsx:27:9
+  25 |
+  26 |     useEffect(() => {
+> 27 |         setCreateOpen(modal === "create");
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  28 |
+  29 |         if (id) {
+  30 |             const customer = customers.find((c) => c.id === id);  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\domain\inventory\delete-product-button.tsx
+  43:25  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  64:29  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  64:43  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\laragon\www\lumbung\components\domain\inventory\inventory-actions.tsx
+  30:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\inventory\inventory-create-modal.tsx
+   64:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   93:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  280:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\inventory\inventory-dialog.tsx
+  20:10  warning  'formatCurrency' is defined but never used  @typescript-eslint/no-unused-vars
+  46:28  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  99:25  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\inventory\inventory-edit-modal.tsx
+   66:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  298:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\inventory\inventory-modal-manager.tsx
+  36:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\inventory\inventory-modal-manager.tsx:36:9
+  34 |
+  35 |     useEffect(() => {
+> 36 |         setCreateOpen(modal === "create");
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  37 |
+  38 |         if (id) {
+  39 |             const product = products.find((p) => p.id === id);  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\domain\inventory\inventory-show-modal.tsx
+   18:10  warning  'ScrollArea' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   39:44  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+   44:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\inventory\inventory-show-modal.tsx:44:13
+  42 |     useEffect(() => {
+  43 |         if (open && product) {
+> 44 |             setLoadingHistory(true);
+     |             ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  45 |             getProductHistory(product.id)
+  46 |                 .then(setHistory)
+  47 |                 .catch(console.error)  react-hooks/set-state-in-effect
+  160:83  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+  190:80  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\inventory\inventory-stock-modal.tsx
+   3:10  warning  'useState' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  65:46  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  89:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  95:33  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\laragon\www\lumbung\components\domain\inventory\inventory-stock-modal.tsx:95:33
+  93 |     };
+  94 |
+> 95 |     const selectedWarehouseId = form.watch("warehouseId");
+     |                                 ^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  96 |     const currentStock = product.inventoryItems.find(
+  97 |         (item) => item.warehouseId === selectedWarehouseId
+  98 |     )?.quantityOnHand || 0;  react-hooks/incompatible-library
+
+C:\laragon\www\lumbung\components\domain\purchase-orders\purchase-order-actions.tsx
+  7:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\purchase-orders\purchase-order-create-modal.tsx
+   72:46  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+   97:49  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  116:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  134:26  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\laragon\www\lumbung\components\domain\purchase-orders\purchase-order-create-modal.tsx:134:26
+  132 |     };
+  133 |
+> 134 |     const currentItems = form.watch("items");
+      |                          ^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  135 |     const total = currentItems.reduce((sum, item) => sum + (item.quantity * item.unitCost), 0);
+  136 |
+  137 |     return (  react-hooks/incompatible-library
+
+C:\laragon\www\lumbung\components\domain\purchase-orders\purchase-order-dialog.tsx
+   24:8   warning  'Link' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-unused-vars
+   43:13  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+   59:11  warning  'router' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   90:49  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+  108:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+  126:26  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\laragon\www\lumbung\components\domain\purchase-orders\purchase-order-dialog.tsx:126:26
+  124 |     };
+  125 |
+> 126 |     const currentItems = form.watch("items");
+      |                          ^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  127 |     const total = currentItems.reduce((sum, item) => sum + (item.quantity * item.unitCost), 0);
+  128 |
+  129 |     const renderViewContent = () => {  react-hooks/incompatible-library
+  198:61  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\purchase-orders\purchase-order-edit-modal.tsx
+  17:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\purchase-orders\purchase-order-modal-manager.tsx
+  10:13  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  26:56  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  29:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\purchase-orders\purchase-order-modal-manager.tsx:29:9
+  27 |
+  28 |     useEffect(() => {
+> 29 |         setCreateOpen(modal === "create");
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  30 |
+  31 |         if (id) {
+  32 |             const order = orders.find((o) => o.id === id);  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\domain\purchase-orders\purchase-order-show-modal.tsx
+   22:12  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+   34:11  warning  'tCommon' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   44:25  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  125:65  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\sales-orders\sales-order-actions.tsx
+  12:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\sales-orders\sales-order-create-modal.tsx
+   73:46  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+   98:49  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  117:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  136:26  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\laragon\www\lumbung\components\domain\sales-orders\sales-order-create-modal.tsx:136:26
+  134 |     };
+  135 |
+> 136 |     const currentItems = form.watch("items");
+      |                          ^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  137 |     const subtotal = currentItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+  138 |     const totalDiscount = currentItems.reduce((sum, item) => sum + (item.discount || 0), 0);
+  139 |     const total = subtotal - totalDiscount;  react-hooks/incompatible-library
+
+C:\laragon\www\lumbung\components\domain\sales-orders\sales-order-dialog.tsx
+   44:13  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+   60:11  warning  'router' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   75:37  warning  'update' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   92:49  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  110:25  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  130:26  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\laragon\www\lumbung\components\domain\sales-orders\sales-order-dialog.tsx:130:26
+  128 |
+  129 |     // Calculate totals for create form
+> 130 |     const currentItems = form.watch("items");
+      |                          ^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  131 |     const subtotal = currentItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+  132 |     const totalDiscount = currentItems.reduce((sum, item) => sum + (item.discount || 0), 0);
+  133 |     const total = subtotal - totalDiscount;  react-hooks/incompatible-library
+  217:61  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\sales-orders\sales-order-edit-modal.tsx
+   3:10  warning  'useState' is defined but never used             @typescript-eslint/no-unused-vars
+   3:20  warning  'useEffect' is defined but never used            @typescript-eslint/no-unused-vars
+   4:10  warning  'useForm' is defined but never used              @typescript-eslint/no-unused-vars
+   4:19  warning  'useFieldArray' is defined but never used        @typescript-eslint/no-unused-vars
+   5:10  warning  'zodResolver' is defined but never used          @typescript-eslint/no-unused-vars
+   8:5   warning  'Form' is defined but never used                 @typescript-eslint/no-unused-vars
+   9:5   warning  'FormControl' is defined but never used          @typescript-eslint/no-unused-vars
+  10:5   warning  'FormField' is defined but never used            @typescript-eslint/no-unused-vars
+  11:5   warning  'FormItem' is defined but never used             @typescript-eslint/no-unused-vars
+  12:5   warning  'FormLabel' is defined but never used            @typescript-eslint/no-unused-vars
+  13:5   warning  'FormMessage' is defined but never used          @typescript-eslint/no-unused-vars
+  15:10  warning  'Input' is defined but never used                @typescript-eslint/no-unused-vars
+  25:10  warning  'useRouter' is defined but never used            @typescript-eslint/no-unused-vars
+  26:10  warning  'Plus' is defined but never used                 @typescript-eslint/no-unused-vars
+  26:16  warning  'Trash2' is defined but never used               @typescript-eslint/no-unused-vars
+  27:10  warning  'Card' is defined but never used                 @typescript-eslint/no-unused-vars
+  27:16  warning  'CardContent' is defined but never used          @typescript-eslint/no-unused-vars
+  27:29  warning  'CardHeader' is defined but never used           @typescript-eslint/no-unused-vars
+  27:41  warning  'CardTitle' is defined but never used            @typescript-eslint/no-unused-vars
+  28:10  warning  'formatCurrency' is defined but never used       @typescript-eslint/no-unused-vars
+  29:10  warning  'CustomerDialog' is defined but never used       @typescript-eslint/no-unused-vars
+  30:10  warning  'toast' is defined but never used                @typescript-eslint/no-unused-vars
+  52:7   warning  'formSchema' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  62:12  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  72:5   warning  'order' is defined but never used                @typescript-eslint/no-unused-vars
+  73:5   warning  'customers' is defined but never used            @typescript-eslint/no-unused-vars
+  74:5   warning  'warehouses' is defined but never used           @typescript-eslint/no-unused-vars
+  75:5   warning  'products' is defined but never used             @typescript-eslint/no-unused-vars
+  76:5   warning  'onSuccess' is defined but never used            @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\components\domain\sales-orders\sales-order-modal-manager.tsx
+  10:13  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  26:56  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  29:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\sales-orders\sales-order-modal-manager.tsx:29:9
+  27 |
+  28 |     useEffect(() => {
+> 29 |         setCreateOpen(modal === "create");
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  30 |
+  31 |         if (id) {
+  32 |             const order = orders.find((o) => o.id === id);  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\domain\sales-orders\sales-order-show-modal.tsx
+   23:12  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+   35:11  warning  'tCommon' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   45:25  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  141:65  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\settings\organization-form.tsx
+  68:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\settings\user-create-modal.tsx
+  81:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\settings\user-edit-modal.tsx
+  17:5   warning  'FormControl' is defined but never used   @typescript-eslint/no-unused-vars
+  36:11  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  69:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\settings\user-modal-manager.tsx
+  11:13  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  24:54  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  27:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\settings\user-modal-manager.tsx:27:9
+  25 |
+  26 |     useEffect(() => {
+> 27 |         setCreateOpen(modal === "create");
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  28 |
+  29 |         if (id) {
+  30 |             const user = users.find((u) => u.id === id);  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\domain\settings\user-show-modal.tsx
+  17:11  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\settings\users-table.tsx
+   3:10  warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+  16:12  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:12  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  21:37  warning  'roles' is defined but never used         @typescript-eslint/no-unused-vars
+  32:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\suppliers\supplier-actions.tsx
+  29:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\suppliers\supplier-create-modal.tsx
+  40:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  77:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\suppliers\supplier-edit-modal.tsx
+  92:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\suppliers\supplier-modal-manager.tsx
+  27:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\suppliers\supplier-modal-manager.tsx:27:9
+  25 |
+  26 |     useEffect(() => {
+> 27 |         setCreateOpen(modal === "create");
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  28 |
+  29 |         if (id) {
+  30 |             const supplier = suppliers.find((s) => s.id === id);  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\domain\transfers\transfer-actions.tsx
+  7:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\transfers\transfer-create-modal.tsx
+    3:10  warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+   68:46  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  106:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\transfers\transfer-edit-modal.tsx
+  17:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\transfers\transfer-modal-manager.tsx
+  10:16  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  25:62  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  28:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\transfers\transfer-modal-manager.tsx:28:9
+  26 |
+  27 |     useEffect(() => {
+> 28 |         setCreateOpen(modal === "create");
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  29 |
+  30 |         if (id) {
+  31 |             const transfer = transfers.find((t) => t.id === id);  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\domain\transfers\transfer-show-modal.tsx
+   22:15  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+   34:11  warning  'tCommon' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   44:25  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  121:68  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\warehouses\warehouse-actions.tsx
+  29:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\warehouses\warehouse-create-modal.tsx
+  77:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\warehouses\warehouse-edit-modal.tsx
+  97:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\components\domain\warehouses\warehouse-modal-manager.tsx
+  27:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\domain\warehouses\warehouse-modal-manager.tsx:27:9
+  25 |
+  26 |     useEffect(() => {
+> 27 |         setCreateOpen(modal === "create");
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  28 |
+  29 |         if (id) {
+  30 |             const warehouse = warehouses.find((w) => w.id === id);  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\layout\sidebar.tsx
+  32:11  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+C:\laragon\www\lumbung\components\layout\theme-toggle.tsx
+  12:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\components\layout\theme-toggle.tsx:12:9
+  10 |
+  11 |     useEffect(() => {
+> 12 |         setMounted(true);
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  13 |     }, []);
+  14 |
+  15 |     if (!mounted) {  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\components\layout\topbar.tsx
+  8:10  warning  'cn' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\components\shared\language-switcher.tsx
+  18:11  warning  't' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\components\ui\card.tsx
+  1:10  warning  'ReactNode' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\components\ui\input.tsx
+  4:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+C:\laragon\www\lumbung\components\ui\label.tsx
+  4:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+C:\laragon\www\lumbung\components\ui\textarea.tsx
+  4:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+C:\laragon\www\lumbung\features\adjustments\actions.ts
+  56:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\features\inventory\actions.ts
+    6:10  warning  'redirect' is defined but never used      @typescript-eslint/no-unused-vars
+  155:35  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\features\purchase-orders\actions.ts
+    6:10  warning  'redirect' is defined but never used        @typescript-eslint/no-unused-vars
+   40:11  warning  'order' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  167:35  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\features\sales-orders\actions.ts
+    6:10  warning  'redirect' is defined but never used      @typescript-eslint/no-unused-vars
+  175:35  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\features\settings\actions.ts
+  65:16  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\laragon\www\lumbung\features\transfers\actions.ts
+   6:10  warning  'redirect' is defined but never used           @typescript-eslint/no-unused-vars
+  38:11  warning  'transfer' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\features\warehouses\actions.ts
+  6:10  warning  'redirect' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\laragon\www\lumbung\hooks\use-media-query.ts
+  13:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\laragon\www\lumbung\hooks\use-media-query.ts:13:9
+  11 |         const result = matchMedia(query)
+  12 |         result.addEventListener("change", onChange)
+> 13 |         setValue(result.matches)
+     |         ^^^^^^^^ Avoid calling setState() directly within an effect
+  14 |
+  15 |         return () => result.removeEventListener("change", onChange)
+  16 |     }, [query])  react-hooks/set-state-in-effect
+
+C:\laragon\www\lumbung\lib\services\purchaseOrderService.ts
+  95:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\laragon\www\lumbung\prisma\seed.ts
+   86:11  warning  'user2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  107:11  warning  'wh2' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  116:11  warning  'wh3' is assigned a value but never used    @typescript-eslint/no-unused-vars
+
+Γ£û 221 problems (138 errors, 83 warnings)
+

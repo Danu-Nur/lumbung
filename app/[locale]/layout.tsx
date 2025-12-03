@@ -7,6 +7,7 @@ import "../globals.css";
 import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -45,6 +46,7 @@ export default async function RootLayout({
           >
             <SessionProvider>
               {children}
+              <Toaster />
             </SessionProvider>
           </ThemeProvider>
         </NextIntlClientProvider>

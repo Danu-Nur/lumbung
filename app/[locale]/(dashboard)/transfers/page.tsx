@@ -7,6 +7,7 @@ import { Plus, ArrowLeftRight } from 'lucide-react';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { Pagination } from '@/components/shared/pagination';
+import { SearchInput } from '@/components/shared/search-input';
 import { PageHeader } from '@/components/shared/page-header';
 import {
     Table,
@@ -17,23 +18,41 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { getTranslations } from 'next-intl/server';
+import { TransferModalManager } from '@/components/domain/transfers/transfer-modal-manager';
+import { TransferActions } from '@/components/domain/transfers/transfer-actions';
 
-async function getTransfers(organizationId: string, page: number = 1, pageSize: number = 10) {
+async function getTransfers(organizationId: string, page: number = 1, pageSize: number = 10, query: string = '') {
     const skip = (page - 1) * pageSize;
+    const where: any = {
+        organizationId,
+    };
+
+    if (query) {
+        where.OR = [
+            { transferNumber: { contains: query } },
+            { fromWarehouse: { name: { contains: query } } },
+            { toWarehouse: { name: { contains: query } } },
+        ];
+    }
+
     const [transfers, total] = await Promise.all([
         prisma.stockTransfer.findMany({
-            where: { organizationId },
+            where,
             include: {
                 fromWarehouse: true,
                 toWarehouse: true,
-                items: true,
+                items: {
+                    include: {
+                        product: true,
+                    },
+                },
             },
             orderBy: { createdAt: 'desc' },
             skip,
             take: pageSize,
         }),
         prisma.stockTransfer.count({
-            where: { organizationId },
+            where,
         }),
     ]);
 
@@ -56,41 +75,79 @@ export default async function TransfersPage({ searchParams }: TransfersPageProps
     const params = await searchParams;
     const page = Number(params?.page) || 1;
     const pageSize = Number(params?.pageSize) || 10;
+    const query = params?.q?.toString() || '';
 
-    const { transfers, total } = await getTransfers(session.user.organizationId, page, pageSize);
+    const [transferData, warehouses, products] = await Promise.all([
+        getTransfers(session.user.organizationId, page, pageSize, query),
+        prisma.warehouse.findMany({
+            where: { organizationId: session.user.organizationId, deletedAt: null, isActive: true },
+            select: { id: true, name: true },
+            orderBy: { name: 'asc' },
+        }),
+        prisma.product.findMany({
+            where: { organizationId: session.user.organizationId, deletedAt: null },
+            select: { id: true, name: true, sku: true },
+            orderBy: { name: 'asc' },
+        }),
+    ]);
+
+    const { transfers, total } = transferData;
     const totalPages = Math.ceil(total / pageSize);
+
+    // Serialize Decimal fields for client component
+    const serializedTransfers = transfers.map((transfer) => ({
+        ...transfer,
+        items: transfer.items.map((item) => ({
+            ...item,
+            product: {
+                ...item.product,
+                sellingPrice: Number(item.product.sellingPrice),
+                costPrice: Number(item.product.costPrice),
+            },
+        })),
+    }));
 
     return (
         <div className="space-y-6">
+            <TransferModalManager
+                transfers={serializedTransfers}
+                warehouses={warehouses}
+                products={products}
+            />
             <PageHeader
                 title={t('title')}
                 description={t('description')}
                 help={{
                     title: t('help.title'),
-                    sections: [
-                        {
-                            heading: t('help.purpose.heading'),
-                            content: t('help.purpose.content'),
-                        },
-                        {
-                            heading: 'Features',
-                            content: (
-                                <ul className="list-disc list-inside space-y-1">
-                                    <li><strong>Create Transfer:</strong> Move stock from one warehouse to another.</li>
-                                    <li><strong>Send:</strong> Deduct stock from source warehouse (In Transit).</li>
-                                    <li><strong>Complete:</strong> Add stock to destination warehouse.</li>
-                                </ul>
-                            ),
-                        },
-                    ],
+                    children: (
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">{t('help.purpose.heading')}</h3>
+                                <div className="text-sm text-muted-foreground">{t('help.purpose.content')}</div>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">Features</h3>
+                                <div className="text-sm text-muted-foreground">
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li><strong>Create Transfer:</strong> Move stock from one warehouse to another.</li>
+                                        <li><strong>Send:</strong> Deduct stock from source warehouse (In Transit).</li>
+                                        <li><strong>Complete:</strong> Add stock to destination warehouse.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )
                 }}
                 actions={
-                    <Link href="/transfers/new">
-                        <Button>
-                            <Plus className="w-4 h-4 mr-2" />
-                            {tCommon('buttons.add')}
-                        </Button>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <SearchInput placeholder={tCommon('buttons.search')} />
+                        <Link href="?modal=create">
+                            <Button>
+                                <Plus className="w-4 h-4 mr-2" />
+                                {tCommon('buttons.add')}
+                            </Button>
+                        </Link>
+                    </div>
                 }
             />
 
@@ -99,13 +156,13 @@ export default async function TransfersPage({ searchParams }: TransfersPageProps
                     <CardTitle>{t('title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {transfers.length === 0 ? (
+                    {serializedTransfers.length === 0 ? (
                         <div className="text-center py-12">
                             <ArrowLeftRight className="w-12 h-12 text-slate-400 mx-auto mb-4" />
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
                                 {tCommon('table.noData')}
                             </p>
-                            <Link href="/transfers/new">
+                            <Link href="?modal=create">
                                 <Button>
                                     <Plus className="w-4 h-4 mr-2" />
                                     {tCommon('buttons.add')}
@@ -127,7 +184,7 @@ export default async function TransfersPage({ searchParams }: TransfersPageProps
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {transfers.map((transfer) => (
+                                    {serializedTransfers.map((transfer) => (
                                         <TableRow key={transfer.id}>
                                             <TableCell className="font-medium">
                                                 {transfer.transferNumber}
@@ -159,11 +216,7 @@ export default async function TransfersPage({ searchParams }: TransfersPageProps
                                                 {transfer.items.length}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <Link href={`/transfers/${transfer.id}`}>
-                                                    <Button variant="outline" size="sm">
-                                                        {tCommon('buttons.view')}
-                                                    </Button>
-                                                </Link>
+                                                <TransferActions transfer={transfer} />
                                             </TableCell>
                                         </TableRow>
                                     ))}

@@ -8,10 +8,7 @@ interface PageHeaderProps {
     description?: string;
     help?: {
         title: string;
-        sections: {
-            heading: string;
-            content: ReactNode;
-        }[];
+        children: ReactNode;
     };
     actions?: ReactNode;
 }
@@ -24,7 +21,7 @@ export function PageHeader({ title, description, help, actions }: PageHeaderProp
                     <h1 className="text-3xl font-bold text-foreground">
                         {title}
                     </h1>
-                    {help && <PageHelp title={help.title} sections={help.sections} />}
+                    {help && <PageHelp title={help.title}>{help.children}</PageHelp>}
                 </div>
                 {description && (
                     <p className="text-muted-foreground mt-1">

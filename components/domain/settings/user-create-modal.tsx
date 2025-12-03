@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,7 +9,8 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
+    DialogDescription,
+    DialogFooter,
 } from '@/components/ui/dialog';
 import {
     Form,
@@ -21,24 +22,30 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { inviteUser } from '@/features/settings/actions';
-import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 const formSchema = z.object({
-    name: z.string().min(2),
-    email: z.string().email(),
-    roleId: z.string().min(1),
-    password: z.string().min(6),
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    roleId: z.string().min(1, "Role is required"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-interface UserDialogProps {
+interface UserCreateModalProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
     roles: { id: string; name: string }[];
+    onSuccess?: () => void;
 }
 
-export function UserDialog({ roles }: UserDialogProps) {
-    const [open, setOpen] = useState(false);
+export function UserCreateModal({ open, onOpenChange, roles, onSuccess }: UserCreateModalProps) {
     const router = useRouter();
+    const t = useTranslations('settings.users');
+    const tCommon = useTranslations('common');
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -49,6 +56,17 @@ export function UserDialog({ roles }: UserDialogProps) {
         },
     });
 
+    useEffect(() => {
+        if (open) {
+            form.reset({
+                name: '',
+                email: '',
+                roleId: '',
+                password: '',
+            });
+        }
+    }, [open, form]);
+
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         const formData = new FormData();
         Object.entries(values).forEach(([key, value]) => {
@@ -56,27 +74,24 @@ export function UserDialog({ roles }: UserDialogProps) {
         });
         try {
             await inviteUser(formData);
-            setOpen(false);
-            form.reset();
-            alert('User invited successfully.');
+            toast.success('User invited successfully');
+            onOpenChange(false);
             router.refresh();
+            if (onSuccess) onSuccess();
         } catch (error: any) {
             console.error(error);
-            alert(error.message || 'Failed to invite user.');
+            toast.error(error.message || 'Failed to invite user');
         }
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button size="sm">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Invite User
-                </Button>
-            </DialogTrigger>
-            <DialogContent>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                    <DialogTitle>Invite New User</DialogTitle>
+                    <DialogTitle>{t('invite')}</DialogTitle>
+                    <DialogDescription>
+                        Send an invitation to a new team member.
+                    </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -85,9 +100,9 @@ export function UserDialog({ roles }: UserDialogProps) {
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Name</FormLabel>
+                                    <FormLabel>{tCommon('table.name')}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input placeholder="John Doe" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -98,9 +113,9 @@ export function UserDialog({ roles }: UserDialogProps) {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel>{t('email')}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="email" />
+                                        <Input placeholder="john@example.com" {...field} type="email" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -111,9 +126,9 @@ export function UserDialog({ roles }: UserDialogProps) {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel>{t('password')}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="password" />
+                                        <Input placeholder="******" {...field} type="password" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -124,12 +139,12 @@ export function UserDialog({ roles }: UserDialogProps) {
                             name="roleId"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Role</FormLabel>
+                                    <FormLabel>{t('role')}</FormLabel>
                                     <select
                                         {...field}
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
-                                        <option value="">Select a role</option>
+                                        <option value="">{t('selectRole')}</option>
                                         {roles.map((role) => (
                                             <option key={role.id} value={role.id}>
                                                 {role.name}
@@ -140,11 +155,14 @@ export function UserDialog({ roles }: UserDialogProps) {
                                 </FormItem>
                             )}
                         />
-                        <div className="flex justify-end">
-                            <Button type="submit" disabled={form.formState.isSubmitting}>
-                                {form.formState.isSubmitting ? 'Inviting...' : 'Invite User'}
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                                {tCommon('buttons.cancel')}
                             </Button>
-                        </div>
+                            <Button type="submit" disabled={form.formState.isSubmitting}>
+                                {form.formState.isSubmitting ? t('inviting') : t('invite')}
+                            </Button>
+                        </DialogFooter>
                     </form>
                 </Form>
             </DialogContent>

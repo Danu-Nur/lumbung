@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CategoryDialog } from "@/components/domain/categories/category-dialog";
+import { CategoryCreateModal } from "@/components/domain/categories/category-create-modal";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import {
@@ -25,6 +25,7 @@ interface CategorySelectorProps {
 export function CategorySelector({ initialCategories }: CategorySelectorProps) {
     const [categories, setCategories] = useState<Category[]>(initialCategories);
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
     const handleCategoryCreated = (newCategory: Category) => {
         setCategories((prev) => [...prev, newCategory].sort((a, b) => a.name.localeCompare(b.name)));
@@ -53,12 +54,18 @@ export function CategorySelector({ initialCategories }: CategorySelectorProps) {
                         </SelectContent>
                     </Select>
                 </div>
-                <CategoryDialog
-                    trigger={
-                        <Button type="button" variant="outline" size="icon" title="Add New Category">
-                            <Plus className="h-4 w-4" />
-                        </Button>
-                    }
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    title="Add New Category"
+                    onClick={() => setIsCategoryModalOpen(true)}
+                >
+                    <Plus className="h-4 w-4" />
+                </Button>
+                <CategoryCreateModal
+                    open={isCategoryModalOpen}
+                    onOpenChange={setIsCategoryModalOpen}
                     onSuccess={handleCategoryCreated}
                 />
             </div>

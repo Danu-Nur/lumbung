@@ -110,7 +110,7 @@ export async function createStockAdjustment(formData: FormData) {
     revalidatePath('/adjustments');
     revalidatePath('/dashboard');
     revalidatePath('/inventory');
-    redirect('/adjustments');
+
 }
 
 export async function reverseStockAdjustment(adjustmentId: string) {
@@ -180,4 +180,32 @@ export async function reverseStockAdjustment(adjustmentId: string) {
 
     revalidatePath('/adjustments');
     redirect('/adjustments');
+}
+
+export async function getStockHistory(productId: string) {
+    const session = await auth();
+    if (!session?.user || !session.user.organizationId) throw new Error('Unauthorized');
+
+    const movements = await prisma.inventoryMovement.findMany({
+        where: {
+            productId,
+            product: {
+                organizationId: session.user.organizationId,
+            },
+        },
+        include: {
+            warehouse: true,
+            createdBy: {
+                select: {
+                    name: true,
+                },
+            },
+        },
+        orderBy: {
+            createdAt: 'desc',
+        },
+        take: 5,
+    });
+
+    return movements;
 }

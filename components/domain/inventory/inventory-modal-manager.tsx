@@ -1,0 +1,78 @@
+"use client";
+
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { Category, Product, InventoryItem, Warehouse } from "@prisma/client";
+import { InventoryCreateModal } from "./inventory-create-modal";
+import { InventoryEditModal } from "./inventory-edit-modal";
+import { InventoryShowModal } from "./inventory-show-modal";
+import { InventoryStockModal } from "./inventory-stock-modal";
+
+import { SerializedProduct } from "@/types/serialized";
+
+interface InventoryModalManagerProps {
+    products: SerializedProduct[];
+    categories: Category[];
+    warehouses: Warehouse[];
+}
+
+export function InventoryModalManager({ products, categories, warehouses }: InventoryModalManagerProps) {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+    const modal = searchParams.get("modal");
+    const id = searchParams.get("id");
+
+    const createOpen = modal === "create";
+    const editOpen = modal === "edit";
+    const showOpen = modal === "show";
+    const stockOpen = modal === "stock";
+
+    const selectedProduct = id ? products.find((p) => p.id === id) : undefined;
+
+    const handleClose = () => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("modal");
+        params.delete("id");
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    };
+
+    const handleSuccess = () => {
+        handleClose();
+        router.refresh();
+    };
+
+    return (
+        <>
+            <InventoryCreateModal
+                open={createOpen}
+                onOpenChange={(open) => !open && handleClose()}
+                categories={categories}
+                onSuccess={handleSuccess}
+            />
+
+            {selectedProduct && (
+                <>
+                    <InventoryEditModal
+                        open={editOpen}
+                        onOpenChange={(open) => !open && handleClose()}
+                        product={selectedProduct}
+                        categories={categories}
+                        onSuccess={handleSuccess}
+                    />
+                    <InventoryShowModal
+                        open={showOpen}
+                        onOpenChange={(open) => !open && handleClose()}
+                        product={selectedProduct}
+                    />
+                    <InventoryStockModal
+                        open={stockOpen}
+                        onOpenChange={(open) => !open && handleClose()}
+                        product={selectedProduct}
+                        warehouses={warehouses}
+                        onSuccess={handleSuccess}
+                    />
+                </>
+            )}
+        </>
+    );
+}

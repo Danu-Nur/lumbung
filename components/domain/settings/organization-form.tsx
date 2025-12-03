@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -18,6 +18,7 @@ import { updateOrganization } from '@/features/settings/actions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 const formSchema = z.object({
     name: z.string().min(2),
@@ -39,6 +40,9 @@ interface OrganizationFormProps {
 export function OrganizationForm({ initialData, canEdit }: OrganizationFormProps) {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const t = useTranslations('settings.organization');
+    const tSection = useTranslations('settings.sections');
+    const tCommon = useTranslations('common');
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -59,11 +63,11 @@ export function OrganizationForm({ initialData, canEdit }: OrganizationFormProps
         });
         try {
             await updateOrganization(formData);
-            alert('Organization settings saved successfully.');
+            alert(t('saved'));
             router.refresh();
         } catch (error: any) {
             console.error(error);
-            alert(error.message || 'Failed to save settings.');
+            alert(error.message || t('failed'));
         } finally {
             setLoading(false);
         }
@@ -74,7 +78,7 @@ export function OrganizationForm({ initialData, canEdit }: OrganizationFormProps
             <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                     <Building2 className="w-5 h-5" />
-                    <span>Organization Details</span>
+                    <span>{tSection('organization')}</span>
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -85,7 +89,7 @@ export function OrganizationForm({ initialData, canEdit }: OrganizationFormProps
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Organization Name</FormLabel>
+                                    <FormLabel>{t('name')}</FormLabel>
                                     <FormControl>
                                         <Input {...field} disabled={!canEdit} />
                                     </FormControl>
@@ -99,7 +103,7 @@ export function OrganizationForm({ initialData, canEdit }: OrganizationFormProps
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Email</FormLabel>
+                                        <FormLabel>{t('email')}</FormLabel>
                                         <FormControl>
                                             <Input {...field} disabled={!canEdit} />
                                         </FormControl>
@@ -112,7 +116,7 @@ export function OrganizationForm({ initialData, canEdit }: OrganizationFormProps
                                 name="phone"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Phone</FormLabel>
+                                        <FormLabel>{t('phone')}</FormLabel>
                                         <FormControl>
                                             <Input {...field} disabled={!canEdit} />
                                         </FormControl>
@@ -126,7 +130,7 @@ export function OrganizationForm({ initialData, canEdit }: OrganizationFormProps
                             name="address"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Address</FormLabel>
+                                    <FormLabel>{t('address')}</FormLabel>
                                     <FormControl>
                                         <Input {...field} disabled={!canEdit} />
                                     </FormControl>
@@ -137,7 +141,7 @@ export function OrganizationForm({ initialData, canEdit }: OrganizationFormProps
                         {canEdit && (
                             <div className="flex justify-end">
                                 <Button type="submit" disabled={loading}>
-                                    {loading ? 'Saving...' : 'Save Changes'}
+                                    {loading ? tCommon('users.saving') : tCommon('buttons.save')}
                                 </Button>
                             </div>
                         )}
@@ -147,4 +151,3 @@ export function OrganizationForm({ initialData, canEdit }: OrganizationFormProps
         </Card>
     );
 }
-

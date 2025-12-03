@@ -16,14 +16,28 @@ import { Plus, ArrowLeftRight } from 'lucide-react';
 import Link from 'next/link';
 import { formatDateTime } from '@/lib/utils';
 import { Pagination } from '@/components/shared/pagination';
+import { SearchInput } from '@/components/shared/search-input';
 import { PageHeader } from '@/components/shared/page-header';
 import { getTranslations } from 'next-intl/server';
+import { AdjustmentModalManager } from '@/components/domain/adjustments/adjustment-modal-manager';
+import { AdjustmentActions } from '@/components/domain/adjustments/adjustment-actions';
 
-async function getAdjustments(organizationId: string, page: number = 1, pageSize: number = 10) {
+async function getAdjustments(organizationId: string, page: number = 1, pageSize: number = 10, query: string = '') {
     const skip = (page - 1) * pageSize;
+    const where: any = {
+        organizationId,
+    };
+
+    if (query) {
+        where.OR = [
+            { product: { name: { contains: query } } },
+            { reason: { contains: query } },
+        ];
+    }
+
     const [adjustments, total] = await Promise.all([
         prisma.stockAdjustment.findMany({
-            where: { organizationId },
+            where,
             include: {
                 product: true,
                 warehouse: true,
@@ -34,7 +48,7 @@ async function getAdjustments(organizationId: string, page: number = 1, pageSize
             take: pageSize,
         }),
         prisma.stockAdjustment.count({
-            where: { organizationId },
+            where,
         }),
     ]);
 
@@ -57,41 +71,76 @@ export default async function AdjustmentsPage({ searchParams }: AdjustmentsPageP
     const params = await searchParams;
     const page = Number(params?.page) || 1;
     const pageSize = Number(params?.pageSize) || 10;
+    const query = params?.q?.toString() || '';
 
-    const { adjustments, total } = await getAdjustments(session.user.organizationId, page, pageSize);
+    const [adjustmentData, products, warehouses] = await Promise.all([
+        getAdjustments(session.user.organizationId, page, pageSize, query),
+        prisma.product.findMany({
+            where: { organizationId: session.user.organizationId, deletedAt: null },
+            select: { id: true, name: true, sku: true, unit: true },
+            orderBy: { name: 'asc' },
+        }),
+        prisma.warehouse.findMany({
+            where: { organizationId: session.user.organizationId, deletedAt: null, isActive: true },
+            select: { id: true, name: true },
+            orderBy: { name: 'asc' },
+        }),
+    ]);
+
+    const { adjustments, total } = adjustmentData;
     const totalPages = Math.ceil(total / pageSize);
+
+    // Serialize Decimal fields for client component
+    const serializedAdjustments = adjustments.map((adjustment) => ({
+        ...adjustment,
+        product: {
+            ...adjustment.product,
+            sellingPrice: Number(adjustment.product.sellingPrice),
+            costPrice: Number(adjustment.product.costPrice),
+        },
+    }));
 
     return (
         <div className="space-y-6">
+            <AdjustmentModalManager
+                adjustments={serializedAdjustments}
+                products={products}
+                warehouses={warehouses}
+            />
             <PageHeader
                 title={t('title')}
                 description={t('description')}
                 help={{
                     title: t('help.title'),
-                    sections: [
-                        {
-                            heading: t('help.purpose.heading'),
-                            content: t('help.purpose.content'),
-                        },
-                        {
-                            heading: 'Features',
-                            content: (
-                                <ul className="list-disc list-inside space-y-1">
-                                    <li><strong>Increase:</strong> Add stock (e.g., found items).</li>
-                                    <li><strong>Decrease:</strong> Remove stock (e.g., damage, theft).</li>
-                                    <li><strong>Reasons:</strong> Categorize adjustments for reporting.</li>
-                                </ul>
-                            ),
-                        },
-                    ],
+                    children: (
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">{t('help.purpose.heading')}</h3>
+                                <div className="text-sm text-muted-foreground">{t('help.purpose.content')}</div>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">Features</h3>
+                                <div className="text-sm text-muted-foreground">
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li><strong>Increase:</strong> Add stock (e.g., found items).</li>
+                                        <li><strong>Decrease:</strong> Remove stock (e.g., damage, theft).</li>
+                                        <li><strong>Reasons:</strong> Categorize adjustments for reporting.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )
                 }}
                 actions={
-                    <Link href="/adjustments/new">
-                        <Button>
-                            <Plus className="w-4 h-4 mr-2" />
-                            {tCommon('buttons.add')}
-                        </Button>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <SearchInput placeholder={tCommon('buttons.search')} />
+                        <Link href="?modal=create">
+                            <Button>
+                                <Plus className="w-4 h-4 mr-2" />
+                                {tCommon('buttons.add')}
+                            </Button>
+                        </Link>
+                    </div>
                 }
             />
 
@@ -100,12 +149,12 @@ export default async function AdjustmentsPage({ searchParams }: AdjustmentsPageP
                     <CardTitle>{t('title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {adjustments.length === 0 ? (
+                    {serializedAdjustments.length === 0 ? (
                         <div className="text-center py-12">
                             <p className="text-muted-foreground mb-4">
                                 {tCommon('table.noData')}
                             </p>
-                            <Link href="/adjustments/new">
+                            <Link href="?modal=create">
                                 <Button>
                                     <Plus className="w-4 h-4 mr-2" />
                                     {tCommon('buttons.add')}
@@ -128,7 +177,7 @@ export default async function AdjustmentsPage({ searchParams }: AdjustmentsPageP
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {adjustments.map((adjustment) => (
+                                    {serializedAdjustments.map((adjustment) => (
                                         <TableRow key={adjustment.id}>
                                             <TableCell className="text-muted-foreground text-sm">
                                                 {formatDateTime(adjustment.createdAt)}
@@ -167,11 +216,7 @@ export default async function AdjustmentsPage({ searchParams }: AdjustmentsPageP
                                                 {adjustment.createdBy.name}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <Link href={`/adjustments/${adjustment.id}`}>
-                                                    <Button variant="outline" size="sm">
-                                                        {tCommon('buttons.view')}
-                                                    </Button>
-                                                </Link>
+                                                <AdjustmentActions adjustment={adjustment} />
                                             </TableCell>
                                         </TableRow>
                                     ))}

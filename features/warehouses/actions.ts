@@ -18,7 +18,7 @@ export async function createWarehouse(data: {
         throw new Error('Unauthorized');
     }
 
-    await prisma.warehouse.create({
+    const warehouse = await prisma.warehouse.create({
         data: {
             ...data,
             organizationId: session.user.organizationId,
@@ -26,7 +26,7 @@ export async function createWarehouse(data: {
     });
 
     revalidatePath('/warehouses');
-    redirect('/warehouses');
+    return warehouse;
 }
 
 export async function updateWarehouse(id: string, data: {
@@ -43,14 +43,14 @@ export async function updateWarehouse(id: string, data: {
         throw new Error('Unauthorized');
     }
 
-    await prisma.warehouse.update({
+    const warehouse = await prisma.warehouse.update({
         where: { id },
         data,
     });
 
     revalidatePath('/warehouses');
     revalidatePath(`/warehouses/${id}`);
-    redirect('/warehouses');
+    return warehouse;
 }
 
 export async function deleteWarehouse(id: string) {

@@ -73,7 +73,7 @@ export async function createPurchaseOrder(formData: FormData) {
     });
 
     revalidatePath('/purchase-orders');
-    redirect('/purchase-orders');
+    return order;
 }
 
 export async function receivePurchaseOrder(orderId: string) {

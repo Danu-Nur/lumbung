@@ -1,88 +1,55 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Pencil, Trash2 } from 'lucide-react';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { SupplierDialog } from './supplier-dialog';
-import { deleteSupplier } from '@/features/suppliers/actions';
-import { Supplier } from '@prisma/client';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Supplier } from "@prisma/client";
+import { deleteSupplier } from "@/features/suppliers/actions";
+import { ActionColumn } from "@/components/shared/action-column";
+import { DeleteConfirmationModal } from "@/components/shared/delete-confirmation-modal";
+import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface SupplierActionsProps {
     supplier: Supplier;
 }
 
 export function SupplierActions({ supplier }: SupplierActionsProps) {
-    const [loading, setLoading] = useState(false);
-    const [open, setOpen] = useState(false);
+    const router = useRouter();
+    const t = useTranslations("common");
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleDelete = async () => {
-        setLoading(true);
+        setIsDeleting(true);
         try {
             await deleteSupplier(supplier.id);
-            setOpen(false);
+            toast.success(t("actions.deleteSuccess"));
+            setDeleteOpen(false);
+            router.refresh();
         } catch (error: any) {
-            console.error(error);
-            alert(error.message || 'Failed to delete supplier');
+            console.error("Failed to delete supplier:", error);
+            toast.error(error.message || t("actions.deleteError"));
         } finally {
-            setLoading(false);
+            setIsDeleting(false);
         }
     };
 
     return (
-        <div className="flex items-center gap-2">
-            <SupplierDialog
-                supplier={supplier}
-                trigger={
-                    <Button variant="ghost" size="icon">
-                        <Pencil className="h-4 w-4" />
-                    </Button>
-                }
+        <>
+            <ActionColumn
+                onView={() => router.push(`?modal=show&id=${supplier.id}`, { scroll: false })}
+                onEdit={() => router.push(`?modal=edit&id=${supplier.id}`, { scroll: false })}
+                onDelete={() => setDeleteOpen(true)}
             />
-            <AlertDialog open={open} onOpenChange={setOpen}>
-                <AlertDialogTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive"
-                        disabled={loading}
-                    >
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the supplier
-                            "{supplier.name}".
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleDelete();
-                            }}
-                            disabled={loading}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                            {loading ? 'Deleting...' : 'Delete'}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-        </div>
+
+            <DeleteConfirmationModal
+                open={deleteOpen}
+                onOpenChange={setDeleteOpen}
+                onConfirm={handleDelete}
+                title={t("actions.deleteTitle")}
+                description={t("actions.deleteConfirmDescription", { name: supplier.name })}
+                loading={isDeleting}
+            />
+        </>
     );
 }

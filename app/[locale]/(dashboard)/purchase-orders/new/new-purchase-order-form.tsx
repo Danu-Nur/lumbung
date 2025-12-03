@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { createPurchaseOrder } from '@/features/purchase-orders/actions';
-import { SupplierDialog } from '@/components/domain/suppliers/supplier-dialog';
+import { SupplierCreateModal } from '@/components/domain/suppliers/supplier-create-modal';
 
 interface LineItem {
     productId: string;
@@ -82,7 +82,7 @@ export function NewPurchaseOrderForm({ suppliers, warehouses, products }: NewPur
 
     return (
         <>
-            <SupplierDialog
+            <SupplierCreateModal
                 open={isSupplierDialogOpen}
                 onOpenChange={setIsSupplierDialogOpen}
                 onSuccess={handleSupplierCreated}

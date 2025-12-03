@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Warehouse as WarehouseIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Pagination } from '@/components/shared/pagination';
+import { SearchInput } from '@/components/shared/search-input';
 import { PageHeader } from '@/components/shared/page-header';
 import {
     Table,
@@ -17,15 +18,28 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { getTranslations } from 'next-intl/server';
+import { WarehouseModalManager } from '@/components/domain/warehouses/warehouse-modal-manager';
+import { WarehouseActions } from '@/components/domain/warehouses/warehouse-actions';
 
-async function getWarehouses(organizationId: string, page: number = 1, pageSize: number = 10) {
+async function getWarehouses(organizationId: string, page: number = 1, pageSize: number = 10, query: string = '') {
     const skip = (page - 1) * pageSize;
+    const where: any = {
+        organizationId,
+        deletedAt: null,
+    };
+
+    if (query) {
+        where.OR = [
+            { name: { contains: query } },
+            { code: { contains: query } },
+            { city: { contains: query } },
+            { address: { contains: query } },
+        ];
+    }
+
     const [warehouses, total] = await Promise.all([
         prisma.warehouse.findMany({
-            where: {
-                organizationId,
-                deletedAt: null,
-            },
+            where,
             include: {
                 _count: {
                     select: { inventoryItems: true },
@@ -36,10 +50,7 @@ async function getWarehouses(organizationId: string, page: number = 1, pageSize:
             take: pageSize,
         }),
         prisma.warehouse.count({
-            where: {
-                organizationId,
-                deletedAt: null,
-            },
+            where,
         }),
     ]);
 
@@ -62,41 +73,48 @@ export default async function WarehousesPage({ searchParams }: WarehousesPagePro
     const params = await searchParams;
     const page = Number(params?.page) || 1;
     const pageSize = Number(params?.pageSize) || 10;
+    const query = params?.q?.toString() || '';
 
-    const { warehouses, total } = await getWarehouses(session.user.organizationId, page, pageSize);
+    const { warehouses, total } = await getWarehouses(session.user.organizationId, page, pageSize, query);
     const totalPages = Math.ceil(total / pageSize);
 
     return (
         <div className="space-y-6">
+            <WarehouseModalManager warehouses={warehouses} />
             <PageHeader
                 title={t('title')}
                 description={t('description')}
                 help={{
                     title: t('help.title'),
-                    sections: [
-                        {
-                            heading: t('help.purpose.heading'),
-                            content: t('help.purpose.content'),
-                        },
-                        {
-                            heading: 'Features',
-                            content: (
-                                <ul className="list-disc list-inside space-y-1">
-                                    <li><strong>Add Warehouse:</strong> Create new storage locations.</li>
-                                    <li><strong>Active Status:</strong> Toggle warehouses on/off.</li>
-                                    <li><strong>Inventory:</strong> View stock levels per warehouse.</li>
-                                </ul>
-                            ),
-                        },
-                    ],
+                    children: (
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">{t('help.purpose.heading')}</h3>
+                                <div className="text-sm text-muted-foreground">{t('help.purpose.content')}</div>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-base mb-1">Features</h3>
+                                <div className="text-sm text-muted-foreground">
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li><strong>Add Warehouse:</strong> Create new storage locations.</li>
+                                        <li><strong>Active Status:</strong> Toggle warehouses on/off.</li>
+                                        <li><strong>Inventory:</strong> View stock levels per warehouse.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )
                 }}
                 actions={
-                    <Link href="/warehouses/new">
-                        <Button>
-                            <Plus className="w-4 h-4 mr-2" />
-                            {tCommon('buttons.add')}
-                        </Button>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <SearchInput placeholder={tCommon('buttons.search')} />
+                        <Link href="?modal=create">
+                            <Button>
+                                <Plus className="w-4 h-4 mr-2" />
+                                {tCommon('buttons.add')}
+                            </Button>
+                        </Link>
+                    </div>
                 }
             />
 
@@ -111,7 +129,7 @@ export default async function WarehousesPage({ searchParams }: WarehousesPagePro
                             <p className="text-muted-foreground mb-4">
                                 {tCommon('table.noData')}
                             </p>
-                            <Link href="/warehouses/new">
+                            <Link href="?modal=create">
                                 <Button>
                                     <Plus className="w-4 h-4 mr-2" />
                                     {tCommon('buttons.add')}
@@ -152,11 +170,7 @@ export default async function WarehousesPage({ searchParams }: WarehousesPagePro
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <Link href={`/warehouses/${warehouse.id}`}>
-                                                    <Button variant="outline" size="sm">
-                                                        {tCommon('buttons.edit')}
-                                                    </Button>
-                                                </Link>
+                                                <WarehouseActions warehouse={warehouse} />
                                             </TableCell>
                                         </TableRow>
                                     ))}

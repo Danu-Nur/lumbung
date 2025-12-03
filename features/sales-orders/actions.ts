@@ -77,7 +77,7 @@ export async function createSalesOrder(formData: FormData) {
     });
 
     revalidatePath('/sales-orders');
-    redirect('/sales-orders');
+    return order;
 }
 
 export async function fulfillSalesOrder(orderId: string) {
