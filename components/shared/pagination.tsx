@@ -75,9 +75,9 @@ export function Pagination({
                     })}
                 </div>
             )}
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center space-x-2">
                 <div className="flex items-center space-x-2">
-                    <p className="text-sm font-medium">{t('rowsPerPage')}</p>
+                    <p className="text-sm font-medium text-nowrap">{t('rowsPerPage')}</p>
                     <Select
                         value={pageSize.toString()}
                         onValueChange={handlePageSizeChange}
@@ -94,10 +94,10 @@ export function Pagination({
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+                <div className="flex w-[100px] items-center text-nowrap justify-center text-sm font-medium mx-2">
                     {t('pageOf', { current: currentPage, total: totalPages })}
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mx-auto">
                     <Button
                         variant="outline"
                         className="hidden h-8 w-8 p-0 lg:flex"

@@ -356,8 +356,11 @@ For issues and questions:
 Built with ❤️ using Next.js, Prisma, and PostgreSQL
 
 
+
 ```
 lumbung
+├─ add-translations-en.ps1
+├─ add-translations-id.ps1
 ├─ app
 │  ├─ api
 │  │  └─ auth
@@ -458,6 +461,7 @@ lumbung
 │  │  │  ├─ adjustment-create-modal.tsx
 │  │  │  ├─ adjustment-edit-modal.tsx
 │  │  │  ├─ adjustment-modal-manager.tsx
+│  │  │  ├─ adjustment-row-modal.tsx
 │  │  │  └─ adjustment-show-modal.tsx
 │  │  ├─ categories
 │  │  │  ├─ category-actions.tsx
@@ -586,6 +590,7 @@ lumbung
 │  ├─ users
 │  └─ warehouses
 │     └─ actions.ts
+├─ fix-id-json.ps1
 ├─ hooks
 │  └─ use-media-query.ts
 ├─ i18n
@@ -606,7 +611,9 @@ lumbung
 │  │  ├─ purchaseOrderService.ts
 │  │  ├─ salesOrderService.ts
 │  │  └─ supplierService.ts
-│  └─ utils.ts
+│  ├─ utils.ts
+│  └─ validations
+│     └─ adjustment.ts
 ├─ lint_report.txt
 ├─ messages
 │  ├─ en.json

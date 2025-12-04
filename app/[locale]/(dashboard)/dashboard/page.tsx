@@ -141,7 +141,7 @@ export default async function DashboardPage() {
             </div>
 
             {/* Charts Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="h-[350px] col-span-2">
                     <SalesChart data={salesChartData} />
                 </div>
@@ -149,36 +149,31 @@ export default async function DashboardPage() {
                     <StockDistributionChart data={stockDistributionData} />
                 </div>
 
-                <div className="h-auto md:h-[350px]">
+                {/* <div className="h-auto md:h-[350px]">
                     <SettingsQuickLinksCard />
-                </div>
+                </div> */}
             </div>
 
             {/* Widgets Grid */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 {/* Left Column */}
                 <div className="space-y-6">
-                    <div className="h-auto md:h-[350px]">
+                    <div className="h-auto md:h-[537px]">
                         <LowStockItemsCard items={lowStockItems} />
                     </div>
-                    <div className="h-auto md:h-[350px]">
-                        <WarehouseOverviewCard data={warehouseData} />
-                    </div>
-                    <div className="h-auto md:h-[350px]">
+
+                    <div className="h-auto md:h-[537px]">
                         <AdjustmentOverviewCard data={adjustmentData} />
                     </div>
                 </div>
 
                 {/* Middle Column */}
                 <div className="space-y-6">
-                    <div className="h-auto md:h-[350px]">
+                    <div className="h-auto md:h-[725px]">
                         <RecentInventoryChangesCard changes={recentChanges} />
                     </div>
                     <div className="h-auto md:h-[350px]">
-                        <TransferOverviewCard data={transferData} />
-                    </div>
-                    <div className="h-auto md:h-[350px]">
-                        <PurchaseOverviewCard data={purchaseData} />
+                        <WarehouseOverviewCard data={warehouseData} />
                     </div>
 
                 </div>
@@ -188,14 +183,11 @@ export default async function DashboardPage() {
                     <div className="h-auto md:h-[350px]">
                         <SalesOverviewCard data={salesData} />
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-6">
-                        <div className="h-auto md:h-[350px]">
-                            <CustomersOverviewCard data={customerData} />
-                        </div>
-                        <div className="h-auto md:h-[350px]">
-                            <SuppliersOverviewCard data={supplierData} />
-                        </div>
+                    <div className="h-auto md:h-[350px]">
+                        <TransferOverviewCard data={transferData} />
+                    </div>
+                    <div className="h-auto md:h-[350px]">
+                        <PurchaseOverviewCard data={purchaseData} />
                     </div>
 
                 </div>

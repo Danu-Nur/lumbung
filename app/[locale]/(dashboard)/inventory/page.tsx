@@ -174,7 +174,7 @@ export default async function InventoryPage({
                                         <TableHead>{t('columns.category')}</TableHead>
                                         <TableHead className="text-right">{t('columns.sellingPrice')}</TableHead>
                                         <TableHead className="text-right">{t('columns.totalStock')}</TableHead>
-                                        <TableHead className="text-right">{tCommon('table.actions')}</TableHead>
+                                        <TableHead className="text-center">{tCommon('table.actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -213,7 +213,7 @@ export default async function InventoryPage({
                                                         {totalStock} {product.unit}
                                                     </Badge>
                                                 </TableCell>
-                                                <TableCell className="text-right">
+                                                <TableCell className="text-center">
                                                     <InventoryActions product={product} warehouses={warehouses} />
                                                 </TableCell>
                                             </TableRow>

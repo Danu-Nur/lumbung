@@ -49,7 +49,7 @@ export function InventoryActions({ product, warehouses }: InventoryActionsProps)
     };
 
     return (
-        <>
+        <div className="flex items-center gap-2 justify-center">
             <ActionColumn
                 onView={handleView}
                 onEdit={handleEdit}
@@ -76,6 +76,6 @@ export function InventoryActions({ product, warehouses }: InventoryActionsProps)
                 product={product}
                 warehouses={warehouses}
             />
-        </>
+        </div>
     );
 }
