@@ -18,12 +18,16 @@ interface DashboardActivitySectionProps {
     warehouseData: any;
 }
 
+import { useTranslations } from "next-intl";
+
 export function DashboardActivitySection({
     recentProducts,
     lowStockItems,
     recentChanges,
     warehouseData
 }: DashboardActivitySectionProps) {
+    const t = useTranslations('dashboard.activity');
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
             {/* Recently Added Products */}
@@ -31,13 +35,13 @@ export function DashboardActivitySection({
                 <CardHeader className="shrink-0 flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="flex items-center space-x-2 text-base sm:text-lg font-medium">
                         <PackagePlus className="w-4 h-4 text-primary" />
-                        <span>Recently Added</span>
+                        <span>{t('recentlyAdded.title')}</span>
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 min-h-0 overflow-y-auto pt-2">
                     {recentProducts.length === 0 ? (
                         <p className="text-sm text-muted-foreground text-center py-4">
-                            No products added recently
+                            {t('recentlyAdded.empty')}
                         </p>
                     ) : (
                         <div className="space-y-3">
@@ -51,7 +55,7 @@ export function DashboardActivitySection({
                                             {product.name}
                                         </p>
                                         <p className="text-xs text-muted-foreground truncate">
-                                            SKU: {product.sku}
+                                            {t('sku')}: {product.sku}
                                         </p>
                                     </div>
                                     <div className="text-right shrink-0">

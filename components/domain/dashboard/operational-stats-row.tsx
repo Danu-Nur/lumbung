@@ -12,31 +12,33 @@ interface OperationalStatsRowProps {
 }
 
 export function OperationalStatsRow({ data }: OperationalStatsRowProps) {
+    const t = useTranslations('dashboard.metrics.operational');
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             <StatsCard
-                title="Total Customers"
+                title={t('customers')}
                 value={data.totalCustomers}
                 icon={Users}
                 color="blue"
                 variant="filled"
             />
             <StatsCard
-                title="Total Suppliers"
+                title={t('suppliers')}
                 value={data.totalSuppliers}
                 icon={Building2}
                 color="purple"
                 variant="filled"
             />
             <StatsCard
-                title="Total Products"
+                title={t('products')}
                 value={data.totalProducts}
                 icon={Package}
                 color="green"
                 variant="filled"
             />
             <StatsCard
-                title="Total Sales Invoices"
+                title={t('invoices')}
                 value={data.totalSalesInvoices}
                 icon={FileText}
                 color="orange"

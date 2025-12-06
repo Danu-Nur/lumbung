@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
+import { useTranslations } from 'next-intl';
 
 interface DashboardChartsSectionProps {
     monthlyData: {
@@ -21,10 +22,12 @@ interface DashboardChartsSectionProps {
 const COLORS = ['#10b981', '#ef4444', '#f59e0b']; // emerald, red, amber
 
 export function DashboardChartsSection({ monthlyData, yearlyData }: DashboardChartsSectionProps) {
+    const t = useTranslations('dashboard.charts');
+
     const pieData = [
-        { name: 'Sales', value: yearlyData.sales },
-        { name: 'Purchase', value: yearlyData.purchase },
-        { name: 'Profit', value: yearlyData.profit > 0 ? yearlyData.profit : 0 },
+        { name: t('sales'), value: yearlyData.sales },
+        { name: t('purchase'), value: yearlyData.purchase },
+        { name: t('profit'), value: yearlyData.profit > 0 ? yearlyData.profit : 0 },
     ];
 
     return (
@@ -32,7 +35,7 @@ export function DashboardChartsSection({ monthlyData, yearlyData }: DashboardCha
             {/* Area Chart - Monthly Data */}
             <Card className="lg:col-span-2 shadow-sm">
                 <CardHeader>
-                    <CardTitle className="text-base sm:text-lg font-semibold">Financial Overview (Monthly)</CardTitle>
+                    <CardTitle className="text-base sm:text-lg font-semibold">{t('financial')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="h-[300px] sm:h-[350px] w-full">
@@ -74,9 +77,9 @@ export function DashboardChartsSection({ monthlyData, yearlyData }: DashboardCha
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                 />
                                 <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                                <Area type="monotone" dataKey="sales" name="Sales" stroke="#10b981" fillOpacity={1} fill="url(#colorSales)" strokeWidth={2} />
-                                <Area type="monotone" dataKey="purchase" name="Purchase" stroke="#ef4444" fillOpacity={1} fill="url(#colorPurchase)" strokeWidth={2} />
-                                <Area type="monotone" dataKey="profit" name="Profit" stroke="#f59e0b" fillOpacity={1} fill="url(#colorProfit)" strokeWidth={2} />
+                                <Area type="monotone" dataKey="sales" name={t('sales')} stroke="#10b981" fillOpacity={1} fill="url(#colorSales)" strokeWidth={2} />
+                                <Area type="monotone" dataKey="purchase" name={t('purchase')} stroke="#ef4444" fillOpacity={1} fill="url(#colorPurchase)" strokeWidth={2} />
+                                <Area type="monotone" dataKey="profit" name={t('profit')} stroke="#f59e0b" fillOpacity={1} fill="url(#colorProfit)" strokeWidth={2} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
@@ -86,7 +89,7 @@ export function DashboardChartsSection({ monthlyData, yearlyData }: DashboardCha
             {/* Pie Chart - Yearly Data */}
             <Card className="shadow-sm">
                 <CardHeader>
-                    <CardTitle className="text-base sm:text-lg font-semibold">Composition (Yearly)</CardTitle>
+                    <CardTitle className="text-base sm:text-lg font-semibold">{t('composition')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="h-[300px] sm:h-[350px] w-full">

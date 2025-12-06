@@ -18,25 +18,25 @@ export function FinancialStatsRow({ data }: FinancialStatsRowProps) {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             <StatsCard
-                title="Total Purchase"
+                title={t('financial.purchase')}
                 value={formatCurrency(data.totalPurchases)}
                 icon={ShoppingCart}
                 color="blue"
             />
             <StatsCard
-                title="Total Stock Value"
+                title={t('financial.stockValue')}
                 value={formatCurrency(data.totalStockValue)}
                 icon={Package}
                 color="purple"
             />
             <StatsCard
-                title="Total Sales"
+                title={t('financial.sales')}
                 value={formatCurrency(data.totalSales)}
                 icon={DollarSign}
                 color="green"
             />
             <StatsCard
-                title="Profit"
+                title={t('financial.profit')}
                 value={formatCurrency(data.profit)}
                 icon={TrendingUp}
                 color="orange"

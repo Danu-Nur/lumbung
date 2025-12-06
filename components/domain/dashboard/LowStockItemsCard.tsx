@@ -61,7 +61,7 @@ export function LowStockItemsCard({ items }: LowStockItemsCardProps) {
                                         {item.quantityOnHand} {item.product.unit}
                                     </Badge>
                                     <p className="text-[10px] text-muted-foreground">
-                                        Min: {item.product.lowStockThreshold}
+                                        {t('min')} {item.product.lowStockThreshold}
                                     </p>
                                 </div>
                             </div>

@@ -98,40 +98,35 @@
     "title": "Dashboard",
     "welcome_back": "Welcome back",
     "metrics": {
-      "total_products": {
-        "title": "Total Products"
+      "financial": {
+        "title": "Financial Overview",
+        "purchase": "Total Purchase",
+        "stockValue": "Total Stock Value",
+        "sales": "Total Sales",
+        "profit": "Profit"
       },
-      "total_stock_value": {
-        "title": "Total Stock Value"
-      },
-      "active_orders": {
-        "title": "Active Orders"
-      },
-      "low_stock_items": {
-        "title": "Low Stock Items"
+      "operational": {
+        "title": "Operational Overview",
+        "customers": "Total Customers",
+        "suppliers": "Total Suppliers",
+        "products": "Total Products",
+        "invoices": "Total Sales Invoices"
       }
     },
-    "low_stock_alert": {
-      "title": "Low Stock Items"
+    "charts": {
+      "financial": "Financial Overview (Monthly)",
+      "composition": "Composition (Yearly)",
+      "sales": "Sales",
+      "purchase": "Purchase",
+      "profit": "Profit"
     },
-    "recent_inventory_changes": {
-      "title": "Recent Inventory Changes"
-    },
-    "help": {
-      "buttonLabel": "Help",
-      "title": "Dashboard Help",
-      "description": "Explanation and how to use this page.",
-      "overview": {
-        "heading": "Overview",
-        "content": "The Dashboard provides an overview of your inventory status."
+    "activity": {
+      "title": "Activity & Status",
+      "recentlyAdded": {
+        "title": "Recently Added",
+        "empty": "No products added recently"
       },
-      "metrics": {
-        "heading": "Metrics",
-        "total_products": "Total Products: Number of active products.",
-        "total_stock_value": "Total Stock Value: Value of all items in stock (Cost Price × Quantity).",
-        "active_orders": "Active Orders: Sales orders that are in Draft or Confirmed status.",
-        "low_stock_items": "Low Stock Items: Items that have fallen below their minimum stock level."
-      }
+      "sku": "SKU"
     },
     "widgets": {
       "suppliers": {
@@ -181,23 +176,40 @@
       "lowStock": {
         "title": "Low Stock Items",
         "viewAll": "View All",
-        "empty": "All items are well stocked!"
+        "empty": "All items are well stocked!",
+        "min": "Min:"
       },
       "customers": {
         "newest": "Newest Customers",
         "title": "Customers Overview",
         "totalCustomers": "Total Customers"
       }
+    }
+  },
+  "help": {
+    "buttonLabel": "Help",
+    "title": "Dashboard Help",
+    "description": "Explanation and how to use this page.",
+    "overview": {
+      "heading": "Overview",
+      "content": "The Dashboard provides an overview of your inventory status."
     },
-    "charts": {
-      "sales": {
-        "title": "Sales Last 7 Days",
-        "sales": "Sales"
-      },
-      "stockDistribution": {
-        "title": "Stock Value by Warehouse",
-        "empty": "No stock data available"
-      }
+    "metrics": {
+      "heading": "Metrics",
+      "total_products": "Total Products: Number of active products.",
+      "total_stock_value": "Total Stock Value: Value of all items in stock (Cost Price × Quantity).",
+      "active_orders": "Active Orders: Sales orders that are in Draft or Confirmed status.",
+      "low_stock_items": "Low Stock Items: Items that have fallen below their minimum stock level."
+    }
+  },
+  "charts": {
+    "sales": {
+      "title": "Sales Last 7 Days",
+      "sales": "Sales"
+    },
+    "stockDistribution": {
+      "title": "Stock Value by Warehouse",
+      "empty": "No stock data available"
     }
   },
   "inventory": {
