@@ -203,6 +203,11 @@
   "inventory": {
     "title": "Inventory",
     "description": "Manage your product inventory across warehouses",
+    "tabs": {
+      "stock": "Inventory List",
+      "transfers": "Stock Transfers",
+      "adjustments": "Stock Adjustments"
+    },
     "columns": {
       "product": "Product",
       "sku": "SKU",

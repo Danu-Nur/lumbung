@@ -3,7 +3,14 @@ import { SalesOrderStatus, PurchaseOrderStatus } from "@prisma/client";
 
 export const dashboardService = {
     async getDashboardStats(organizationId: string) {
-        const [totalProducts, inventoryItems, activeSalesOrders, lowStockItems] = await Promise.all([
+        const [
+            totalProducts,
+            inventoryItems,
+            activeSalesOrders,
+            lowStockItems,
+            salesAgg,
+            purchaseAgg
+        ] = await Promise.all([
             prisma.product.count({
                 where: { organizationId, deletedAt: null },
             }),
@@ -18,6 +25,14 @@ export const dashboardService = {
                 where: { product: { organizationId, deletedAt: null } },
                 include: { product: true, warehouse: true },
             }),
+            prisma.salesOrder.aggregate({
+                where: { organizationId, status: { not: SalesOrderStatus.CANCELLED } },
+                _sum: { total: true },
+            }),
+            prisma.purchaseOrder.aggregate({
+                where: { organizationId, status: { not: PurchaseOrderStatus.CANCELLED } },
+                _sum: { total: true },
+            }),
         ]);
 
         const totalStockValue = inventoryItems.reduce((sum, item) => {
@@ -28,11 +43,18 @@ export const dashboardService = {
             (item) => item.quantityOnHand <= item.product.lowStockThreshold
         ).length;
 
+        const totalSales = Number(salesAgg._sum.total || 0);
+        const totalPurchases = Number(purchaseAgg._sum.total || 0);
+        const profit = totalSales - totalPurchases;
+
         return {
             totalProducts,
             totalStockValue,
             activeSalesOrders,
             lowStockCount,
+            totalSales,
+            totalPurchases,
+            profit
         };
     },
 
@@ -295,5 +317,103 @@ export const dashboardService = {
                 return sum + item.quantityOnHand * Number(item.product.costPrice);
             }, 0),
         })).filter(item => item.value > 0);
+    },
+    async getOperationalStats(organizationId: string) {
+        const [totalCustomers, totalSuppliers, totalProducts, totalSalesInvoices] = await Promise.all([
+            prisma.customer.count({ where: { organizationId } }),
+            prisma.supplier.count({ where: { organizationId } }),
+            prisma.product.count({ where: { organizationId, deletedAt: null } }),
+            prisma.salesOrder.count({ where: { organizationId, status: { not: SalesOrderStatus.CANCELLED } } }),
+        ]);
+
+        return {
+            totalCustomers,
+            totalSuppliers,
+            totalProducts,
+            totalSalesInvoices,
+        };
+    },
+
+    async getFinancialAnalytics(organizationId: string) {
+        const today = new Date();
+        const startOfYear = new Date(today.getFullYear(), 0, 1);
+        const endOfYear = new Date(today.getFullYear(), 11, 31, 23, 59, 59);
+
+        // Fetch all relevant orders for the year
+        const [sales, purchases] = await Promise.all([
+            prisma.salesOrder.findMany({
+                where: {
+                    organizationId,
+                    createdAt: { gte: startOfYear, lte: endOfYear },
+                    status: { not: SalesOrderStatus.CANCELLED },
+                },
+                select: { createdAt: true, total: true },
+            }),
+            prisma.purchaseOrder.findMany({
+                where: {
+                    organizationId,
+                    createdAt: { gte: startOfYear, lte: endOfYear },
+                    status: { not: PurchaseOrderStatus.CANCELLED },
+                },
+                select: { createdAt: true, total: true },
+            }),
+        ]);
+
+        const monthlyStats = Array.from({ length: 12 }, (_, i) => ({
+            month: new Date(today.getFullYear(), i, 1).toLocaleString('default', { month: 'short' }),
+            sales: 0,
+            purchase: 0,
+            profit: 0,
+            rawDate: new Date(today.getFullYear(), i, 1),
+        }));
+
+        let yearlyStats = {
+            sales: 0,
+            purchase: 0,
+            profit: 0,
+        };
+
+        // Aggregate Sales
+        sales.forEach(order => {
+            const month = order.createdAt.getMonth();
+            const val = Number(order.total);
+            if (monthlyStats[month]) {
+                monthlyStats[month].sales += val;
+                monthlyStats[month].profit += val;
+            }
+            yearlyStats.sales += val;
+            yearlyStats.profit += val;
+        });
+
+        // Aggregate Purchases
+        purchases.forEach(order => {
+            const month = order.createdAt.getMonth();
+            const val = Number(order.total);
+            if (monthlyStats[month]) {
+                monthlyStats[month].purchase += val;
+                monthlyStats[month].profit -= val;
+            }
+            yearlyStats.purchase += val;
+            yearlyStats.profit -= val;
+        });
+
+        return {
+            monthly: monthlyStats,
+            yearly: yearlyStats,
+        };
+    },
+
+    async getRecentProducts(organizationId: string, limit = 5) {
+        return await prisma.product.findMany({
+            where: { organizationId, deletedAt: null },
+            orderBy: { createdAt: 'desc' },
+            take: limit,
+            select: {
+                id: true,
+                name: true,
+                sku: true,
+                createdAt: true,
+            }
+        });
     },
 };

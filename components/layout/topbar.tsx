@@ -10,10 +10,32 @@ import Link from 'next/link';
 import { MobileSidebar } from './sidebar';
 import { useTranslations } from 'next-intl';
 
+import { usePathname } from 'next/navigation';
+
 export function Topbar() {
     const { data: session } = useSession();
     const [showDropdown, setShowDropdown] = useState(false);
     const t = useTranslations('common.topbar');
+    const tNav = useTranslations('common.nav');
+    const pathname = usePathname();
+
+    const getPageTitle = (path: string | null) => {
+        if (!path) return tNav('dashboard');
+        // Strip locale
+        const cleanPath = path.replace(/^\/(en|id)/, '') || '/';
+
+        if (cleanPath === '/' || cleanPath === '/dashboard') return tNav('dashboard');
+        if (cleanPath.startsWith('/inventory')) return tNav('inventory');
+        if (cleanPath.startsWith('/sales-orders')) return tNav('sales');
+        if (cleanPath.startsWith('/purchase-orders')) return tNav('purchases');
+        if (cleanPath.startsWith('/warehouses')) return tNav('warehouses');
+        if (cleanPath.startsWith('/categories')) return tNav('categories');
+        if (cleanPath.startsWith('/customers')) return tNav('customers');
+        if (cleanPath.startsWith('/suppliers')) return tNav('suppliers');
+        if (cleanPath.startsWith('/settings')) return tNav('settings');
+
+        return tNav('dashboard');
+    };
 
     return (
         <header className="h-14 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-30">
@@ -21,14 +43,11 @@ export function Topbar() {
                 {/* Mobile Menu */}
                 <MobileSidebar />
 
-                {/* Organization Name */}
+                {/* Page Title */}
                 <div>
                     <h1 className="text-lg font-semibold text-foreground">
-                        {session?.user?.organizationName || t('defaultOrg')}
+                        {getPageTitle(pathname)}
                     </h1>
-                    <p className="text-xs text-muted-foreground hidden sm:block">
-                        {session?.user?.roleName || t('guest')}
-                    </p>
                 </div>
             </div>
 

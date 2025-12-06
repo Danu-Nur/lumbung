@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import {
     LayoutDashboard,
@@ -53,6 +54,7 @@ function isLinkActive(pathname: string | null, href: string): boolean {
 }
 
 export function Sidebar({ className }: SidebarProps) {
+    const { data: session } = useSession();
     const pathname = usePathname();
     const t = useTranslations('common.nav');
     const tSidebar = useTranslations('common.sidebar');
@@ -64,8 +66,7 @@ export function Sidebar({ className }: SidebarProps) {
         { name: t('sales'), href: '/sales-orders', icon: ShoppingCart },
         { name: t('purchases'), href: '/purchase-orders', icon: ShoppingBag },
         { name: t('warehouses'), href: '/warehouses', icon: Warehouse },
-        { name: t('transfers'), href: '/transfers', icon: ArrowLeftRight },
-        { name: t('adjustments'), href: '/adjustments', icon: ClipboardList },
+
         { name: t('customers'), href: '/customers', icon: Users },
         { name: t('suppliers'), href: '/suppliers', icon: Building2 },
         { name: t('settings'), href: '/settings', icon: Settings },
@@ -88,6 +89,18 @@ export function Sidebar({ className }: SidebarProps) {
                         {tSidebar('logo')}
                     </span>
                 </Link>
+            </div>
+
+            {/* Organization Info */}
+            <div className="px-4 py-4 border-b border-border">
+                <div className="flex flex-col">
+                    <h2 className="text-sm font-semibold text-foreground truncate">
+                        {session?.user?.organizationName || tSidebar('defaultOrg')}
+                    </h2>
+                    <p className="text-xs text-muted-foreground truncate">
+                        {session?.user?.roleName || tSidebar('guest')}
+                    </p>
+                </div>
             </div>
 
             {/* Navigation */}
@@ -125,6 +138,7 @@ export function Sidebar({ className }: SidebarProps) {
 }
 
 export function MobileSidebar() {
+    const { data: session } = useSession();
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
     const t = useTranslations('common.nav');
@@ -137,8 +151,7 @@ export function MobileSidebar() {
         { name: t('sales'), href: '/sales-orders', icon: ShoppingCart },
         { name: t('purchases'), href: '/purchase-orders', icon: ShoppingBag },
         { name: t('warehouses'), href: '/warehouses', icon: Warehouse },
-        { name: t('transfers'), href: '/transfers', icon: ArrowLeftRight },
-        { name: t('adjustments'), href: '/adjustments', icon: ClipboardList },
+
         { name: t('customers'), href: '/customers', icon: Users },
         { name: t('suppliers'), href: '/suppliers', icon: Building2 },
         { name: t('settings'), href: '/settings', icon: Settings },
@@ -172,6 +185,18 @@ export function MobileSidebar() {
                             {tSidebar('logo')}
                         </span>
                     </Link>
+                </div>
+
+                {/* Organization Info */}
+                <div className="px-4 py-4 border-b border-border">
+                    <div className="flex flex-col">
+                        <h2 className="text-sm font-semibold text-foreground truncate">
+                            {session?.user?.organizationName || tSidebar('defaultOrg')}
+                        </h2>
+                        <p className="text-xs text-muted-foreground truncate">
+                            {session?.user?.roleName || tSidebar('guest')}
+                        </p>
+                    </div>
                 </div>
 
                 {/* Navigation */}

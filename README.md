@@ -51,6 +51,7 @@ lumbung
 │  ├─ [locale]              # Route utama dengan i18n
 │  │  ├─ (auth)             # Login & Register
 │  │  ├─ (dashboard)        # Modul aplikasi (Inventory, Sales, dll)
+│  │  ├─ (marketing)        # Modul aplikasi (Landing, Pricing, dll)
 │  │  └─ api                # Public API endpoints
 │  └─ api                   # Global API (Auth)
 ├─ components
@@ -169,7 +170,7 @@ Ikuti langkah ini untuk menjalankan proyek di lokal:
 *   **Role-Based**: User memiliki role (SuperAdmin, Admin, dll) yang menentukan hak akses fitur (diimplementasikan via `RolePermission`).
 
 ## Internationalization (i18n)
-
+****
 Aplikasi mendukung multi-bahasa menggunakan `next-intl`.
 *   File translasi ada di folder `/messages` (`id.json`, `en.json`).
 *   Bahasa default adalah **Indonesia (id)**.
@@ -177,4 +178,4 @@ Aplikasi mendukung multi-bahasa menggunakan `next-intl`.
 
 ## Lisensi
 
-[MIT License](LICENSE)
+[MIT License](LICENSE)****

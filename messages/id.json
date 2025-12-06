@@ -175,14 +175,14 @@
       }
     },
     "help": {
-      "title": "Dashboard Help",
+      "title": "Bantuan Dashboard",
       "description": "Penjelasan dan cara penggunaan halaman ini.",
       "overview": {
-        "heading": "Overview",
+        "heading": "Ikhtisar",
         "content": "Dashboard memberikan gambaran umum status inventaris Anda."
       },
       "metrics": {
-        "heading": "Metrics",
+        "heading": "Metrik",
         "total_products": "Total Produk: Jumlah produk aktif.",
         "total_stock_value": "Total Nilai Stok: Nilai total semua item di stok (Harga Pokok × Jumlah).",
         "active_orders": "Pesanan Aktif: Pesanan penjualan yang sedang dalam status Draft atau Confirmed.",
@@ -193,6 +193,11 @@
   "inventory": {
     "title": "Inventaris",
     "description": "Kelola stok produk Anda di seluruh gudang",
+    "tabs": {
+      "stock": "Daftar Inventaris",
+      "transfers": "Transfer Stok",
+      "adjustments": "Penyesuaian Stok"
+    },
     "columns": {
       "product": "Produk",
       "sku": "SKU",
@@ -206,6 +211,7 @@
     },
     "help": {
       "title": "Panduan Inventaris",
+      "buttonLabel": "Panduan",
       "purpose": {
         "heading": "Tujuan",
         "content": "Halaman ini menampilkan jumlah stok setiap barang di setiap gudang secara real-time."
@@ -217,8 +223,7 @@
         "available": "Stok Tersedia",
         "ordered": "Stok Dipesan",
         "minStock": "Batas Minimum Stok"
-      },
-      "buttonLabel": "Panduan"
+      }
     },
     "form": {
       "createDescription": "Tambahkan produk baru ke inventaris Anda.",
@@ -281,13 +286,6 @@
       "reasonPlaceholder": "Alasan penyesuaian",
       "reason": "Alasan",
       "selectWarehouse": "Pilih gudang"
-    },
-    "units": {
-      "meter": "Meter",
-      "box": "Kotak",
-      "pcs": "Buah (pcs)",
-      "liter": "Liter",
-      "kg": "Kilogram (kg)"
     }
   },
   "categories": {
@@ -299,11 +297,11 @@
     },
     "help": {
       "title": "Panduan Kategori",
+      "buttonLabel": "Panduan",
       "purpose": {
         "heading": "Tujuan",
         "content": "Kategori digunakan untuk mengelompokkan produk agar lebih rapi dan mudah dicari."
-      },
-      "buttonLabel": "Panduan"
+      }
     },
     "form": {
       "namePlaceholder": "Nama Kategori",
