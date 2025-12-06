@@ -45,7 +45,7 @@ export function TransferShowModal({
             if (onSuccess) onSuccess();
         } catch (error: any) {
             console.error(error);
-            toast.error(error.message || "Action failed");
+            toast.error(error.message || tCommon("actions.operationFailed"));
         }
     };
 

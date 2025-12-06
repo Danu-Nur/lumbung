@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Category } from "@prisma/client";
 import { deleteCategory } from "@/features/categories/actions";
 import { ActionColumn } from "@/components/shared/action-column";
@@ -15,9 +15,17 @@ interface CategoryActionsProps {
 
 export function CategoryActions({ category }: CategoryActionsProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const t = useTranslations("common");
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleAction = (modal: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('modal', modal);
+        params.set('id', category.id);
+        router.push(`?${params.toString()}`, { scroll: false });
+    };
 
     const handleDelete = async () => {
         setIsDeleting(true);
@@ -37,8 +45,8 @@ export function CategoryActions({ category }: CategoryActionsProps) {
     return (
         <>
             <ActionColumn
-                onView={() => router.push(`?modal=show&id=${category.id}`, { scroll: false })}
-                onEdit={() => router.push(`?modal=edit&id=${category.id}`, { scroll: false })}
+                onView={() => handleAction('show')}
+                onEdit={() => handleAction('edit')}
                 onDelete={() => setDeleteOpen(true)}
             />
 
@@ -46,7 +54,7 @@ export function CategoryActions({ category }: CategoryActionsProps) {
                 open={deleteOpen}
                 onOpenChange={setDeleteOpen}
                 onConfirm={handleDelete}
-                title={t("actions.deleteTitle")}
+                title={t("actions.deleteConfirmTitle")}
                 description={t("actions.deleteConfirmDescription", { name: category.name })}
                 loading={isDeleting}
             />

@@ -112,18 +112,19 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
     ];
 
     // Export Handlers
+    // Export Handlers
     const handleExportExcel = (rows: SerializedProduct[]) => {
         const exportData = rows.map(row => ({
-            Name: row.name,
-            SKU: row.sku,
-            Category: row.category?.name || '-',
-            Price: row.sellingPrice,
-            Stock: row.inventoryItems.reduce((acc, item) => acc + item.quantityOnHand, 0),
-            Unit: row.unit,
+            [t('columns.product')]: row.name,
+            [t('columns.sku')]: row.sku,
+            [t('columns.category')]: row.category?.name || '-',
+            [t('columns.sellingPrice')]: row.sellingPrice,
+            [t('columns.totalStock')]: row.inventoryItems.reduce((acc, item) => acc + item.quantityOnHand, 0),
+            [t('columns.unit')]: row.unit,
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Inventory");
+        XLSX.utils.book_append_sheet(wb, ws, t('title'));
         XLSX.writeFile(wb, `inventory_export_${new Date().toISOString().slice(0, 10)}.xlsx`);
     };
 
@@ -138,7 +139,13 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
         ]);
 
         autoTable(doc, {
-            head: [['Name', 'SKU', 'Category', 'Price', 'Stock']],
+            head: [[
+                t('columns.product'),
+                t('columns.sku'),
+                t('columns.category'),
+                t('columns.sellingPrice'),
+                t('columns.totalStock')
+            ]],
             body: tableData,
         });
         doc.save(`inventory_export_${new Date().toISOString().slice(0, 10)}.pdf`);
@@ -168,7 +175,7 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
             onDelete={(rows) => {
                 console.log("Deleting rows", rows);
                 // Would implement batch delete server action here
-                alert(`Batch delete ${rows.length} items (Coming soon)`);
+                alert(tCommon("actions.comingSoon"));
             }}
         />
     );

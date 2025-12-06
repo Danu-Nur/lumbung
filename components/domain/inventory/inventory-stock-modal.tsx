@@ -31,14 +31,6 @@ import { useTranslations } from "next-intl";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-const formSchema = z.object({
-    warehouseId: z.string().min(1, "Warehouse is required"),
-    type: z.enum(["increase", "decrease"]),
-    quantity: z.coerce.number().min(1, "Quantity must be at least 1"),
-    reason: z.string().min(1, "Reason is required"),
-    notes: z.string().optional(),
-});
-
 interface InventoryStockModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -54,9 +46,18 @@ export function InventoryStockModal({
     warehouses,
     onSuccess,
 }: InventoryStockModalProps) {
-    const router = useRouter();
     const t = useTranslations("inventory");
     const tCommon = useTranslations("common");
+    const tValidation = useTranslations("common.validation");
+    const router = useRouter();
+
+    const formSchema = z.object({
+        warehouseId: z.string().min(1, tValidation("required")),
+        type: z.enum(["increase", "decrease"]),
+        quantity: z.coerce.number().min(1, tValidation("min", { min: 1 })),
+        reason: z.string().min(1, tValidation("required")),
+        notes: z.string().optional(),
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema) as any,

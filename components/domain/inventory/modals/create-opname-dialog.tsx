@@ -37,10 +37,7 @@ import { Textarea } from "@/components/ui/textarea"; // Assuming exists
 import { createOpname } from "@/lib/actions/opname";
 import { toast } from "sonner";
 
-const formSchema = z.object({
-    warehouseId: z.string().min(1, "Warehouse is required"),
-    notes: z.string().optional(),
-});
+
 
 interface CreateOpnameDialogProps {
     warehouses: { id: string; name: string }[];
@@ -49,7 +46,14 @@ interface CreateOpnameDialogProps {
 export function CreateOpnameDialog({ warehouses }: CreateOpnameDialogProps) {
     const t = useTranslations("opname.form");
     const tCommon = useTranslations("common.buttons");
+    const tActions = useTranslations("common.actions");
+    const tValidation = useTranslations("common.validation");
     const [open, setOpen] = useState(false);
+
+    const formSchema = z.object({
+        warehouseId: z.string().min(1, tValidation("required")),
+        notes: z.string().optional(),
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -70,12 +74,12 @@ export function CreateOpnameDialog({ warehouses }: CreateOpnameDialogProps) {
             const result = await createOpname(formData);
 
             if (result.success) {
-                toast.success("Opname created successfully");
+                toast.success(tActions("createSuccess"));
                 setOpen(false);
                 form.reset();
             }
         } catch (error) {
-            toast.error("Failed to create opname");
+            toast.error(tActions("createFailed"));
         }
     }
 
@@ -139,7 +143,7 @@ export function CreateOpnameDialog({ warehouses }: CreateOpnameDialogProps) {
                         />
                         <DialogFooter>
                             <Button type="submit" disabled={isSubmitting}>
-                                {isSubmitting ? "Creating..." : tCommon("create")}
+                                {isSubmitting ? tActions("create") : tCommon("create")}
                             </Button>
                         </DialogFooter>
                     </form>

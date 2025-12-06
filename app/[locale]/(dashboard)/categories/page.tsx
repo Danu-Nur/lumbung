@@ -1,26 +1,6 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { categoryService } from '@/lib/services/categoryService';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
-import { CategoryModalManager } from '@/components/domain/categories/category-modal-manager';
-import { CategoryActions } from '@/components/domain/categories/category-actions';
-import { Pagination } from '@/components/shared/pagination';
-import { SearchInput } from '@/components/shared/search-input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-import { PageHeader } from '@/components/shared/page-header';
-import { getTranslations } from 'next-intl/server';
+import { CategoriesListSection } from '@/components/domain/categories/sections/categories-list-section';
 
 export default async function CategoriesPage({
     searchParams,
@@ -33,120 +13,17 @@ export default async function CategoriesPage({
     const pageSize = Number(resolvedSearchParams.pageSize) || 10;
     const search = resolvedSearchParams.q || '';
 
-    const t = await getTranslations('categories');
-    const tCommon = await getTranslations('common');
-
-    if (!session?.user || !session.user.organizationId) {
+    if (!session?.user) {
         redirect('/login');
     }
 
-    const { data: categories, total, totalPages } = await categoryService.listCategories({
-        organizationId: session.user.organizationId,
-        search,
-        page,
-        pageSize,
-    });
-
-
-    const helpSections = [
-        {
-            heading: t('help.purpose.heading'),
-            content: t('help.purpose.content'),
-        },
-        {
-            heading: 'Penjelasan Kolom', // TODO: Add to translations if missing or use generic help keys
-            content: (
-                <ul className="list-disc pl-4 space-y-2">
-                    <li><strong>{t('columns.name')}:</strong> {t('columns.name')}</li>
-                    <li><strong>{t('columns.description')}:</strong> {t('columns.description')}</li>
-                </ul>
-            ),
-        },
-    ];
-
     return (
-        <div className="space-y-6">
-            <CategoryModalManager categories={categories} />
-            <PageHeader
-                title={t('title')}
-                description={t('description')}
-                help={{
-                    title: t('help.title'),
-                    children: (
-                        <div className="space-y-4">
-                            <div>
-                                <h3 className="font-semibold text-base mb-1">{t('help.purpose.heading')}</h3>
-                                <div className="text-sm text-muted-foreground">{t('help.purpose.content')}</div>
-                            </div>
-                            <div>
-                                <h3 className="font-semibold text-base mb-1">Penjelasan Kolom</h3>
-                                <div className="text-sm text-muted-foreground">
-                                    <ul className="list-disc pl-4 space-y-2">
-                                        <li><strong>{t('columns.name')}:</strong> {t('columns.name')}</li>
-                                        <li><strong>{t('columns.description')}:</strong> {t('columns.description')}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    )
-                }}
-                actions={
-                    <Link href="?modal=create">
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" /> {tCommon('buttons.add')} {t('title')}
-                        </Button>
-                    </Link>
-                }
+        <div className="w-full space-y-6">
+            <CategoriesListSection
+                page={page}
+                pageSize={pageSize}
+                search={search}
             />
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('title')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex items-center space-x-2 mb-4">
-                        <SearchInput placeholder={`${tCommon('buttons.search')}...`} />
-                    </div>
-
-                    <div className="border rounded-md">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>{t('columns.name')}</TableHead>
-                                    <TableHead>{t('columns.description')}</TableHead>
-                                    <TableHead className="w-[100px]">{tCommon('table.actions')}</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {categories.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={3} className="text-center py-10">
-                                            {tCommon('table.noData')}
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    categories.map((category) => (
-                                        <TableRow key={category.id}>
-                                            <TableCell className="font-medium">{category.name}</TableCell>
-                                            <TableCell>{category.description}</TableCell>
-                                            <TableCell>
-                                                <CategoryActions category={category} />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-
-                    <Pagination
-                        currentPage={page}
-                        totalPages={totalPages}
-                        pageSize={pageSize}
-                        totalItems={total}
-                    />
-                </CardContent>
-            </Card>
         </div>
     );
 }

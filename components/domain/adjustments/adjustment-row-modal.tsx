@@ -55,11 +55,21 @@ export function AdjustmentRowModal({
     const router = useRouter();
     const t = useTranslations("adjustments");
     const tCommon = useTranslations("common");
+    const tValidation = useTranslations("common.validation");
     const [history, setHistory] = useState<any[]>([]);
     const [loadingHistory, setLoadingHistory] = useState(false);
 
-    const form = useForm<AdjustmentFormValues>({
-        resolver: zodResolver(adjustmentFormSchema) as any,
+    const formSchema = z.object({
+        productId: z.string().min(1, tValidation("required")),
+        warehouseId: z.string().min(1, tValidation("required")),
+        adjustmentType: z.enum(["increase", "decrease"]),
+        quantity: z.coerce.number().min(1, tValidation("min", { min: 1 })),
+        reason: z.string().min(1, tValidation("required")),
+        notes: z.string().optional(),
+    });
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema) as any,
         defaultValues: {
             productId: product.id,
             warehouseId: warehouses.length === 1 ? warehouses[0].id : "",
@@ -96,7 +106,7 @@ export function AdjustmentRowModal({
         }
     };
 
-    const onSubmit = async (values: AdjustmentFormValues) => {
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
             const formData = new FormData();
             formData.append("productId", values.productId);

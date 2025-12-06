@@ -30,22 +30,6 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { LineItemsForm } from "@/components/shared/form/line-items-form";
 
-const lineItemSchema = z.object({
-    productId: z.string().min(1, "Product is required"),
-    productName: z.string(),
-    quantity: z.coerce.number().min(1, "Quantity must be at least 1"),
-});
-
-const formSchema = z.object({
-    fromWarehouseId: z.string().min(1, "Source warehouse is required"),
-    toWarehouseId: z.string().min(1, "Destination warehouse is required"),
-    notes: z.string().optional(),
-    items: z.array(lineItemSchema).min(1, "At least one item is required"),
-}).refine((data) => data.fromWarehouseId !== data.toWarehouseId, {
-    message: "Source and destination warehouses must be different",
-    path: ["toWarehouseId"],
-});
-
 interface TransferCreateModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -64,6 +48,23 @@ export function TransferCreateModal({
     const router = useRouter();
     const t = useTranslations("transfers");
     const tCommon = useTranslations("common");
+    const tValidation = useTranslations("common.validation");
+
+    const lineItemSchema = z.object({
+        productId: z.string().min(1, tValidation("required")),
+        productName: z.string(),
+        quantity: z.coerce.number().min(1, tValidation("min", { min: 1 })),
+    });
+
+    const formSchema = z.object({
+        fromWarehouseId: z.string().min(1, tValidation("required")),
+        toWarehouseId: z.string().min(1, tValidation("required")),
+        notes: z.string().optional(),
+        items: z.array(lineItemSchema).min(1, tValidation("required")),
+    }).refine((data) => data.fromWarehouseId !== data.toWarehouseId, {
+        message: tValidation("sameWarehouseError"),
+        path: ["toWarehouseId"],
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema) as any,

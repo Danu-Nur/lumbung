@@ -85,7 +85,7 @@ export async function InventoryOpnameSection({ page, pageSize, search }: Invento
                     <p className="text-sm text-muted-foreground">{t('description')}</p>
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} />
+                    {/* <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} /> */}
                     <CreateOpnameDialog warehouses={warehouses} />
                 </div>
             </div>

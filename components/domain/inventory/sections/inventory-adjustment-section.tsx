@@ -96,7 +96,7 @@ export async function InventoryAdjustmentSection({ page, pageSize, search }: Inv
                     <p className="text-sm text-muted-foreground">{t('description')}</p>
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} />
+                    {/* <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} /> */}
                     <Link href="?view=adjustments&modal=create">
                         <Button className="shrink-0 w-10 h-10 p-0 sm:w-auto sm:h-10 sm:px-4 sm:py-2">
                             <Plus className="w-4 h-4 sm:mr-2" />

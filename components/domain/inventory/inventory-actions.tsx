@@ -61,7 +61,7 @@ export function InventoryActions({ product, warehouses }: InventoryActionsProps)
                 onDelete={() => setDeleteOpen(true)}
                 customActions={[
                     {
-                        label: t("title"),
+                        label: t("stock.adjustment"),
                         onClick: () => setAdjustmentOpen(true),
                         icon: <ClipboardList className="h-4 w-4" />
                     }

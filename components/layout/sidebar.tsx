@@ -62,7 +62,7 @@ export function Sidebar({ className }: SidebarProps) {
     const navigation = [
         { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
         { name: t('inventory'), href: '/inventory', icon: Package },
-        { name: t('categories'), href: '/categories', icon: Layers },
+        // { name: t('categories'), href: '/categories', icon: Layers },
         { name: t('sales'), href: '/sales-orders', icon: ShoppingCart },
         { name: t('purchases'), href: '/purchase-orders', icon: ShoppingBag },
         { name: t('warehouses'), href: '/warehouses', icon: Warehouse },
@@ -147,7 +147,7 @@ export function MobileSidebar() {
     const navigation = [
         { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
         { name: t('inventory'), href: '/inventory', icon: Package },
-        { name: t('categories'), href: '/categories', icon: Layers },
+        // { name: t('categories'), href: '/categories', icon: Layers },
         { name: t('sales'), href: '/sales-orders', icon: ShoppingCart },
         { name: t('purchases'), href: '/purchase-orders', icon: ShoppingBag },
         { name: t('warehouses'), href: '/warehouses', icon: Warehouse },

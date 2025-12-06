@@ -15,6 +15,8 @@ import { InventoryModalManager } from '@/components/domain/inventory/inventory-m
 import { InventoryActions } from '@/components/domain/inventory/inventory-actions';
 import { prisma } from '@/lib/prisma';
 import { InventoryTable } from '@/components/domain/inventory/tables/inventory-table';
+import { ImportModal } from '@/components/shared/import-modal';
+import { importStockBatch } from '@/features/inventory/import-actions';
 
 interface InventoryListSectionProps {
     page: number;
@@ -79,7 +81,12 @@ export async function InventoryListSection({ page, pageSize, search }: Inventory
                     <p className="text-sm text-muted-foreground">{t('help.purpose.content')}</p>
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <SearchInput className="w-full sm:w-[300px]" placeholder={`${tCommon('buttons.search')}...`} />
+                    {/* <SearchInput className="w-full sm:w-[300px]" placeholder={`${tCommon('buttons.search')}...`} /> */}
+                    <ImportModal
+                        type="stock"
+                        onImport={importStockBatch}
+                        sampleData={[{ Name: 'Product A', SKU: 'SKU123', Category: 'General', Warehouse: 'Main', Quantity: 100, Unit: 'pcs', 'Cost Price': 1000, 'Selling Price': 1500, 'Min Stock': 10 }]}
+                    />
                     <Link href="?view=stock&modal=create">
                         <Button className="shrink-0 w-10 h-10 p-0 sm:w-auto sm:h-10 sm:px-4 sm:py-2">
                             <Plus className="h-4 w-4 sm:mr-2" />

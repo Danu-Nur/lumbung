@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
-import { Package, ArrowRightLeft, ClipboardList, Info, ClipboardCheck } from 'lucide-react';
+import { Package, ArrowRightLeft, ClipboardList, Info, ClipboardCheck, Layers } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function InventoryHeader() {
@@ -16,16 +16,25 @@ export function InventoryHeader() {
         {
             id: 'stock',
             label: t('tabs.stock'),
-            description: t('description'),
+            description: t('menu.stock.description'),
             icon: Package,
             color: "text-blue-500",
             bg: "bg-blue-50 dark:bg-blue-950/20",
             border: "border-blue-200 dark:border-blue-800"
         },
         {
+            id: 'categories',
+            label: t('tabs.categories'),
+            description: t('menu.categories.description'),
+            icon: Layers,
+            color: "text-lime-500",
+            bg: "bg-lime-50 dark:bg-lime-950/20",
+            border: "border-lime-200 dark:border-lime-800"
+        },
+        {
             id: 'transfers',
             label: t('tabs.transfers'),
-            description: "Manage stock movements",
+            description: t('menu.transfers.description'),
             icon: ArrowRightLeft,
             color: "text-purple-500",
             bg: "bg-purple-50 dark:bg-purple-950/20",
@@ -34,7 +43,7 @@ export function InventoryHeader() {
         {
             id: 'adjustments',
             label: t('tabs.adjustments'),
-            description: "Correct stock discrepancies",
+            description: t('menu.adjustments.description'),
             icon: ClipboardList,
             color: "text-orange-500",
             bg: "bg-orange-50 dark:bg-orange-950/20",
@@ -43,7 +52,7 @@ export function InventoryHeader() {
         {
             id: 'opname',
             label: t('tabs.opname'),
-            description: "Physical stock count",
+            description: t('menu.opname.description'),
             icon: ClipboardCheck,
             color: "text-emerald-500",
             bg: "bg-emerald-50 dark:bg-emerald-950/20",
@@ -63,7 +72,7 @@ export function InventoryHeader() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
 
             {/* Navigation Cards (Bento Grid) */}
-            <div className="col-span-1 md:col-span-3 lg:col-span-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="col-span-1 md:col-span-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                 {menuItems.map((item) => {
                     const isActive = activeView === item.id;
                     const Icon = item.icon;
@@ -96,7 +105,7 @@ export function InventoryHeader() {
                                 <Icon className={cn("w-6 h-6", item.color)} />
                             </div>
                             <span className={cn(
-                                "text-sm font-semibold transition-colors",
+                                "text-xs lg:text-sm font-semibold transition-colors",
                                 isActive ? "text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400"
                             )}>
                                 {item.label}

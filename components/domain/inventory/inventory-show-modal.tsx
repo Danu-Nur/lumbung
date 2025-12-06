@@ -219,7 +219,7 @@ export function InventoryShowModal({
 
                 <DialogFooter>
                     <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                        {tCommon("actions.close")}
+                        {tCommon("buttons.close")}
                     </Button>
                 </DialogFooter>
             </DialogContent>

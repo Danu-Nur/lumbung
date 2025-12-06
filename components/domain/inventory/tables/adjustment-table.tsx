@@ -14,7 +14,7 @@ import autoTable from 'jspdf-autotable';
 import { SerializedStockAdjustment } from '@/types/serialized';
 
 export function AdjustmentTable({ data }: { data: SerializedStockAdjustment[] }) {
-    const t = useTranslations('inventory');
+    const t = useTranslations('adjustments');
     const tCommon = useTranslations('common');
 
     const columns: ColumnDef<SerializedStockAdjustment>[] = [
@@ -42,7 +42,7 @@ export function AdjustmentTable({ data }: { data: SerializedStockAdjustment[] })
             header: ({ column }) => <DataTableColumnHeader column={column} title={t('columns.type')} />,
             cell: ({ row }) => (
                 <Badge variant={row.getValue('adjustmentType') === 'increase' ? 'default' : 'destructive'}>
-                    {row.getValue('adjustmentType')}
+                    {t(`types.${row.getValue('adjustmentType')}`)}
                 </Badge>
             )
         },
@@ -72,13 +72,13 @@ export function AdjustmentTable({ data }: { data: SerializedStockAdjustment[] })
 
     const handleExportExcel = (rows: SerializedStockAdjustment[]) => {
         const exportData = rows.map(row => ({
-            Date: formatDateTime(row.createdAt),
-            Product: row.product.name,
-            Warehouse: row.warehouse.name,
-            Type: row.adjustmentType,
-            Quantity: row.quantity,
-            Reason: row.reason,
-            By: row.createdBy.name
+            [t('columns.date')]: formatDateTime(row.createdAt),
+            [t('columns.product')]: row.product.name,
+            [t('columns.warehouse')]: row.warehouse.name,
+            [t('columns.type')]: t(`types.${row.adjustmentType}`),
+            [t('columns.quantity')]: row.quantity,
+            [t('columns.reason')]: row.reason,
+            [t('columns.by')]: row.createdBy.name
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
@@ -92,14 +92,14 @@ export function AdjustmentTable({ data }: { data: SerializedStockAdjustment[] })
             formatDateTime(row.createdAt),
             row.product.name,
             row.warehouse.name,
-            row.adjustmentType,
+            t(`types.${row.adjustmentType}`),
             row.quantity,
             row.reason,
             row.createdBy.name
         ]);
 
         autoTable(doc, {
-            head: [['Date', 'Product', 'Warehouse', 'Type', 'Qty', 'Reason', 'By']],
+            head: [[t('columns.date'), t('columns.product'), t('columns.warehouse'), t('columns.type'), t('columns.quantity'), t('columns.reason'), t('columns.by')]],
             body: tableData,
         });
         doc.save(`adjustments_export_${new Date().toISOString().slice(0, 10)}.pdf`);

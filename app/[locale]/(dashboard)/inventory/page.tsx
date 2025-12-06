@@ -5,6 +5,7 @@ import { InventoryListSection } from '@/components/domain/inventory/sections/inv
 import { InventoryTransferSection } from '@/components/domain/inventory/sections/inventory-transfer-section';
 import { InventoryAdjustmentSection } from '@/components/domain/inventory/sections/inventory-adjustment-section';
 import { InventoryOpnameSection } from '@/components/domain/inventory/sections/inventory-opname-section';
+import { CategoriesListSection } from '@/components/domain/categories/sections/categories-list-section';
 import { InventoryHeader } from '@/components/domain/inventory/inventory-header';
 import { InventoryContentWrapper } from '@/components/domain/inventory/inventory-content-wrapper';
 
@@ -35,6 +36,13 @@ export default async function InventoryPage({
                 <div className="min-h-[500px]">
                     {view === 'stock' && (
                         <InventoryListSection
+                            page={page}
+                            pageSize={pageSize}
+                            search={search}
+                        />
+                    )}
+                    {view === 'categories' && (
+                        <CategoriesListSection
                             page={page}
                             pageSize={pageSize}
                             search={search}

@@ -48,7 +48,7 @@ export function TransferTable({ data }: TransferTableProps) {
                         row.getValue('status') === 'COMPLETED' ? 'bg-green-100 text-green-700' :
                             'bg-red-100 text-red-700'
                     }`}>
-                    {row.getValue('status')}
+                    {t(`status.${row.getValue('status')}`)}
                 </span>
             ),
         },
@@ -66,12 +66,12 @@ export function TransferTable({ data }: TransferTableProps) {
 
     const handleExportExcel = (rows: SerializedStockTransfer[]) => {
         const exportData = rows.map(row => ({
-            Reference: row.transferNumber,
-            From: row.fromWarehouse.name,
-            To: row.toWarehouse.name,
-            Date: formatDate(row.transferDate),
-            Status: row.status,
-            Items: row.items ? row.items.length : 0
+            [t('columns.reference')]: row.transferNumber,
+            [t('columns.from')]: row.fromWarehouse.name,
+            [t('columns.to')]: row.toWarehouse.name,
+            [t('columns.date')]: formatDate(row.transferDate),
+            [t('columns.status')]: t(`status.${row.status}`),
+            [t('columns.items')]: row.items ? row.items.length : 0
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
@@ -86,12 +86,12 @@ export function TransferTable({ data }: TransferTableProps) {
             row.fromWarehouse.name,
             row.toWarehouse.name,
             formatDate(row.transferDate),
-            row.status,
+            t(`status.${row.status}`),
             row.items ? row.items.length : 0
         ]);
 
         autoTable(doc, {
-            head: [['Ref', 'From', 'To', 'Date', 'Status', 'Items']],
+            head: [[t('columns.reference'), t('columns.from'), t('columns.to'), t('columns.date'), t('columns.status'), t('columns.items')]],
             body: tableData,
         });
         doc.save(`transfers_export_${new Date().toISOString().slice(0, 10)}.pdf`);

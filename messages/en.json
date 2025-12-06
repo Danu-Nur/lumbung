@@ -13,13 +13,18 @@
       "deleteFailed": "Failed to delete",
       "deleteSuccess": "Deleted successfully",
       "deleteConfirmTitle": "Confirm Delete",
-      "deleteConfirmDescription": "Are you sure you want to delete this item? This action cannot be undone.",
+      "deleteConfirmDescription": "Are you sure you want to delete {name}? This action cannot be undone.",
+      "operationFailed": "Operation failed",
+      "comingSoon": "Coming soon",
       "cancel": "Cancelling...",
       "cancelSuccess": "Cancelled successfully",
       "cancelError": "Failed to cancel",
       "cancelTitle": "Confirm Cancellation",
       "cancelDescription": "Are you sure you want to cancel {name}? This action cannot be undone.",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "importSuccess": "Successfully imported {count} items",
+      "importPartialSuccess": "Imported {success} items, {failed} failed",
+      "importError": "Import failed"
     },
     "buttons": {
       "save": "Save",
@@ -37,6 +42,7 @@
       "login": "Login",
       "register": "Register",
       "logout": "Logout",
+      "close": "Close",
       "create": "Create"
     },
     "table": {
@@ -44,6 +50,7 @@
       "actions": "Actions",
       "name": "Name",
       "description": "Description",
+      "items": "Items",
       "status": "Status",
       "date": "Date",
       "total": "Total"
@@ -89,10 +96,23 @@
       "toggleMenu": "Toggle Menu",
       "navMenu": "Navigation Menu",
       "mobileNavDesc": "Mobile navigation menu for Inventory Pro",
-      "defaultOrg": "Inventory Pro"
+      "defaultOrg": "Inventory Pro",
+      "guest": "Guest"
     },
     "statsCard": {
       "fromLastMonth": "from last month"
+    },
+    "validation": {
+      "required": "This field is required",
+      "min": "Value must be at least {min}",
+      "positive": "Value must be positive",
+      "email": "Invalid email address",
+      "select": "Please make a selection",
+      "differentWarehouses": "Source and destination warehouses must be different",
+      "atLeastOneItem": "At least one item is required",
+      "productRequired": "Product is required",
+      "invalidType": "Invalid type",
+      "sameWarehouseError": "Source and destination warehouses cannot be the same"
     }
   },
   "dashboard": {
@@ -218,9 +238,34 @@
     "description": "Manage your product inventory across warehouses",
     "tabs": {
       "stock": "Inventory List",
+      "categories": "Categories",
       "transfers": "Stock Transfers",
       "adjustments": "Stock Adjustments",
       "opname": "Stock Opname"
+    },
+    "menu": {
+      "stock": {
+        "description": "Manage your product inventory across warehouses"
+      },
+      "transfers": {
+        "description": "Manage stock movements"
+      },
+      "adjustments": {
+        "description": "Correct stock discrepancies"
+      },
+      "opname": {
+        "description": "Physical stock count"
+      },
+      "categories": {
+        "description": "Manage product categories"
+      }
+    },
+    "units": {
+      "pcs": "Pieces (pcs)",
+      "box": "Box",
+      "kg": "Kilogram (kg)",
+      "liter": "Liter",
+      "meter": "Meter"
     },
     "columns": {
       "product": "Product",
@@ -309,7 +354,21 @@
       "currentStock": "Current Stock",
       "reasonPlaceholder": "Reason for adjustment",
       "reason": "Reason",
-      "selectWarehouse": "Select warehouse"
+      "selectWarehouse": "Select warehouse",
+      "addStock": "Add Stock",
+      "removeStock": "Remove Stock",
+      "action": "Action",
+      "quantity": "Quantity",
+      "selectReason": "Select reason"
+    },
+    "reasons": {
+      "correction": "Correction",
+      "damage": "Damage",
+      "lost": "Lost",
+      "found": "Found",
+      "audit": "Audit",
+      "expired": "Expired",
+      "other": "Other"
     }
   },
   "categories": {
@@ -681,6 +740,12 @@
       "sendSuccess": "Transfer sent successfully",
       "toWarehouse": "To Warehouse",
       "fromWarehouse": "From Warehouse"
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "IN_TRANSIT": "In Transit",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
     }
   },
   "opname": {
@@ -753,15 +818,6 @@
       "increase": "Increase (+)",
       "selectReason": "Select reason",
       "type": "Type",
-      "reasons": {
-        "AUDIT": "Audit Correction",
-        "OTHER": "Other",
-        "CORRECTION": "Data Correction",
-        "EXPIRED": "Expired",
-        "LOST": "Lost",
-        "DAMAGE": "Damage",
-        "FOUND": "Found"
-      },
       "selectProduct": "Select product",
       "quantity": "Quantity",
       "reason": "Reason",
@@ -782,6 +838,23 @@
       "reverseSuccess": "Adjustment reversed successfully",
       "details": "Details",
       "reverseError": "Failed to reverse adjustment"
+    },
+    "types": {
+      "increase": "Increase",
+      "decrease": "Decrease"
+    },
+    "reasons": {
+      "AUDIT": "Audit Correction",
+      "OTHER": "Other",
+      "CORRECTION": "Data Correction",
+      "EXPIRED": "Expired",
+      "LOST": "Lost",
+      "DAMAGE": "Damage",
+      "FOUND": "Found"
+    },
+    "history": {
+      "title": "History",
+      "empty": "No history available"
     }
   },
   "salesOrders": {

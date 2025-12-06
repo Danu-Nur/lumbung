@@ -31,18 +31,6 @@ import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { CategoryCreateModal } from "@/components/domain/categories/category-create-modal";
 
-const formSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    sku: z.string().min(1, "SKU is required"),
-    barcode: z.string().optional().or(z.literal("")),
-    categoryId: z.string().optional().or(z.literal("")),
-    description: z.string().optional().or(z.literal("")),
-    unit: z.string().min(1, "Unit is required"),
-    sellingPrice: z.coerce.number().min(0, "Selling price must be positive"),
-    costPrice: z.coerce.number().min(0, "Cost price must be positive"),
-    lowStockThreshold: z.coerce.number().min(0).default(10),
-});
-
 interface InventoryEditModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -61,7 +49,20 @@ export function InventoryEditModal({
     const router = useRouter();
     const t = useTranslations("inventory");
     const tCommon = useTranslations("common");
+    const tValidation = useTranslations("common.validation");
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+
+    const formSchema = z.object({
+        name: z.string().min(1, tValidation("required")),
+        sku: z.string().min(1, tValidation("required")),
+        barcode: z.string().optional().or(z.literal("")),
+        categoryId: z.string().optional().or(z.literal("")),
+        description: z.string().optional().or(z.literal("")),
+        unit: z.string().min(1, tValidation("required")),
+        sellingPrice: z.coerce.number().min(0, tValidation("positive")),
+        costPrice: z.coerce.number().min(0, tValidation("positive")),
+        lowStockThreshold: z.coerce.number().min(0).default(10),
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema) as any,
@@ -228,11 +229,11 @@ export function InventoryEditModal({
                                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                                 {...field}
                                             >
-                                                <option value="pcs">Pieces (pcs)</option>
-                                                <option value="box">Box</option>
-                                                <option value="kg">Kilogram (kg)</option>
-                                                <option value="liter">Liter</option>
-                                                <option value="meter">Meter</option>
+                                                <option value="pcs">{t("units.pcs")}</option>
+                                                <option value="box">{t("units.box")}</option>
+                                                <option value="kg">{t("units.kg")}</option>
+                                                <option value="liter">{t("units.liter")}</option>
+                                                <option value="meter">{t("units.meter")}</option>
                                             </select>
                                             <FormMessage />
                                         </FormItem>

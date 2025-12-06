@@ -13,10 +13,15 @@
       "deleteFailed": "Gagal menghapus",
       "deleteSuccess": "Berhasil dihapus",
       "deleteConfirmTitle": "Konfirmasi Hapus",
-      "deleteConfirmDescription": "Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan.",
-      "cancel": "Membatalkan...",
+      "deleteConfirmDescription": "Apakah Anda yakin ingin menghapus {name}? Tindakan ini tidak dapat dibatalkan.",
+      "operationFailed": "Operasi gagal",
+      "comingSoon": "Segera hadir",
+      "cancel": "Batal",
       "navMenu": "Menu Navigasi",
-      "mobileNavDesc": "Menu navigasi mobile untuk Inventory Pro"
+      "mobileNavDesc": "Menu navigasi mobile untuk Inventory Pro",
+      "importSuccess": "Berhasil mengimpor {count} item",
+      "importPartialSuccess": "Berhasil mengimpor {success} item, {failed} gagal",
+      "importError": "Impor gagal"
     },
     "buttons": {
       "save": "Simpan",
@@ -34,6 +39,7 @@
       "login": "Masuk",
       "register": "Daftar",
       "logout": "Keluar",
+      "close": "Tutup",
       "create": "Buat"
     },
     "table": {
@@ -41,6 +47,7 @@
       "actions": "Aksi",
       "name": "Nama",
       "description": "Deskripsi",
+      "items": "Item",
       "status": "Status",
       "date": "Tanggal",
       "total": "Total"
@@ -86,10 +93,23 @@
       "toggleMenu": "Buka Menu",
       "navMenu": "Menu Navigasi",
       "mobileNavDesc": "Menu navigasi mobile untuk Inventory Pro",
-      "defaultOrg": "Inventory Pro"
+      "defaultOrg": "Inventory Pro",
+      "guest": "Tamu"
     },
     "statsCard": {
       "fromLastMonth": "dari bulan lalu"
+    },
+    "validation": {
+      "required": "Kolom ini wajib diisi",
+      "min": "Nilai minimal adalah {min}",
+      "positive": "Nilai harus positif",
+      "email": "Alamat email tidak valid",
+      "select": "Silakan pilih salah satu",
+      "differentWarehouses": "Gudang asal dan tujuan harus berbeda",
+      "atLeastOneItem": "Setidaknya satu item diperlukan",
+      "productRequired": "Produk wajib diisi",
+      "invalidType": "Tipe tidak valid",
+      "sameWarehouseError": "Gudang asal dan tujuan tidak boleh sama"
     }
   },
   "dashboard": {
@@ -214,9 +234,34 @@
     "description": "Kelola stok produk Anda di seluruh gudang",
     "tabs": {
       "stock": "Daftar Inventaris",
+      "categories": "Kategori",
       "transfers": "Transfer Stok",
       "adjustments": "Penyesuaian Stok",
       "opname": "Stok Opname"
+    },
+    "menu": {
+      "stock": {
+        "description": "Kelola stok produk Anda di seluruh gudang"
+      },
+      "transfers": {
+        "description": "Kelola pergerakan stok"
+      },
+      "adjustments": {
+        "description": "Koreksi selisih stok"
+      },
+      "opname": {
+        "description": "Perhitungan fisik stok"
+      },
+      "categories": {
+        "description": "Kelola kategori produk"
+      }
+    },
+    "units": {
+      "pcs": "Buah (pcs)",
+      "box": "Kotak",
+      "kg": "Kilogram (kg)",
+      "liter": "Liter",
+      "meter": "Meter"
     },
     "columns": {
       "product": "Produk",
@@ -305,7 +350,21 @@
       "currentStock": "Stok Saat Ini",
       "reasonPlaceholder": "Alasan penyesuaian",
       "reason": "Alasan",
-      "selectWarehouse": "Pilih gudang"
+      "selectWarehouse": "Pilih gudang",
+      "addStock": "Tambah Stok",
+      "removeStock": "Kurangi Stok",
+      "action": "Aksi",
+      "quantity": "Jumlah",
+      "selectReason": "Pilih alasan"
+    },
+    "reasons": {
+      "correction": "Koreksi",
+      "damage": "Rusak",
+      "lost": "Hilang",
+      "found": "Ditemukan",
+      "audit": "Audit",
+      "expired": "Kadaluarsa",
+      "other": "Lainnya"
     }
   },
   "categories": {
@@ -668,6 +727,12 @@
       "sendSuccess": "Transfer berhasil dikirim",
       "toWarehouse": "Ke Gudang",
       "fromWarehouse": "Dari Gudang"
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "IN_TRANSIT": "Dalam Pengiriman",
+      "COMPLETED": "Selesai",
+      "CANCELLED": "Dibatalkan"
     }
   },
   "opname": {
@@ -729,9 +794,6 @@
       },
       "buttonLabel": "Panduan"
     },
-    "history": {
-      "title": "Riwayat Penyesuaian"
-    },
     "form": {
       "selectWarehouse": "Pilih gudang",
       "notesPlaceholder": "Tambahkan catatan di sini...",
@@ -743,15 +805,6 @@
       "increase": "Tambah (+)",
       "selectReason": "Pilih alasan",
       "type": "Tipe",
-      "reasons": {
-        "AUDIT": "Koreksi Audit",
-        "OTHER": "Lainnya",
-        "CORRECTION": "Koreksi Data",
-        "EXPIRED": "Kadaluarsa",
-        "LOST": "Hilang",
-        "DAMAGE": "Rusak",
-        "FOUND": "Ditemukan"
-      },
       "selectProduct": "Pilih produk",
       "quantity": "Jumlah",
       "reason": "Alasan",
@@ -772,6 +825,23 @@
       "reverseSuccess": "Penyesuaian berhasil dibatalkan",
       "details": "Detail",
       "reverseError": "Gagal membatalkan penyesuaian"
+    },
+    "types": {
+      "increase": "Penambahan",
+      "decrease": "Pengurangan"
+    },
+    "reasons": {
+      "AUDIT": "Koreksi Audit",
+      "OTHER": "Lainnya",
+      "CORRECTION": "Koreksi Data",
+      "EXPIRED": "Kadaluarsa",
+      "LOST": "Hilang",
+      "DAMAGE": "Rusak",
+      "FOUND": "Ditemukan"
+    },
+    "history": {
+      "title": "Riwayat",
+      "empty": "Tidak ada riwayat"
     }
   },
   "Landing": {

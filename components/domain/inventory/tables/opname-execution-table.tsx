@@ -23,6 +23,7 @@ interface OpnameExecutionTableProps {
 
 export function OpnameExecutionTable({ items, status }: OpnameExecutionTableProps) {
     const t = useTranslations("opname.show");
+    const tCommon = useTranslations("common");
 
     // Local state management could be added for optimistic updates, 
     // but for now relying on server revalidation onBlur.
@@ -88,7 +89,7 @@ export function OpnameExecutionTable({ items, status }: OpnameExecutionTableProp
                     {items.length === 0 && (
                         <TableRow>
                             <TableCell colSpan={4} className="h-24 text-center">
-                                No items found.
+                                {tCommon('table.noData')}
                             </TableCell>
                         </TableRow>
                     )}

@@ -29,7 +29,7 @@ import { useTranslations } from "next-intl";
 
 import { adjustmentFormSchema, AdjustmentFormValues } from "@/lib/validations/adjustment";
 
-const formSchema = adjustmentFormSchema;
+
 
 interface AdjustmentCreateModalProps {
     open: boolean;
@@ -49,6 +49,16 @@ export function AdjustmentCreateModal({
     const router = useRouter();
     const t = useTranslations("adjustments");
     const tCommon = useTranslations("common");
+    const tValidation = useTranslations("common.validation");
+
+    const formSchema = z.object({
+        productId: z.string().min(1, tValidation("required")),
+        warehouseId: z.string().min(1, tValidation("required")),
+        adjustmentType: z.enum(["increase", "decrease"]),
+        quantity: z.coerce.number().min(1, tValidation("min", { min: 1 })),
+        reason: z.string().min(1, tValidation("required")),
+        notes: z.string().optional(),
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema) as any,

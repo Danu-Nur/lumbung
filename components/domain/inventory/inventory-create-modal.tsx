@@ -30,18 +30,6 @@ import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { CategoryCreateModal } from "../categories/category-create-modal";
 
-const formSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    sku: z.string().min(1, "SKU is required"),
-    barcode: z.string().optional().or(z.literal("")),
-    categoryId: z.string().optional().or(z.literal("")),
-    description: z.string().optional().or(z.literal("")),
-    unit: z.string().min(1, "Unit is required"),
-    sellingPrice: z.coerce.number().min(0, "Selling price must be positive"),
-    costPrice: z.coerce.number().min(0, "Cost price must be positive"),
-    lowStockThreshold: z.coerce.number().min(0).default(10),
-});
-
 interface InventoryCreateModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -58,7 +46,20 @@ export function InventoryCreateModal({
     const router = useRouter();
     const t = useTranslations("inventory");
     const tCommon = useTranslations("common");
+    const tValidation = useTranslations("common.validation");
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+
+    const formSchema = z.object({
+        name: z.string().min(1, tValidation("required")),
+        sku: z.string().min(1, tValidation("required")),
+        barcode: z.string().optional().or(z.literal("")),
+        categoryId: z.string().optional().or(z.literal("")),
+        description: z.string().optional().or(z.literal("")),
+        unit: z.string().min(1, tValidation("required")),
+        sellingPrice: z.coerce.number().min(0, tValidation("positive")),
+        costPrice: z.coerce.number().min(0, tValidation("positive")),
+        lowStockThreshold: z.coerce.number().min(0).default(10),
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema) as any,
