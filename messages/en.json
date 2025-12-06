@@ -59,7 +59,9 @@
       "transfers": "Transfers",
       "adjustments": "Adjustments",
       "warehouses": "Warehouses",
-      "settings": "Settings"
+      "settings": "Settings",
+      "pricing": "Pricing",
+      "about": "About"
     },
     "pagination": {
       "showing": "Showing {from} to {to} of {total} entries",
@@ -482,6 +484,44 @@
         "heading": "Purpose",
         "content": "Manage your sales orders here."
       }
+    },
+    "form": {
+      "createTitle": "Create Sales Order",
+      "createDescription": "Create a new sales order for customer.",
+      "editTitle": "Edit Sales Order",
+      "customer": "Customer",
+      "walkInCustomer": "Walk-in Customer",
+      "warehouse": "Warehouse",
+      "selectWarehouse": "Select warehouse",
+      "notes": "Notes",
+      "notesPlaceholder": "Add notes here...",
+      "lineItems": "Line Items",
+      "selectProduct": "Select product to add",
+      "noItems": "No items added yet",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "total": "Total"
+    },
+    "show": {
+      "title": "Sales Order #{orderNumber}",
+      "invoice": "Invoice",
+      "confirm": "Confirm Order",
+      "fulfill": "Fulfill Order",
+      "cancel": "Cancel Order",
+      "confirmSuccess": "Order confirmed successfully",
+      "fulfillSuccess": "Order fulfilled successfully",
+      "cancelSuccess": "Order cancelled successfully",
+      "customer": "Customer",
+      "walkInCustomer": "Walk-in Customer",
+      "warehouse": "Warehouse",
+      "orderItems": "Order Items",
+      "product": "Product",
+      "qty": "Qty",
+      "price": "Price",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "notes": "Notes"
     }
   },
   "purchases": {
@@ -502,6 +542,37 @@
         "heading": "Purpose",
         "content": "Manage your purchase orders here."
       }
+    },
+    "form": {
+      "createTitle": "Create Purchase Order",
+      "createDescription": "Create a new purchase order for supplier.",
+      "editTitle": "Edit Purchase Order",
+      "supplier": "Supplier",
+      "selectSupplier": "Select supplier",
+      "warehouse": "Warehouse",
+      "selectWarehouse": "Select warehouse",
+      "notes": "Notes",
+      "notesPlaceholder": "Add notes here...",
+      "lineItems": "Line Items",
+      "selectProduct": "Select product to add",
+      "noItems": "No items added yet",
+      "total": "Total"
+    },
+    "show": {
+      "title": "Purchase Order #{poNumber}",
+      "sendOrder": "Send Order",
+      "receiveItems": "Receive Items",
+      "sendSuccess": "Order sent successfully",
+      "receiveSuccess": "Items received successfully",
+      "supplier": "Supplier",
+      "warehouse": "Warehouse",
+      "orderItems": "Order Items",
+      "product": "Product",
+      "qty": "Qty",
+      "cost": "Cost",
+      "total": "Total",
+      "received": "Received",
+      "notes": "Notes"
     }
   },
   "warehouses": {
@@ -728,6 +799,175 @@
       "total": "Total",
       "received": "Received",
       "notes": "Notes"
+    }
+  },
+  "Landing": {
+    "hero": {
+      "title": "Manage Your Warehouse with Ease",
+      "subtitle": "The most complete solution for stock management, multi-warehouse, and direct sales.",
+      "getStarted": "Get Started",
+      "learnMore": "Learn More"
+    },
+    "features": {
+      "title": "Everything you need",
+      "subtitle": "Powerful features wrapped in a beautiful interface."
+    },
+    "metrics": {
+      "itemsTracked": "1M+",
+      "itemsTrackedLabel": "Items tracked across warehouses",
+      "timeSaved": "10h",
+      "timeSavedLabel": "Average weekly time saved",
+      "errorReduced": "80%",
+      "errorReducedLabel": "Reduction in stock errors"
+    },
+    "testimonials": {
+      "title": "Loved by Businesses",
+      "subtitle": "From distributors to manufacturers, Lumbung keeps operations lean and predictable.",
+      "budi": {
+        "name": "Budi Santoso",
+        "role": "Owner, Gudang Maju",
+        "content": "Lumbung changed how we manage our stock. No more lost items!"
+      },
+      "sarah": {
+        "name": "Sarah Wijaya",
+        "role": "Logistics Manager",
+        "content": "The reporting features are incredible. I save 10 hours a week."
+      },
+      "anton": {
+        "name": "Anton Pradana",
+        "role": "Distributor Elektronik",
+        "content": "Simple to use, yet very powerful for enterprise needs."
+      }
+    },
+    "pricing": {
+      "title": "Simple Pricing",
+      "subtitle": "Choose the plan that fits your business needs.",
+      "popularBadge": "Popular",
+      "perMonth": "month",
+      "choosePlan": "Choose",
+      "starter": {
+        "name": "Starter",
+        "price": "$29",
+        "description": "For small businesses",
+        "features": [
+          "Up to 1,000 SKUs",
+          "1 Warehouse",
+          "Basic Support"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "price": "$79",
+        "description": "For growing teams",
+        "features": [
+          "Unlimited SKUs",
+          "5 Warehouses",
+          "Priority Support",
+          "API Access"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "price": "Custom",
+        "description": "For large organizations",
+        "features": [
+          "Unlimited Everything",
+          "Dedicated Manager",
+          "Custom Integration"
+        ]
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "multiWarehouse": {
+        "question": "Can I manage multiple warehouses?",
+        "answer": "Yes, our Pro and Enterprise plans support multi-warehouse management with transfer features."
+      },
+      "trial": {
+        "question": "Is there a free trial?",
+        "answer": "Absolutely! You can try Lumbung for free for 14 days, no credit card required."
+      },
+      "export": {
+        "question": "Can I export my data?",
+        "answer": "Yes, you can export all your inventory and sales data to CSV or Excel at any time."
+      }
+    },
+    "partners": {
+      "trustedBy": "TRUSTED BY INNOVATIVE COMPANIES",
+      "logo": "LOGO"
+    },
+    "cta": {
+      "title": "Ready to streamline your warehouse?",
+      "subtitle": "Join thousands of businesses who trust Lumbung for their inventory management.",
+      "button": "Get Started for Free"
+    }
+  },
+  "Pricing": {
+    "title": "Simple, transparent pricing",
+    "subtitle": "Choose the plan that's right for your business. No hidden fees.",
+    "compareTitle": "Compare Plans",
+    "feature": "Feature",
+    "warehouses": "Warehouses",
+    "users": "Users",
+    "apiAccess": "API Access",
+    "prioritySupport": "Priority Support",
+    "customIntegrations": "Custom Integrations",
+    "free": "Free",
+    "month": "month",
+    "choose": "Choose"
+  },
+  "About": {
+    "mission": {
+      "badge": "Our Mission",
+      "title": "Empowering businesses to master their inventory.",
+      "description": "We believe that warehouse management shouldn't be complicated. Our mission is to provide powerful, accessible tools that help businesses grow."
+    },
+    "values": {
+      "simplicity": {
+        "title": "Simplicity",
+        "desc": "We prioritize clean design and intuitive workflows over feature bloat."
+      },
+      "reliability": {
+        "title": "Reliability",
+        "desc": "Your data is the backbone of your business. We treat it with utmost care."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "desc": "We constantly evolve to bring the latest tech to your warehouse."
+      }
+    },
+    "journey": {
+      "title": "Our Journey",
+      "2023": {
+        "title": "The Idea",
+        "desc": "Lumbung was born out of frustration with clunky, expensive warehouse software."
+      },
+      "2024": {
+        "title": "Launch v1.0",
+        "desc": "We launched our MVP and got our first 100 paying customers."
+      },
+      "2025": {
+        "title": "Scaling Up",
+        "desc": "Released v2.0 with advanced analytics and AI features. Reached 1000+ users."
+      }
+    },
+    "team": {
+      "title": "Meet the Team",
+      "subtitle": "The passionate individuals building the future of inventory management."
+    },
+    "cta": {
+      "title": "Join us on this journey",
+      "subtitle": "We're always looking for talented people to join our team and businesses to partner with.",
+      "getStarted": "Get Started",
+      "careers": "View Careers"
+    }
+  },
+  "Footer": {
+    "rights": "All rights reserved.",
+    "links": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "faq": "FAQ"
     }
   }
 }

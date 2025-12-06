@@ -13,7 +13,70 @@ export type CreatePurchaseReceiptParams = {
     userId: string;
 };
 
+export type CreatePurchaseOrderDraftParams = {
+    organizationId: string;
+    supplierId: string;
+    warehouseId: string;
+    items: {
+        productId: string;
+        quantity: number;
+        unitCost: number;
+    }[];
+    notes?: string;
+    createdById: string;
+};
+
 export const purchaseOrderService = {
+    /**
+     * Creates a Purchase Order in DRAFT status.
+     */
+    async createPurchaseOrderDraft(params: CreatePurchaseOrderDraftParams) {
+        const { organizationId, supplierId, warehouseId, items, notes, createdById } = params;
+
+        return await prisma.$transaction(async (tx) => {
+            const poNumber = `PO-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+            let subtotal = 0;
+            const orderItemsData = [];
+
+            for (const item of items) {
+                const lineTotal = item.quantity * item.unitCost;
+                subtotal += lineTotal;
+
+                orderItemsData.push({
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    unitCost: item.unitCost,
+                    lineTotal,
+                });
+            }
+
+            const total = subtotal; // Tax handling can be added here
+
+            const purchaseOrder = await tx.purchaseOrder.create({
+                data: {
+                    poNumber,
+                    supplierId,
+                    warehouseId,
+                    organizationId,
+                    status: PurchaseOrderStatus.DRAFT,
+                    notes,
+                    subtotal,
+                    tax: 0,
+                    total,
+                    createdById,
+                    items: {
+                        create: orderItemsData,
+                    },
+                },
+                include: {
+                    items: true,
+                },
+            });
+
+            return purchaseOrder;
+        });
+    },
     /**
      * Receives items for a Purchase Order.
      * Creates PurchaseReceipt and IN inventory movements.
@@ -109,7 +172,7 @@ export const purchaseOrderService = {
                         referenceId: po.id,
                         createdById: userId,
                         notes: `Receipt ${receiptNumber} for PO ${po.poNumber}`,
-                    });
+                    }, tx);
                 }
             }
 

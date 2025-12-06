@@ -1,5 +1,4 @@
 import { Package } from 'lucide-react';
-import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { LoginForm } from './login-form';
 import { Metadata } from 'next';
 
@@ -10,28 +9,37 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
     return (
-        <>
-            <div className="absolute top-4 right-4 z-50">
-                <ThemeToggle />
-            </div>
-            <div className="w-full space-y-8">
-                <div className="text-center space-y-6">
-                    <div className="flex justify-center items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-                            <Package className="w-7 h-7 text-primary-foreground" />
-                        </div>
-                        <span className="text-2xl font-bold">Inventory Pro</span>
+        // Wrapper Utama: 
+        // Tidak perlu 'min-h-screen' atau 'flex-center' lagi karena AuthLayout sudah menanganinya.
+        // Kita kunci lebarnya di 450px agar terlihat padat dan rapi.
+        <div className="w-full max-w-[450px] bg-card border rounded-xl shadow-lg">
+
+            {/* Padding Card */}
+            <div className="p-6 sm:p-8 space-y-8">
+
+                {/* Bagian Header (Logo & Judul) */}
+                <div className="flex flex-col items-center text-center space-y-2">
+                    {/* Logo Box */}
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary mb-2">
+                        <Package className="h-6 w-6 text-primary-foreground" />
                     </div>
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
-                        <p className="text-muted-foreground">
+
+                    {/* Nama Brand */}
+                    <span className="text-2xl font-bold">Inventory Pro</span>
+
+                    {/* Sub-judul */}
+                    <div className="space-y-1">
+                        <h1 className="text-xl font-semibold tracking-tight">Welcome back</h1>
+                        <p className="text-sm text-muted-foreground">
                             Enter your credentials to access your account
                         </p>
                     </div>
                 </div>
 
+                {/* Komponen Form Login (Input, Tombol, Demo, Link Register) */}
                 <LoginForm />
+
             </div>
-        </>
+        </div>
     );
 }

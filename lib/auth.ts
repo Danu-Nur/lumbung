@@ -18,6 +18,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return null;
                 }
 
+                console.log("[Auth] Authorize called for:", credentials.email);
+
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email as string },
                     include: {
@@ -34,7 +36,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     },
                 });
 
-                if (!user || !user.isActive) {
+                if (!user) {
+                    console.log("[Auth] User not found");
+                    return null;
+                }
+                if (!user.isActive) {
+                    console.log("[Auth] User inactive");
                     return null;
                 }
 
@@ -42,6 +49,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     credentials.password as string,
                     user.password
                 );
+
+                console.log("[Auth] Password valid:", isPasswordValid);
 
                 if (!isPasswordValid) {
                     return null;

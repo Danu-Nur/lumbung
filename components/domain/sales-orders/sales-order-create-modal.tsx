@@ -30,6 +30,7 @@ import { formatCurrency } from "@/lib/utils";
 import { CustomerCreateModal } from "@/components/domain/customers/customer-create-modal";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { LineItemsForm } from "@/components/shared/form/line-items-form";
 
 const lineItemSchema = z.object({
     productId: z.string().min(1, "Product is required"),
@@ -79,7 +80,7 @@ export function SalesOrderCreateModal({
         },
     });
 
-    const { fields, append, remove } = useFieldArray({
+    const { fields } = useFieldArray({
         control: form.control,
         name: "items",
     });
@@ -120,23 +121,7 @@ export function SalesOrderCreateModal({
         }
     };
 
-    const handleAddItem = (productId: string) => {
-        const product = products.find((p) => p.id === productId);
-        if (product) {
-            append({
-                productId: product.id,
-                productName: product.name,
-                quantity: 1,
-                unitPrice: Number(product.sellingPrice),
-                discount: 0,
-            });
-        }
-    };
 
-    const currentItems = form.watch("items");
-    const subtotal = currentItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-    const totalDiscount = currentItems.reduce((sum, item) => sum + (item.discount || 0), 0);
-    const total = subtotal - totalDiscount;
 
     return (
         <>
@@ -228,120 +213,13 @@ export function SalesOrderCreateModal({
                                 )}
                             />
 
-                            <Card>
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-base">{t("form.lineItems")}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="flex gap-2">
-                                        <select
-                                            className="flex-1 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                            onChange={(e) => {
-                                                if (e.target.value) {
-                                                    handleAddItem(e.target.value);
-                                                    e.target.value = "";
-                                                }
-                                            }}
-                                        >
-                                            <option value="">{t("form.selectProduct")}</option>
-                                            {products.map((product) => (
-                                                <option key={product.id} value={product.id}>
-                                                    {product.name} ({product.sku}) - {formatCurrency(Number(product.sellingPrice))}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    {fields.length === 0 ? (
-                                        <p className="text-center text-muted-foreground py-4">
-                                            {t("form.noItems")}
-                                        </p>
-                                    ) : (
-                                        <div className="space-y-2">
-                                            {fields.map((field, index) => (
-                                                <div key={field.id} className="flex gap-2 items-center p-3 bg-muted/50 rounded-lg">
-                                                    <div className="flex-1">
-                                                        <p className="font-medium text-sm">{field.productName}</p>
-                                                    </div>
-                                                    <FormField
-                                                        control={form.control}
-                                                        name={`items.${index}.quantity`}
-                                                        render={({ field }) => (
-                                                            <FormItem className="space-y-0">
-                                                                <FormControl>
-                                                                    <Input
-                                                                        type="number"
-                                                                        className="w-20 h-8"
-                                                                        min="1"
-                                                                        {...field}
-                                                                    />
-                                                                </FormControl>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                                    <FormField
-                                                        control={form.control}
-                                                        name={`items.${index}.unitPrice`}
-                                                        render={({ field }) => (
-                                                            <FormItem className="space-y-0">
-                                                                <FormControl>
-                                                                    <Input
-                                                                        type="number"
-                                                                        className="w-28 h-8"
-                                                                        step="0.01"
-                                                                        {...field}
-                                                                    />
-                                                                </FormControl>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                                    <FormField
-                                                        control={form.control}
-                                                        name={`items.${index}.discount`}
-                                                        render={({ field }) => (
-                                                            <FormItem className="space-y-0">
-                                                                <FormControl>
-                                                                    <Input
-                                                                        type="number"
-                                                                        className="w-24 h-8"
-                                                                        step="0.01"
-                                                                        placeholder="Disc"
-                                                                        {...field}
-                                                                    />
-                                                                </FormControl>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 text-destructive"
-                                                        onClick={() => remove(index)}
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    <div className="border-t pt-4 space-y-2">
-                                        <div className="flex justify-between text-sm">
-                                            <span>{t("form.subtotal")}:</span>
-                                            <span className="font-medium">{formatCurrency(subtotal)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span>{t("form.discount")}:</span>
-                                            <span className="font-medium">{formatCurrency(totalDiscount)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-lg font-bold">
-                                            <span>{t("form.total")}:</span>
-                                            <span>{formatCurrency(total)}</span>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <LineItemsForm
+                                control={form.control}
+                                name="items"
+                                products={products.map(p => ({ ...p, price: Number(p.sellingPrice) }))}
+                                priceFieldName="unitPrice"
+                                showDiscount={true}
+                            />
 
                             <DialogFooter>
                                 <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

@@ -1,37 +1,37 @@
 import { Package } from 'lucide-react';
-import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { RegisterForm } from './register-form';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'Register - Inventory Pro',
-    description: 'Create a new account',
+    description: 'Create your account',
 };
 
 export default function RegisterPage() {
     return (
-        <div className="relative w-full max-w-md mx-auto">
-            {/* Theme toggle */}
-            <div className="absolute -top-16 right-0">
-                <ThemeToggle />
-            </div>
+        <div className="w-full max-w-[550px] bg-card border rounded-xl shadow-lg">
+            <div className="p-6 sm:p-8 space-y-8">
 
-            <div className="flex flex-col items-center space-y-6 mb-8">
-                <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground">
-                        <Package className="w-6 h-6" />
+                {/* Header Section */}
+                <div className="flex flex-col items-center text-center space-y-2">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary mb-2">
+                        <Package className="h-6 w-6 text-primary-foreground" />
                     </div>
-                    <span className="text-xl font-bold">Inventory Pro</span>
-                </div>
-                <div className="text-center space-y-2">
-                    <h1 className="text-2xl font-bold tracking-tight">Create an account</h1>
-                    <p className="text-sm text-muted-foreground">
-                        Enter your details to create your organization
-                    </p>
-                </div>
-            </div>
 
-            <RegisterForm />
+                    <span className="text-2xl font-bold">Inventory Pro</span>
+
+                    <div className="space-y-1">
+                        <h1 className="text-xl font-semibold tracking-tight">Create an account</h1>
+                        <p className="text-sm text-muted-foreground">
+                            Enter your information to get started
+                        </p>
+                    </div>
+                </div>
+
+                {/* Form Section */}
+                <RegisterForm />
+
+            </div>
         </div>
     );
 }

@@ -28,6 +28,7 @@ import { Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { LineItemsForm } from "@/components/shared/form/line-items-form";
 
 const lineItemSchema = z.object({
     productId: z.string().min(1, "Product is required"),
@@ -74,7 +75,7 @@ export function TransferCreateModal({
         },
     });
 
-    const { fields, append, remove } = useFieldArray({
+    const { fields } = useFieldArray({
         control: form.control,
         name: "items",
     });
@@ -109,16 +110,7 @@ export function TransferCreateModal({
         }
     };
 
-    const handleAddItem = (productId: string) => {
-        const product = products.find((p) => p.id === productId);
-        if (product) {
-            append({
-                productId: product.id,
-                productName: product.name,
-                quantity: 1,
-            });
-        }
-    };
+
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -194,72 +186,12 @@ export function TransferCreateModal({
                             )}
                         />
 
-                        <Card>
-                            <CardHeader className="pb-3">
-                                <CardTitle className="text-base">{t("form.lineItems")}</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex gap-2">
-                                    <select
-                                        className="flex-1 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                        onChange={(e) => {
-                                            if (e.target.value) {
-                                                handleAddItem(e.target.value);
-                                                e.target.value = "";
-                                            }
-                                        }}
-                                    >
-                                        <option value="">{t("form.selectProduct")}</option>
-                                        {products.map((product) => (
-                                            <option key={product.id} value={product.id}>
-                                                {product.name} ({product.sku})
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                {fields.length === 0 ? (
-                                    <p className="text-center text-muted-foreground py-4">
-                                        {t("form.noItems")}
-                                    </p>
-                                ) : (
-                                    <div className="space-y-2">
-                                        {fields.map((field, index) => (
-                                            <div key={field.id} className="flex gap-2 items-center p-3 bg-muted/50 rounded-lg">
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-sm">{field.productName}</p>
-                                                </div>
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`items.${index}.quantity`}
-                                                    render={({ field }) => (
-                                                        <FormItem className="space-y-0">
-                                                            <FormControl>
-                                                                <Input
-                                                                    type="number"
-                                                                    className="w-20 h-8"
-                                                                    min="1"
-                                                                    {...field}
-                                                                />
-                                                            </FormControl>
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8 text-destructive"
-                                                    onClick={() => remove(index)}
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
+                        <LineItemsForm
+                            control={form.control}
+                            name="items"
+                            products={products.map(p => ({ ...p, price: 0 }))}
+                            hidePrice={true}
+                        />
 
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

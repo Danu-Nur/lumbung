@@ -7,7 +7,7 @@ export const inventoryService = {
      * Creates an inventory movement and updates the inventory item cache.
      * This is the ONLY way to change stock levels.
      */
-    async createInventoryMovement(params: CreateInventoryMovementParams) {
+    async createInventoryMovement(params: CreateInventoryMovementParams, tx?: Prisma.TransactionClient) {
         const {
             organizationId,
             warehouseId,
@@ -20,14 +20,16 @@ export const inventoryService = {
             createdById,
         } = params;
 
-        return await prisma.$transaction(async (tx) => {
+        const execute = async (db: Prisma.TransactionClient) => {
             // 1. Validate product and warehouse belong to the same organization
-            const product = await tx.product.findUnique({
+            // Optimization: We could pass these checks if we trust the caller, but for safety we keep them.
+            // For batch operations, we might want to skip this or do it in bulk.
+            const product = await db.product.findUnique({
                 where: { id: productId },
                 select: { organizationId: true },
             });
 
-            const warehouse = await tx.warehouse.findUnique({
+            const warehouse = await db.warehouse.findUnique({
                 where: { id: warehouseId },
                 select: { organizationId: true },
             });
@@ -41,7 +43,7 @@ export const inventoryService = {
             }
 
             // 2. Create the InventoryMovement (Append-Only Ledger)
-            const movement = await tx.inventoryMovement.create({
+            const movement = await db.inventoryMovement.create({
                 data: {
                     productId,
                     warehouseId,
@@ -56,7 +58,7 @@ export const inventoryService = {
 
             // 3. Update InventoryItem cache
             // We use upsert to ensure the item exists
-            const currentItem = await tx.inventoryItem.findUnique({
+            const currentItem = await db.inventoryItem.findUnique({
                 where: {
                     productId_warehouseId: {
                         productId,
@@ -77,7 +79,7 @@ export const inventoryService = {
             const allocatedQty = currentItem?.allocatedQty || 0;
             const availableQty = newQty - allocatedQty;
 
-            await tx.inventoryItem.upsert({
+            await db.inventoryItem.upsert({
                 where: {
                     productId_warehouseId: {
                         productId,
@@ -98,7 +100,13 @@ export const inventoryService = {
             });
 
             return movement;
-        });
+        };
+
+        if (tx) {
+            return execute(tx);
+        }
+
+        return await prisma.$transaction(execute);
     },
 
     /**

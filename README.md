@@ -1,657 +1,180 @@
-# Inventory Pro - Warehouse Inventory Management System
+# Lumbung (Inventory Pro)
 
-A production-ready, scalable, multi-warehouse inventory management system built with Next.js, TypeScript, Prisma, and PostgreSQL.
+Aplikasi manajemen gudang dan inventaris modern yang dirancang untuk efisiensi operasional bisnis dengan dukungan multi-gudang dan pelacakan stok real-time.
 
-## 🚀 Features
+## Fitur Utama
 
-### Core Functionality
-- ✅ **Movement-Based Inventory Architecture** - All stock changes tracked through append-only audit log
-- ✅ **Price Snapshots** - Historical orders preserve prices at time of creation
-- ✅ **Multi-Warehouse Support** - Track inventory across multiple locations
-- ✅ **Multi-Tenancy** - Organization-scoped data with complete isolation
-- ✅ **Role-Based Access Control (RBAC)** - Granular permissions system
-- ✅ **Multi-Admin Support** - Super Admin (cross-tenant) + Organization Admins
+Berikut adalah fitur-fitur unggulan yang tersedia dalam aplikasi:
 
-### Inventory Management
-- Product catalog with SKU, barcode, categories
-- Real-time stock tracking per warehouse
-- Low stock alerts and thresholds
-- Stock adjustments with reasons (damage, lost, audit, etc.)
-- Stock transfers between warehouses
-- Complete inventory movement history
+*   **Manajemen Inventaris (Inventory)**: Pelacakan stok real-time dengan arsitektur *movement-based*. Mendukung *low stock alerts* dan riwayat harga.
+*   **Manajemen Gudang (Warehouses)**: Dukungan *multi-warehouse* untuk mengelola stok di berbagai lokasi fisik.
+*   **Transfer Stok (Stock Transfers)**: Fitur untuk memindahkan stok antar gudang dengan status pelacakan (Draft, In Transit, Completed).
+*   **Penyesuaian Stok (Stock Adjustments)**: Koreksi stok manual untuk audit, barang rusak, atau selisih stok (Opname).
+*   **Penjualan (Sales Orders)**: Manajemen pesanan penjualan, faktur, dan pemenuhan barang dari gudang tertentu.
+*   **Pembelian (Purchase Orders)**: Manajemen pesanan pembelian ke pemasok dan penerimaan barang masuk.
+*   **Manajemen Kontak**: Database terpusat untuk Pelanggan (Customers) dan Pemasok (Suppliers).
+*   **Dashboard Analitik**: Ringkasan visual performa bisnis, nilai stok, dan aktivitas terbaru.
+*   **Multi-Bahasa (i18n)**: Dukungan penuh Bahasa Indonesia dan Inggris.
+*   **Role-Based Access Control**: Sistem hak akses pengguna (SuperAdmin, Admin, Manager, Staff, Viewer).
 
-### Order Management
-- Sales orders with workflow (Draft → Confirmed → Fulfilled → Invoiced)
-- Purchase orders with receiving workflow
-- Customer and supplier management
-- Invoice generation
+## Tech Stack
 
-## 🛠️ Tech Stack
+Aplikasi ini dibangun menggunakan teknologi modern untuk performa dan skalabilitas:
 
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript
-- **Database**: PostgreSQL (via Laragon, Docker-ready)
-- **ORM**: Prisma 7
-- **Authentication**: NextAuth.js v5
-- **Styling**: Tailwind CSS with glassmorphism theme
-- **Icons**: Lucide React
-- **Forms**: React Hook Form + Zod
-- **Email**: Nodemailer
+*   **Frontend**: [Next.js 16](https://nextjs.org/) (App Router), React 19
+*   **Styling**: [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/)
+*   **Backend**: Next.js Server Components & Server Actions
+*   **Database**: PostgreSQL dengan [Prisma ORM](https://www.prisma.io/)
+*   **Authentication**: [NextAuth.js v5](https://authjs.dev/) (Credentials Provider)
+*   **Internationalization**: [next-intl](https://next-intl-docs.vercel.app/)
+*   **Queue & Caching**: [BullMQ](https://docs.bullmq.io/) & [Redis](https://redis.io/) (via `ioredis`)
+*   **Validation**: Zod & React Hook Form
 
-## 📋 Prerequisites
+## Arsitektur Aplikasi
 
-- Node.js 18+ and npm
-- PostgreSQL (via Laragon or Docker)
-- Git
+Aplikasi ini menggunakan arsitektur **Next.js App Router** yang mengutamakan performa dan keamanan:
 
-## 🚀 Installation
+1.  **Server Components**: Sebagian besar halaman dirender di server untuk kecepatan awal dan SEO yang optimal.
+2.  **Server Actions**: Mutasi data (Create, Update, Delete) ditangani langsung oleh Server Actions, menghilangkan kebutuhan akan API layer terpisah untuk operasi internal.
+3.  **Service Layer**: Logika bisnis dipisahkan ke dalam *services* (misalnya `inventoryService`) yang dipanggil oleh Server Components atau Server Actions.
+4.  **Database Layer**: Prisma ORM menangani interaksi database dengan *type-safety* penuh.
+5.  **Background Jobs**: Tugas berat ditangani secara asinkron menggunakan BullMQ dan Redis (opsional, dapat dikonfigurasi).
 
-### 1. Clone the repository
+### Alur Data Inventory
+Perubahan stok menggunakan pendekatan *double-entry bookkeeping* (Inventory Movements). Stok saat ini (`InventoryItem`) adalah hasil kalkulasi atau snapshot dari semua pergerakan (`InventoryMovement`), memastikan akurasi data historis.
+
+## Struktur Project
 
 ```bash
-git clone <repository-url>
-cd lumbung
-```
-
-### 2. Install dependencies
-
-```bash
-npm install
-```
-
-### 3. Configure environment variables
-
-Copy `.env.example` to `.env` and update the values:
-
-```bash
-# Database (PostgreSQL via Laragon - localhost:5432)
-DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/inventory_pro?schema=public"
-
-# NextAuth
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-key-change-this-in-production"
-
-# Email (SMTP)
-SMTP_HOST="smtp.gmail.com"
-SMTP_PORT="587"
-SMTP_USER="your-email@gmail.com"
-SMTP_PASS="your-app-password"
-SMTP_FROM="noreply@inventorypro.com"
-```
-
-### 4. Set up the database
-
-```bash
-# Generate Prisma Client
-npx prisma generate
-
-# Run migrations
-npx prisma migrate dev --name init
-
-# Seed the database
-npx prisma db seed
-```
-
-### 5. Start the development server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## 🔐 Default Login Credentials
-
-After seeding, you can log in with:
-
-**Super Admin (Cross-Tenant Access)**
-- Email: `superadmin@inventorypro.com`
-- Password: `admin123`
-
-**Organization Admin (Demo Warehouse Co.)**
-- Email: `admin@demowarehouse.com`
-- Password: `admin123`
-
-> ⚠️ **Important**: Change these passwords in production!
-
-## 📁 Project Structure
-
-```
-inventory-pro/
-├── app/                        # Next.js App Router
-│   ├── (auth)/                # Auth pages (login, register)
-│   ├── (dashboard)/           # Dashboard pages
-│   ├── api/                   # API routes
-│   └── globals.css            # Global styles
-├── components/                # React components
-│   ├── ui/                    # Base UI components
-│   ├── layout/                # Layout components
-│   └── shared/                # Shared business components
-├── features/                  # Feature modules (domain logic)
-│   ├── auth/                  # Authentication
-│   ├── inventory/             # Inventory management
-│   ├── warehouses/            # Warehouse management
-│   ├── sales-orders/          # Sales orders
-│   ├── purchase-orders/       # Purchase orders
-│   └── ...
-├── lib/                       # Core utilities
-│   ├── prisma.ts             # Prisma client
-│   ├── auth.ts               # NextAuth config
-│   ├── rbac.ts               # RBAC utilities
-│   └── utils.ts              # General utilities
-├── prisma/                    # Database
-│   ├── schema.prisma         # Database schema
-│   ├── migrations/           # Migrations
-│   └── seed.ts               # Seed data
-└── types/                     # TypeScript types
-```
-
-
-
-## 🗄️ Database Schema
-
-### Core Entities
-- **Organization** - Multi-tenant organizations
-- **User** - Users with role-based access
-- **Role** - Roles (SuperAdmin, Admin, Manager, Staff, Viewer)
-- **Permission** - Granular permissions
-- **RolePermission** - Many-to-many relationship
-
-### Product Catalog
-- **Category** - Product categories
-- **Product** - Products with SKU, barcode, current prices
-- **ProductImage** - Product images
-
-### Inventory (Movement-Based)
-- **Warehouse** - Warehouses/locations
-- **InventoryItem** - Current on-hand stock per product/warehouse
-- **InventoryMovement** - Append-only audit log (IN/OUT/ADJUST/TRANSFER)
-- **StockAdjustment** - Adjustment documents
-
-### Orders (with Price Snapshots)
-- **Customer** - Customer master data
-- **SalesOrder** - Sales orders with workflow
-- **SalesOrderItem** - Line items with price snapshot
-- **Supplier** - Supplier master data
-- **PurchaseOrder** - Purchase orders with workflow
-- **PurchaseOrderItem** - Line items with cost snapshot
-- **PurchaseReceipt** - Receiving records
-
-### Transfers
-- **StockTransfer** - Stock transfers between warehouses
-- **StockTransferItem** - Transfer line items
-
-## 🔐 RBAC System
-
-### Roles
-
-- **SuperAdmin**: Cross-tenant access, can manage all organizations
-- **Admin**: Full access within their organization
-- **Manager**: Read/update permissions for inventory and orders
-- **Staff**: Create/read permissions for inventory operations
-- **Viewer**: Read-only access
-
-### Permission Structure
-
-Permissions follow the pattern: `resource:action`
-
-Examples:
-- `inventory:create`
-- `sales-orders:fulfill`
-- `warehouses:update`
-- `users:manage-roles`
-
-## 🏗️ Architecture Principles
-
-### Movement-Based Inventory
-
-Stock is NEVER edited directly. All changes go through `InventoryMovement` records:
-
-1. **IN**: Purchase receipts, transfers in
-2. **OUT**: Sales fulfillment, transfers out
-3. **ADJUST**: Manual adjustments
-
-The `InventoryItem.quantityOnHand` field is maintained for fast queries but is always derivable from the movement history.
-
-### Price Snapshots
-
-All transactional documents (sales orders, purchase orders) store prices at the time of creation:
-
-- `SalesOrderItem.unitPrice` - Price snapshot
-- `PurchaseOrderItem.unitCost` - Cost snapshot
-
-Changing product prices NEVER affects historical documents.
-
-### Multi-Tenancy
-
-- All entities (except SuperAdmin-only tables) are scoped by `organizationId`
-- Middleware enforces tenant isolation
-- Super Admin can access all organizations
-- Organization Admins can only access their own organization
-
-## 🐳 Docker Migration
-
-The system is designed for easy migration to Docker. To switch from Laragon to Docker:
-
-1. Update `DATABASE_URL` in `.env`:
-
-```bash
-# Change from:
-DATABASE_URL="postgresql://postgres:password@localhost:5432/inventory_pro?schema=public"
-
-# To:
-DATABASE_URL="postgresql://postgres:password@postgres:5432/inventory_pro?schema=public"
-```
-
-2. No code changes required! Prisma handles the connection abstraction.
-
-## 📧 Email Configuration
-
-Configure SMTP settings in `.env` for:
-- User invitations
-- Password reset
-- Low stock alerts
-
-Supported providers:
-- Gmail (with app password)
-- SendGrid
-- AWS SES
-- Any SMTP server
-
-## 🧪 Development
-
-### Run migrations
-
-```bash
-npx prisma migrate dev
-```
-
-### Reset database
-
-```bash
-npx prisma migrate reset
-```
-
-### View database
-
-```bash
-npx prisma studio
-```
-
-### Generate Prisma Client
-
-```bash
-npx prisma generate
-```
-
-## 🚀 Production Deployment
-
-### Build the application
-
-```bash
-npm run build
-```
-
-### Start production server
-
-```bash
-npm start
-```
-
-### Environment Variables
-
-Ensure all environment variables are set in your production environment:
-- `DATABASE_URL` - PostgreSQL connection string
-- `NEXTAUTH_URL` - Your production URL
-- `NEXTAUTH_SECRET` - Strong random secret
-- SMTP credentials for email
-
-## 🔧 Extensibility
-
-### Adding New Permissions
-
-1. Add permission to `prisma/seed.ts`
-2. Run seed or manually insert into database
-3. Assign to roles via `RolePermission`
-4. Use in code: `hasPermission(user, 'new-permission')`
-
-### Adding New Product Attributes
-
-Products have a `customAttributes` JSON field for flexible attributes:
-
-```typescript
-{
-  size: "XL",
-  color: "Blue",
-  brand: "Nike"
-}
-```
-
-### Adding New Roles
-
-1. Create role in database
-2. Assign permissions via `RolePermission`
-3. No code changes needed!
-
-## 📝 License
-
-This project is licensed under the MIT License.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these guidelines:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## 📞 Support
-
-For issues and questions:
-- GitHub Issues: [Create an issue]
-- Email: support@inventorypro.com
-
----
-
-Built with ❤️ using Next.js, Prisma, and PostgreSQL
-
-
-
-```
 lumbung
-├─ add-translations-en.ps1
-├─ add-translations-id.ps1
 ├─ app
-│  ├─ api
-│  │  └─ auth
-│  │     ├─ register
-│  │     │  └─ route.ts
-│  │     └─ [...nextauth]
-│  │        └─ route.ts
-│  ├─ favicon.ico
-│  ├─ globals.css
-│  └─ [locale]
-│     ├─ (auth)
-│     │  ├─ layout.tsx
-│     │  ├─ login
-│     │  │  ├─ login-form.tsx
-│     │  │  └─ page.tsx
-│     │  └─ register
-│     │     ├─ page.tsx
-│     │     └─ register-form.tsx
-│     ├─ (dashboard)
-│     │  ├─ adjustments
-│     │  │  ├─ new
-│     │  │  │  └─ page.tsx
-│     │  │  ├─ page.tsx
-│     │  │  └─ [id]
-│     │  │     └─ page.tsx
-│     │  ├─ categories
-│     │  │  └─ page.tsx
-│     │  ├─ customers
-│     │  │  └─ page.tsx
-│     │  ├─ dashboard
-│     │  │  └─ page.tsx
-│     │  ├─ help
-│     │  │  └─ page.tsx
-│     │  ├─ inventory
-│     │  │  ├─ new
-│     │  │  │  └─ page.tsx
-│     │  │  ├─ page.tsx
-│     │  │  └─ [id]
-│     │  │     └─ page.tsx
-│     │  ├─ layout.tsx
-│     │  ├─ purchase-orders
-│     │  │  ├─ new
-│     │  │  │  ├─ new-purchase-order-form.tsx
-│     │  │  │  └─ page.tsx
-│     │  │  ├─ page.tsx
-│     │  │  └─ [id]
-│     │  │     └─ page.tsx
-│     │  ├─ sales-orders
-│     │  │  ├─ new
-│     │  │  │  ├─ new-sales-order-form.tsx
-│     │  │  │  └─ page.tsx
-│     │  │  ├─ page.tsx
-│     │  │  └─ [id]
-│     │  │     ├─ invoice
-│     │  │     │  ├─ invoice-content.tsx
-│     │  │     │  └─ page.tsx
-│     │  │     └─ page.tsx
-│     │  ├─ settings
-│     │  │  └─ page.tsx
-│     │  ├─ suppliers
-│     │  │  └─ page.tsx
-│     │  ├─ transfers
-│     │  │  ├─ new
-│     │  │  │  ├─ new-transfer-form.tsx
-│     │  │  │  └─ page.tsx
-│     │  │  ├─ page.tsx
-│     │  │  └─ [id]
-│     │  │     └─ page.tsx
-│     │  └─ warehouses
-│     │     ├─ new
-│     │     │  ├─ new-warehouse-form.tsx
-│     │     │  └─ page.tsx
-│     │     ├─ page.tsx
-│     │     └─ [id]
-│     │        ├─ edit-warehouse-form.tsx
-│     │        └─ page.tsx
-│     ├─ layout.tsx
-│     └─ page.tsx
+│  ├─ [locale]              # Route utama dengan i18n
+│  │  ├─ (auth)             # Login & Register
+│  │  ├─ (dashboard)        # Modul aplikasi (Inventory, Sales, dll)
+│  │  └─ api                # Public API endpoints
+│  └─ api                   # Global API (Auth)
 ├─ components
-│  ├─ common
-│  │  └─ CrudModal.tsx
-│  ├─ dashboard
-│  │  ├─ AdjustmentOverviewCard.tsx
-│  │  ├─ CustomersOverviewCard.tsx
-│  │  ├─ LowStockItemsCard.tsx
-│  │  ├─ PurchaseOverviewCard.tsx
-│  │  ├─ RecentInventoryChangesCard.tsx
-│  │  ├─ SalesChart.tsx
-│  │  ├─ SalesOverviewCard.tsx
-│  │  ├─ SettingsQuickLinksCard.tsx
-│  │  ├─ StockDistributionChart.tsx
-│  │  ├─ SuppliersOverviewCard.tsx
-│  │  ├─ TransferOverviewCard.tsx
-│  │  └─ WarehouseOverviewCard.tsx
-│  ├─ domain
-│  │  ├─ adjustments
-│  │  │  ├─ adjustment-actions.tsx
-│  │  │  ├─ adjustment-create-modal.tsx
-│  │  │  ├─ adjustment-edit-modal.tsx
-│  │  │  ├─ adjustment-modal-manager.tsx
-│  │  │  ├─ adjustment-row-modal.tsx
-│  │  │  └─ adjustment-show-modal.tsx
-│  │  ├─ categories
-│  │  │  ├─ category-actions.tsx
-│  │  │  ├─ category-create-modal.tsx
-│  │  │  ├─ category-edit-modal.tsx
-│  │  │  ├─ category-modal-manager.tsx
-│  │  │  └─ category-show-modal.tsx
-│  │  ├─ customers
-│  │  │  ├─ customer-actions.tsx
-│  │  │  ├─ customer-create-modal.tsx
-│  │  │  ├─ customer-edit-modal.tsx
-│  │  │  ├─ customer-modal-manager.tsx
-│  │  │  └─ customer-show-modal.tsx
-│  │  ├─ inventory
-│  │  │  ├─ category-selector.tsx
-│  │  │  ├─ delete-product-button.tsx
-│  │  │  ├─ inventory-actions.tsx
-│  │  │  ├─ inventory-create-modal.tsx
-│  │  │  ├─ inventory-dialog.tsx
-│  │  │  ├─ inventory-edit-modal.tsx
-│  │  │  ├─ inventory-modal-manager.tsx
-│  │  │  ├─ inventory-show-modal.tsx
-│  │  │  └─ inventory-stock-modal.tsx
-│  │  ├─ purchase-orders
-│  │  │  ├─ purchase-order-actions.tsx
-│  │  │  ├─ purchase-order-create-modal.tsx
-│  │  │  ├─ purchase-order-dialog.tsx
-│  │  │  ├─ purchase-order-edit-modal.tsx
-│  │  │  ├─ purchase-order-modal-manager.tsx
-│  │  │  └─ purchase-order-show-modal.tsx
-│  │  ├─ sales-orders
-│  │  │  ├─ sales-order-actions.tsx
-│  │  │  ├─ sales-order-create-modal.tsx
-│  │  │  ├─ sales-order-dialog.tsx
-│  │  │  ├─ sales-order-edit-modal.tsx
-│  │  │  ├─ sales-order-modal-manager.tsx
-│  │  │  └─ sales-order-show-modal.tsx
-│  │  ├─ settings
-│  │  │  ├─ organization-form.tsx
-│  │  │  ├─ user-create-modal.tsx
-│  │  │  ├─ user-edit-modal.tsx
-│  │  │  ├─ user-modal-manager.tsx
-│  │  │  ├─ user-show-modal.tsx
-│  │  │  └─ users-table.tsx
-│  │  ├─ suppliers
-│  │  │  ├─ supplier-actions.tsx
-│  │  │  ├─ supplier-create-modal.tsx
-│  │  │  ├─ supplier-edit-modal.tsx
-│  │  │  ├─ supplier-modal-manager.tsx
-│  │  │  └─ supplier-show-modal.tsx
-│  │  ├─ transfers
-│  │  │  ├─ transfer-actions.tsx
-│  │  │  ├─ transfer-create-modal.tsx
-│  │  │  ├─ transfer-edit-modal.tsx
-│  │  │  ├─ transfer-modal-manager.tsx
-│  │  │  └─ transfer-show-modal.tsx
-│  │  └─ warehouses
-│  │     ├─ warehouse-actions.tsx
-│  │     ├─ warehouse-create-modal.tsx
-│  │     ├─ warehouse-edit-modal.tsx
-│  │     ├─ warehouse-modal-manager.tsx
-│  │     └─ warehouse-show-modal.tsx
-│  ├─ layout
-│  │  ├─ ambient-background.tsx
-│  │  ├─ sidebar.tsx
-│  │  ├─ theme-toggle.tsx
-│  │  └─ topbar.tsx
-│  ├─ shared
-│  │  ├─ action-column.tsx
-│  │  ├─ delete-confirmation-modal.tsx
-│  │  ├─ dialog-form.tsx
-│  │  ├─ help-sheet.tsx
-│  │  ├─ language-switcher.tsx
-│  │  ├─ page-header.tsx
-│  │  ├─ page-help.tsx
-│  │  ├─ pagination.tsx
-│  │  ├─ search-input.tsx
-│  │  └─ stats-card.tsx
-│  └─ ui
-│     ├─ accordion.tsx
-│     ├─ alert-dialog.tsx
-│     ├─ badge.tsx
-│     ├─ button.tsx
-│     ├─ card.tsx
-│     ├─ checkbox.tsx
-│     ├─ dialog.tsx
-│     ├─ form.tsx
-│     ├─ input.tsx
-│     ├─ label.tsx
-│     ├─ scroll-area.tsx
-│     ├─ select.tsx
-│     ├─ sheet.tsx
-│     ├─ sonner.tsx
-│     ├─ switch.tsx
-│     ├─ table.tsx
-│     ├─ tabs.tsx
-│     ├─ textarea.tsx
-│     └─ tooltip.tsx
-├─ components.json
-├─ docs
-│  ├─ REFACTOR_NOTES.md
-│  └─ TEST_SCENARIOS.md
-├─ emails
-├─ eslint.config.mjs
-├─ features
-│  ├─ adjustments
-│  │  └─ actions.ts
-│  ├─ auth
-│  ├─ categories
-│  │  └─ actions.ts
-│  ├─ customers
-│  │  └─ actions.ts
-│  ├─ dashboard
-│  ├─ inventory
-│  │  └─ actions.ts
-│  ├─ purchase-orders
-│  │  └─ actions.ts
-│  ├─ sales-orders
-│  │  └─ actions.ts
-│  ├─ settings
-│  │  └─ actions.ts
-│  ├─ suppliers
-│  │  └─ actions.ts
-│  ├─ transfers
-│  │  └─ actions.ts
-│  ├─ users
-│  └─ warehouses
-│     └─ actions.ts
-├─ fix-id-json.ps1
-├─ hooks
-│  └─ use-media-query.ts
-├─ i18n
-│  └─ request.ts
+│  ├─ ui                    # Komponen shadcn/ui reusable
+│  ├─ domain                # Komponen spesifik fitur
+│  └─ shared                # Komponen umum (Layout, Search, dll)
 ├─ lib
-│  ├─ auth.config.ts
-│  ├─ auth.ts
-│  ├─ email.ts
-│  ├─ prisma.ts
-│  ├─ rbac.ts
-│  ├─ services
-│  │  ├─ categoryService.ts
-│  │  ├─ customerService.ts
-│  │  ├─ dashboardService.ts
-│  │  ├─ inventoryService.ts
-│  │  ├─ pricingService.ts
-│  │  ├─ productService.ts
-│  │  ├─ purchaseOrderService.ts
-│  │  ├─ salesOrderService.ts
-│  │  └─ supplierService.ts
-│  ├─ utils.ts
-│  └─ validations
-│     └─ adjustment.ts
-├─ lint_report.txt
-├─ messages
-│  ├─ en.json
-│  └─ id.json
-├─ next.config.ts
-├─ package-lock.json
-├─ package.json
-├─ postcss.config.mjs
-├─ prisma
-│  ├─ migrations
-│  │  ├─ 20251129050733_init
-│  │  │  └─ migration.sql
-│  │  ├─ 20251201031558_init_inventory_price_history
-│  │  │  └─ migration.sql
-│  │  ├─ 20251201033403_init_inventory_price_history_and_supplier_link
-│  │  │  └─ migration.sql
-│  │  ├─ 20251201065449_make_customer_optional
-│  │  │  └─ migration.sql
-│  │  └─ migration_lock.toml
-│  ├─ schema.prisma
-│  └─ seed.ts
-├─ prisma.config.ts
-├─ proxy.ts
-├─ public
-│  ├─ file.svg
-│  ├─ globe.svg
-│  ├─ next.svg
-│  ├─ vercel.svg
-│  └─ window.svg
-├─ README.md
-├─ scripts
-│  ├─ check-users.ts
-│  └─ create-user-test.ts
-├─ tailwind.config.ts
-├─ tsconfig.json
-└─ types
-   ├─ domain.ts
-   ├─ next-auth.d.ts
-   └─ serialized.ts
-
+│  ├─ services              # Logika bisnis (InventoryService, etc)
+│  ├─ performance           # Driver Redis & Queue
+│  └─ prisma.ts             # DB Connection
+├─ prisma                   # Schema & Migrations
+├─ messages                 # File translasi (en.json, id.json)
+└─ public                   # Aset statis
 ```
+
+## Skema Database
+
+Database dirancang untuk skalabilitas multi-organisasi. Berikut adalah entitas utamanya:
+
+*   **Organization**: Entitas induk untuk multi-tenancy.
+*   **User & Role**: Manajemen pengguna dan hak akses (RBAC).
+*   **Product**: Katalog produk master dengan atribut harga dan kategori.
+*   **Warehouse**: Lokasi fisik penyimpanan barang.
+*   **InventoryItem**: Stok saat ini per produk per gudang.
+*   **InventoryMovement**: Log pergerakan stok (Masuk, Keluar, Transfer, Adjustment).
+*   **SalesOrder & PurchaseOrder**: Transaksi bisnis yang memicu pergerakan stok.
+*   **StockTransfer**: Dokumen perpindahan antar gudang.
+
+## Routes & URL Endpoints
+
+### Halaman Aplikasi (UI)
+
+Semua route di bawah ini mendukung prefix bahasa (misal: `/id/dashboard` atau `/en/dashboard`).
+
+| URL Path | Deskripsi | Akses |
+| :--- | :--- | :--- |
+| `/login` | Halaman Masuk | Public |
+| `/register` | Halaman Pendaftaran | Public |
+| `/dashboard` | Ringkasan performa & aktivitas | Login Required |
+| `/inventory` | Daftar & manajemen stok produk | Login Required |
+| `/warehouses` | Manajemen lokasi gudang | Login Required |
+| `/sales-orders` | Daftar pesanan penjualan | Login Required |
+| `/purchase-orders` | Daftar pesanan pembelian | Login Required |
+| `/transfers` | Transfer stok antar gudang | Login Required |
+| `/adjustments` | Penyesuaian stok manual | Login Required |
+| `/customers` | Database pelanggan | Login Required |
+| `/suppliers` | Database pemasok | Login Required |
+| `/settings` | Pengaturan organisasi & user | Login Required |
+
+### API Endpoints
+
+| Method | URL Path | Deskripsi |
+| :--- | :--- | :--- |
+| POST | `/api/auth/callback/credentials` | Login (NextAuth) |
+| POST | `/api/auth/signout` | Logout |
+| GET | `/api/auth/session` | Cek sesi aktif |
+
+*Catatan: Sebagian besar interaksi data menggunakan **Server Actions**, sehingga tidak terekspos sebagai public API endpoints.*
+
+## Konfigurasi & Environment Variables
+
+Salin file `.env.example` ke `.env` dan sesuaikan konfigurasi berikut:
+
+*   `DATABASE_URL`: Connection string PostgreSQL.
+*   `AUTH_SECRET`: Secret key untuk enkripsi sesi NextAuth.
+*   `NEXTAUTH_URL`: URL aplikasi (misal: `http://localhost:3001`).
+*   `REDIS_URL`: URL koneksi Redis (opsional, untuk queue/cache).
+
+## Getting Started
+
+Ikuti langkah ini untuk menjalankan proyek di lokal:
+
+**Prasyarat**:
+*   Node.js (v20+)
+*   npm (atau pnpm/yarn)
+*   PostgreSQL Database
+*   Redis (Opsional)
+
+**Langkah Instalasi**:
+
+1.  **Clone repository**
+    ```bash
+    git clone https://github.com/username/lumbung.git
+    cd lumbung
+    ```
+
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Setup Environment**
+    Buat file `.env` dan isi variabel yang diperlukan (lihat bagian Konfigurasi).
+
+4.  **Setup Database**
+    Jalankan migrasi untuk membuat tabel:
+    ```bash
+    npx prisma migrate dev
+    ```
+    *(Opsional) Seed database dengan data awal:*
+    ```bash
+    npm run prisma:seed
+    ```
+
+5.  **Jalankan Aplikasi**
+    ```bash
+    npm run dev
+    ```
+    Akses aplikasi di `http://localhost:3001`.
+
+## Auth & Keamanan
+
+*   **Autentikasi**: Menggunakan NextAuth.js dengan strategi Credentials (Email/Password).
+*   **Password**: Dihashing menggunakan `bcryptjs`.
+*   **Proteksi Route**: Middleware memastikan hanya user yang login yang bisa mengakses halaman dashboard.
+*   **Role-Based**: User memiliki role (SuperAdmin, Admin, dll) yang menentukan hak akses fitur (diimplementasikan via `RolePermission`).
+
+## Internationalization (i18n)
+
+Aplikasi mendukung multi-bahasa menggunakan `next-intl`.
+*   File translasi ada di folder `/messages` (`id.json`, `en.json`).
+*   Bahasa default adalah **Indonesia (id)**.
+*   Ganti bahasa secara otomatis berdasarkan preferensi browser atau via URL prefix.
+
+## Lisensi
+
+[MIT License](LICENSE)

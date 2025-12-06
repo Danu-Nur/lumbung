@@ -336,6 +336,51 @@ async function main() {
         });
     }
 
+    // 8. Create Plans & Subscriptions
+    console.log('Creating plans...');
+    const freePlan = await prisma.plan.create({
+        data: {
+            name: 'Free',
+            slug: 'free',
+            description: 'Untuk usaha kecil',
+            priceMonthly: 0,
+            priceYearly: 0,
+            limits: { maxUsers: 2, maxWarehouses: 1, maxItems: 100 },
+            features: ['basic_inventory', 'basic_reports'],
+        },
+    });
+
+    const proPlan = await prisma.plan.create({
+        data: {
+            name: 'Pro',
+            slug: 'pro',
+            description: 'Untuk usaha berkembang',
+            priceMonthly: 150000,
+            priceYearly: 1500000,
+            limits: { maxUsers: 10, maxWarehouses: 5, maxItems: 10000 },
+            features: ['advanced_inventory', 'advanced_reports', 'email_notifications'],
+        },
+    });
+
+    console.log('Creating subscriptions...');
+    // Assign Free plan to Org 1
+    await prisma.subscription.create({
+        data: {
+            organizationId: org1.id,
+            planId: freePlan.id,
+            status: 'ACTIVE',
+        },
+    });
+
+    // Assign Pro plan to Org 2
+    await prisma.subscription.create({
+        data: {
+            organizationId: org2.id,
+            planId: proPlan.id,
+            status: 'ACTIVE',
+        },
+    });
+
     console.log('✅ Database seeded successfully!');
     console.log('Credentials:');
     console.log('Motor Admin: admin@majumotor.com / admin123');

@@ -130,10 +130,105 @@ export const salesOrderService = {
                     referenceId: order.id,
                     createdById: userId,
                     notes: `Fulfillment of SO ${order.orderNumber}`,
-                });
+                }, tx);
             }
 
             return updatedOrder;
+        });
+    },
+    /**
+     * Confirms a Sales Order.
+     * Allocates stock for the order items.
+     */
+    async confirmSalesOrder(orderId: string, organizationId: string) {
+        return await prisma.$transaction(async (tx) => {
+            const order = await tx.salesOrder.findFirst({
+                where: { id: orderId, organizationId },
+                include: { items: true },
+            });
+
+            if (!order) throw new Error('Order not found');
+            if (order.status !== SalesOrderStatus.DRAFT) throw new Error('Only draft orders can be confirmed');
+
+            // Allocate stock
+            for (const item of order.items) {
+                const inventoryItem = await tx.inventoryItem.findUnique({
+                    where: {
+                        productId_warehouseId: {
+                            productId: item.productId,
+                            warehouseId: order.warehouseId,
+                        },
+                    },
+                });
+
+                if (inventoryItem) {
+                    const newAllocated = inventoryItem.allocatedQty + item.quantity;
+                    const newAvailable = inventoryItem.quantityOnHand - newAllocated;
+
+                    await tx.inventoryItem.update({
+                        where: { id: inventoryItem.id },
+                        data: {
+                            allocatedQty: newAllocated,
+                            availableQty: newAvailable,
+                        },
+                    });
+                }
+            }
+
+            return await tx.salesOrder.update({
+                where: { id: orderId },
+                data: { status: SalesOrderStatus.CONFIRMED },
+            });
+        });
+    },
+
+    /**
+     * Cancels a Sales Order.
+     * Releases allocated stock if the order was confirmed.
+     */
+    async cancelSalesOrder(orderId: string, organizationId: string) {
+        return await prisma.$transaction(async (tx) => {
+            const order = await tx.salesOrder.findFirst({
+                where: { id: orderId, organizationId },
+                include: { items: true },
+            });
+
+            if (!order) throw new Error('Order not found');
+            if (order.status === SalesOrderStatus.FULFILLED || order.status === SalesOrderStatus.CANCELLED) {
+                throw new Error('Cannot cancel fulfilled or already cancelled orders');
+            }
+
+            // If order was confirmed, release allocated stock
+            if (order.status === SalesOrderStatus.CONFIRMED) {
+                for (const item of order.items) {
+                    const inventoryItem = await tx.inventoryItem.findUnique({
+                        where: {
+                            productId_warehouseId: {
+                                productId: item.productId,
+                                warehouseId: order.warehouseId,
+                            },
+                        },
+                    });
+
+                    if (inventoryItem) {
+                        const newAllocated = Math.max(0, inventoryItem.allocatedQty - item.quantity);
+                        const newAvailable = inventoryItem.quantityOnHand - newAllocated;
+
+                        await tx.inventoryItem.update({
+                            where: { id: inventoryItem.id },
+                            data: {
+                                allocatedQty: newAllocated,
+                                availableQty: newAvailable,
+                            },
+                        });
+                    }
+                }
+            }
+
+            return await tx.salesOrder.update({
+                where: { id: orderId },
+                data: { status: SalesOrderStatus.CANCELLED },
+            });
         });
     },
 };

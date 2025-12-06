@@ -6,8 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
 
 export function RegisterForm() {
     const router = useRouter();
@@ -18,16 +17,21 @@ export function RegisterForm() {
         password: '',
         confirmPassword: '',
     });
+
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    // State untuk toggle password visibility
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
-        // Validation
+        // Client-side Validation
         if (formData.password !== formData.confirmPassword) {
             setError('Passwords do not match');
             setLoading(false);
@@ -52,6 +56,7 @@ export function RegisterForm() {
                 setError(data.error || 'Registration failed');
             } else {
                 setSuccess(true);
+                // Redirect otomatis setelah 2 detik
                 setTimeout(() => {
                     router.push('/login');
                 }, 2000);
@@ -63,119 +68,143 @@ export function RegisterForm() {
         }
     };
 
+    // Tampilan Sukses
+    if (success) {
+        return (
+            <div className="flex flex-col items-center justify-center py-10 space-y-4 animate-in fade-in zoom-in duration-300">
+                <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div className="text-center space-y-2">
+                    <h3 className="text-xl font-semibold text-foreground">Registration Successful!</h3>
+                    <p className="text-muted-foreground text-sm">
+                        Redirecting you to login page...
+                    </p>
+                </div>
+                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground mt-4" />
+            </div>
+        );
+    }
+
+    // Tampilan Form
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Register</CardTitle>
-                <CardDescription>
-                    Get started with your free account
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                {success ? (
-                    <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                        <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/20 rounded-full flex items-center justify-center">
-                            <CheckCircle className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
-                        </div>
-                        <p className="text-center text-emerald-600 dark:text-emerald-400 font-medium">
-                            Registration successful!
-                        </p>
-                        <p className="text-center text-sm text-muted-foreground">
-                            Redirecting to login...
-                        </p>
-                    </div>
-                ) : (
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {error && (
-                            <div className="flex items-center gap-3 p-3 rounded-md bg-destructive/10 text-destructive text-sm">
-                                <AlertCircle className="w-4 h-4 shrink-0" />
-                                <p>{error}</p>
-                            </div>
-                        )}
+        <div className="space-y-6">
+            {error && (
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-destructive/10 text-destructive text-sm font-medium animate-in fade-in-5">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <p>{error}</p>
+                </div>
+            )}
 
-                        <div className="space-y-2">
-                            <Label htmlFor="organizationName">Organization Name</Label>
-                            <Input
-                                id="organizationName"
-                                type="text"
-                                placeholder="My Company Inc."
-                                value={formData.organizationName}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, organizationName: e.target.value })
-                                }
-                                required
-                            />
-                        </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                    <Label htmlFor="organizationName">Organization Name</Label>
+                    <Input
+                        id="organizationName"
+                        type="text"
+                        placeholder="My Company Inc."
+                        value={formData.organizationName}
+                        onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
+                        required
+                        className="h-11"
+                    />
+                </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="name">Your Name</Label>
-                            <Input
-                                id="name"
-                                type="text"
-                                placeholder="John Doe"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                            />
-                        </div>
+                <div className="space-y-2">
+                    <Label htmlFor="name">Your Name</Label>
+                    <Input
+                        id="name"
+                        type="text"
+                        placeholder="John Doe"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                        className="h-11"
+                    />
+                </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="admin@mycompany.com"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                required
-                            />
-                        </div>
+                <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                        id="email"
+                        type="email"
+                        placeholder="admin@mycompany.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
+                        className="h-11"
+                    />
+                </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="password">Password</Label>
+                        <div className="relative">
                             <Input
                                 id="password"
-                                type="password"
+                                type={showPassword ? 'text' : 'password'}
                                 placeholder="••••••••"
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 required
+                                className="h-11 pr-10"
                             />
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-0 top-0 h-11 w-11 text-muted-foreground hover:text-foreground"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </Button>
                         </div>
+                    </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <div className="space-y-2">
+                        <Label htmlFor="confirmPassword">Confirm</Label>
+                        <div className="relative">
                             <Input
                                 id="confirmPassword"
-                                type="password"
+                                type={showConfirmPassword ? 'text' : 'password'}
                                 placeholder="••••••••"
                                 value={formData.confirmPassword}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, confirmPassword: e.target.value })
-                                }
+                                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                                 required
+                                className="h-11 pr-10"
                             />
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-0 top-0 h-11 w-11 text-muted-foreground hover:text-foreground"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </Button>
                         </div>
+                    </div>
+                </div>
 
-                        <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? 'Creating account...' : 'Create Account'}
-                        </Button>
-                    </form>
-                )}
-            </CardContent>
-            {!success && (
-                <CardFooter className="flex justify-center border-t p-6">
-                    <p className="text-sm text-muted-foreground">
-                        Already have an account?{' '}
-                        <Link
-                            href="/login"
-                            className="font-medium text-primary hover:underline"
-                        >
-                            Sign In
-                        </Link>
-                    </p>
-                </CardFooter>
-            )}
-        </Card>
+                <Button type="submit" className="w-full h-11 text-base mt-2" disabled={loading}>
+                    {loading ? (
+                        <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Creating account...
+                        </>
+                    ) : (
+                        <>
+                            Create Account <ArrowRight className="w-4 h-4 ml-2" />
+                        </>
+                    )}
+                </Button>
+            </form>
+
+            <div className="text-center text-sm">
+                <span className="text-muted-foreground">Already have an account? </span>
+                <Link href="/login" className="font-semibold text-primary hover:underline">
+                    Sign In
+                </Link>
+            </div>
+        </div>
     );
 }
