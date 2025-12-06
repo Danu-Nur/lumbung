@@ -8,17 +8,11 @@ import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { Pagination } from '@/components/shared/pagination';
 import { SearchInput } from '@/components/shared/search-input';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+
 import { getTranslations } from 'next-intl/server';
 import { TransferModalManager } from '@/components/domain/transfers/transfer-modal-manager';
 import { TransferActions } from '@/components/domain/transfers/transfer-actions';
+import { TransferTable } from '@/components/domain/inventory/tables/transfer-table';
 
 interface InventoryTransferSectionProps {
     page: number;
@@ -110,7 +104,7 @@ export async function InventoryTransferSection({ page, pageSize, search }: Inven
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                     <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} />
-                    <Link href="?modal=create">
+                    <Link href="?view=transfers&modal=create">
                         <Button className="shrink-0 w-10 h-10 p-0 sm:w-auto sm:h-10 sm:px-4 sm:py-2">
                             <Plus className="h-4 w-4 sm:mr-2" />
                             <span className="hidden sm:inline">{tCommon('buttons.add')}</span>
@@ -127,7 +121,7 @@ export async function InventoryTransferSection({ page, pageSize, search }: Inven
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
                                 {tCommon('table.noData')}
                             </p>
-                            <Link href="?modal=create">
+                            <Link href="?view=transfers&modal=create">
                                 <Button>
                                     <Plus className="w-4 h-4 mr-2" />
                                     {tCommon('buttons.add')}
@@ -136,58 +130,8 @@ export async function InventoryTransferSection({ page, pageSize, search }: Inven
                         </div>
                     ) : (
                         <>
-                            <div className="relative w-full overflow-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>{t('columns.reference')}</TableHead>
-                                            <TableHead>{t('columns.from')}</TableHead>
-                                            <TableHead>{t('columns.to')}</TableHead>
-                                            <TableHead>{t('columns.date')}</TableHead>
-                                            <TableHead>{t('columns.status')}</TableHead>
-                                            <TableHead className="text-right">{t('columns.items')}</TableHead>
-                                            <TableHead className="text-right">{tCommon('table.actions')}</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {serializedTransfers.map((transfer) => (
-                                            <TableRow key={transfer.id}>
-                                                <TableCell className="font-medium">
-                                                    {transfer.transferNumber}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {transfer.fromWarehouse.name}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {transfer.toWarehouse.name}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {formatDate(transfer.transferDate)}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <span
-                                                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${transfer.status === 'DRAFT'
-                                                            ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
-                                                            : transfer.status === 'IN_TRANSIT'
-                                                                ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                                                                : transfer.status === 'COMPLETED'
-                                                                    ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-                                                                    : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-                                                            }`}
-                                                    >
-                                                        {transfer.status}
-                                                    </span>
-                                                </TableCell>
-                                                <TableCell className="text-right">
-                                                    {transfer.items.length}
-                                                </TableCell>
-                                                <TableCell className="text-right">
-                                                    <TransferActions transfer={transfer} />
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                            <div className="relative w-full overflow-auto p-4">
+                                <TransferTable data={serializedTransfers} />
                             </div>
                             <div className="p-4 border-t">
                                 <Pagination

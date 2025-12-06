@@ -3,14 +3,7 @@ import { redirect } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+
 import { inventoryService } from '@/lib/services/inventoryService';
 import { Pagination } from '@/components/shared/pagination';
 import { SearchInput } from '@/components/shared/search-input';
@@ -21,6 +14,7 @@ import { getTranslations } from 'next-intl/server';
 import { InventoryModalManager } from '@/components/domain/inventory/inventory-modal-manager';
 import { InventoryActions } from '@/components/domain/inventory/inventory-actions';
 import { prisma } from '@/lib/prisma';
+import { InventoryTable } from '@/components/domain/inventory/tables/inventory-table';
 
 interface InventoryListSectionProps {
     page: number;
@@ -86,7 +80,7 @@ export async function InventoryListSection({ page, pageSize, search }: Inventory
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                     <SearchInput className="w-full sm:w-[300px]" placeholder={`${tCommon('buttons.search')}...`} />
-                    <Link href="?modal=create">
+                    <Link href="?view=stock&modal=create">
                         <Button className="shrink-0 w-10 h-10 p-0 sm:w-auto sm:h-10 sm:px-4 sm:py-2">
                             <Plus className="h-4 w-4 sm:mr-2" />
                             <span className="hidden sm:inline">{tCommon('buttons.add')} {t('columns.product')}</span>
@@ -103,7 +97,7 @@ export async function InventoryListSection({ page, pageSize, search }: Inventory
                             <p className="text-muted-foreground mb-4">
                                 {tCommon('table.noData')}
                             </p>
-                            <Link href="?modal=create">
+                            <Link href="?view=stock&modal=create">
                                 <Button>
                                     <Plus className="w-4 h-4 mr-2" />
                                     {tCommon('buttons.add')}
@@ -112,62 +106,8 @@ export async function InventoryListSection({ page, pageSize, search }: Inventory
                         </div>
                     ) : (
                         <>
-                            <div className="relative w-full overflow-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>{t('columns.product')}</TableHead>
-                                            <TableHead>{t('columns.sku')}</TableHead>
-                                            <TableHead>{t('columns.category')}</TableHead>
-                                            <TableHead className="text-right">{t('columns.sellingPrice')}</TableHead>
-                                            <TableHead className="text-right">{t('columns.totalStock')}</TableHead>
-                                            <TableHead className="text-center">{tCommon('table.actions')}</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {serializedProducts.map((product) => {
-                                            const totalStock = product.inventoryItems.reduce(
-                                                (sum, item) => sum + item.quantityOnHand,
-                                                0
-                                            );
-                                            const isLowStock = totalStock <= product.lowStockThreshold;
-
-                                            return (
-                                                <TableRow key={product.id}>
-                                                    <TableCell>
-                                                        <div>
-                                                            <p className="font-medium text-foreground">
-                                                                {product.name}
-                                                            </p>
-                                                            {product.description && (
-                                                                <p className="text-sm text-muted-foreground truncate max-w-xs">
-                                                                    {product.description}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell className="text-muted-foreground">
-                                                        {product.sku}
-                                                    </TableCell>
-                                                    <TableCell className="text-muted-foreground">
-                                                        {product.category?.name || '-'}
-                                                    </TableCell>
-                                                    <TableCell className="text-right font-medium">
-                                                        {formatCurrency(Number(product.sellingPrice))}
-                                                    </TableCell>
-                                                    <TableCell className="text-right">
-                                                        <Badge variant={isLowStock ? 'destructive' : 'default'}>
-                                                            {totalStock} {product.unit}
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell className="text-center">
-                                                        <InventoryActions product={product} warehouses={warehouses} />
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                                    </TableBody>
-                                </Table>
+                            <div className="relative w-full overflow-auto p-4">
+                                <InventoryTable data={serializedProducts} warehouses={warehouses} />
                             </div>
                             <div className="p-4 border-t">
                                 <Pagination
@@ -181,6 +121,6 @@ export async function InventoryListSection({ page, pageSize, search }: Inventory
                     )}
                 </CardContent>
             </Card>
-        </div>
+        </div >
     );
 }

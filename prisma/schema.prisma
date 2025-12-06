@@ -37,6 +37,7 @@ model Organization {
   purchaseOrders   PurchaseOrder[]
   stockTransfers   StockTransfer[]
   stockAdjustments StockAdjustment[]
+  stockOpnames     StockOpname[]
 
   subscription     Subscription?
 
@@ -158,6 +159,7 @@ model User {
   createdStockAdjustments StockAdjustment[]     @relation("StockAdjustmentCreatedBy")
   createdStockTransfers   StockTransfer[]       @relation("StockTransferCreatedBy")
   inventoryMovements      InventoryMovement[]   @relation("InventoryMovementCreatedBy")
+  createdStockOpnames     StockOpname[]         @relation("StockOpnameCreatedBy")
   priceChanges            ProductPriceHistory[] // history perubahan harga yang dibuat user ini
 
   @@index([organizationId])
@@ -224,6 +226,7 @@ model Product {
   purchaseOrderItems  PurchaseOrderItem[]
   stockTransferItems  StockTransferItem[]
   stockAdjustments    StockAdjustment[]
+  stockOpnameItems    StockOpnameItem[]
   priceHistory        ProductPriceHistory[]  // history semua perubahan harga
 
   @@unique([organizationId, sku])
@@ -291,6 +294,7 @@ model Warehouse {
   stockTransfersFrom     StockTransfer[]     @relation("TransferFrom")
   stockTransfersTo       StockTransfer[]     @relation("TransferTo")
   stockAdjustments       StockAdjustment[]
+  stockOpnames           StockOpname[]
 
   @@unique([organizationId, code])
   @@index([organizationId])
@@ -599,6 +603,7 @@ model StockTransfer {
   @@map("stock_transfers")
 }
 
+
 model StockTransferItem {
   id              String  @id @default(cuid())
   stockTransferId String
@@ -611,4 +616,54 @@ model StockTransferItem {
   @@index([stockTransferId])
   @@index([productId])
   @@map("stock_transfer_items")
+}
+
+// ============================================
+// STOCK OPNAME (Physical Count)
+// ============================================
+
+enum StockOpnameStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model StockOpname {
+  id             String            @id @default(cuid())
+  opnameNumber   String            @unique
+  warehouseId    String
+  status         StockOpnameStatus @default(DRAFT)
+  date           DateTime          @default(now())
+  notes          String?
+  organizationId String
+  createdById    String
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  warehouse    Warehouse         @relation(fields: [warehouseId], references: [id])
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdBy    User              @relation("StockOpnameCreatedBy", fields: [createdById], references: [id])
+  items        StockOpnameItem[]
+
+  @@index([organizationId])
+  @@index([warehouseId])
+  @@index([status])
+  @@map("stock_opnames")
+}
+
+model StockOpnameItem {
+  id        String @id @default(cuid())
+  opnameId  String
+  productId String
+  systemQty Int // Qty recorded in system at start of opname
+  actualQty Int? // Qty counted physically
+  difference Int? // actualQty - systemQty (computed)
+
+  opname  StockOpname @relation(fields: [opnameId], references: [id], onDelete: Cascade)
+  product Product     @relation(fields: [productId], references: [id])
+
+  @@index([opnameId])
+  @@index([productId])
+  @@map("stock_opname_items")
 }

@@ -85,7 +85,8 @@
       "footer": "© 2025 Inventory Pro",
       "toggleMenu": "Buka Menu",
       "navMenu": "Menu Navigasi",
-      "mobileNavDesc": "Menu navigasi mobile untuk Inventory Pro"
+      "mobileNavDesc": "Menu navigasi mobile untuk Inventory Pro",
+      "defaultOrg": "Inventory Pro"
     },
     "statsCard": {
       "fromLastMonth": "dari bulan lalu"
@@ -214,7 +215,8 @@
     "tabs": {
       "stock": "Daftar Inventaris",
       "transfers": "Transfer Stok",
-      "adjustments": "Penyesuaian Stok"
+      "adjustments": "Penyesuaian Stok",
+      "opname": "Stok Opname"
     },
     "columns": {
       "product": "Produk",
@@ -666,6 +668,43 @@
       "sendSuccess": "Transfer berhasil dikirim",
       "toWarehouse": "Ke Gudang",
       "fromWarehouse": "Dari Gudang"
+    }
+  },
+  "opname": {
+    "title": "Stok Opname",
+    "description": "Perhitungan fisik dan verifikasi stok",
+    "columns": {
+      "opnameNumber": "No. Opname",
+      "warehouse": "Gudang",
+      "date": "Tanggal",
+      "status": "Status",
+      "progress": "Progres"
+    },
+    "form": {
+      "createTitle": "Opname Baru",
+      "createDescription": "Mulai sesi perhitungan fisik baru.",
+      "selectWarehouse": "Pilih gudang",
+      "notes": "Catatan",
+      "notesPlaceholder": "Tambahkan catatan di sini..."
+    },
+    "show": {
+      "title": "Opname #{number}",
+      "start": "Mulai Opname",
+      "finalize": "Selesaikan",
+      "cancel": "Batalkan",
+      "systemQty": "Stok Sistem",
+      "actualQty": "Stok Fisik",
+      "difference": "Selisih",
+      "product": "Produk",
+      "status": "Status",
+      "finalizeSuccess": "Opname berhasil diselesaikan",
+      "startSuccess": "Opname berhasil dimulai"
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "IN_PROGRESS": "Dalam Proses",
+      "COMPLETED": "Selesai",
+      "CANCELLED": "Dibatalkan"
     }
   },
   "adjustments": {

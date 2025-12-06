@@ -2,7 +2,8 @@ import {
     SalesOrder, SalesOrderItem, Product, Customer, Warehouse,
     PurchaseOrder, PurchaseOrderItem, Supplier,
     StockTransfer, StockTransferItem,
-    StockAdjustment, User, Role, Category, InventoryItem
+    StockAdjustment, User, Role, Category, InventoryItem,
+    StockOpname, StockOpnameItem
 } from "@prisma/client";
 
 // Sales Order Types
@@ -80,4 +81,18 @@ export type SerializedProduct = Omit<Product, "sellingPrice" | "costPrice"> & {
     costPrice: number;
     category: Category | null;
     inventoryItems: (InventoryItem & { warehouse: Warehouse })[];
+};
+
+// Stock Opname Types
+export type SerializedStockOpnameItem = StockOpnameItem & {
+    product: Omit<Product, "sellingPrice" | "costPrice"> & {
+        sellingPrice: number;
+        costPrice: number;
+    };
+};
+
+export type SerializedStockOpname = StockOpname & {
+    warehouse: Warehouse;
+    items: SerializedStockOpnameItem[];
+    createdBy: User;
 };

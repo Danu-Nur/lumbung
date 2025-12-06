@@ -4,8 +4,9 @@ import { getTranslations } from 'next-intl/server';
 import { InventoryListSection } from '@/components/domain/inventory/sections/inventory-list-section';
 import { InventoryTransferSection } from '@/components/domain/inventory/sections/inventory-transfer-section';
 import { InventoryAdjustmentSection } from '@/components/domain/inventory/sections/inventory-adjustment-section';
-import { InventoryViewSelector } from '@/components/domain/inventory/inventory-view-selector';
-import { PageHeader } from '@/components/shared/page-header';
+import { InventoryOpnameSection } from '@/components/domain/inventory/sections/inventory-opname-section';
+import { InventoryHeader } from '@/components/domain/inventory/inventory-header';
+import { InventoryContentWrapper } from '@/components/domain/inventory/inventory-content-wrapper';
 
 export default async function InventoryPage({
     searchParams,
@@ -27,38 +28,41 @@ export default async function InventoryPage({
     const view = resolvedSearchParams.view || 'stock';
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col space-y-4">
-                <PageHeader
-                    title={t('title')}
-                    description={t('description')}
-                />
-                <InventoryViewSelector />
-            </div>
+        <div className="w-full space-y-6">
+            <InventoryHeader />
 
-            <div className="min-h-[500px]">
-                {view === 'stock' && (
-                    <InventoryListSection
-                        page={page}
-                        pageSize={pageSize}
-                        search={search}
-                    />
-                )}
-                {view === 'transfers' && (
-                    <InventoryTransferSection
-                        page={page}
-                        pageSize={pageSize}
-                        search={search}
-                    />
-                )}
-                {view === 'adjustments' && (
-                    <InventoryAdjustmentSection
-                        page={page}
-                        pageSize={pageSize}
-                        search={search}
-                    />
-                )}
-            </div>
+            <InventoryContentWrapper viewKey={view}>
+                <div className="min-h-[500px]">
+                    {view === 'stock' && (
+                        <InventoryListSection
+                            page={page}
+                            pageSize={pageSize}
+                            search={search}
+                        />
+                    )}
+                    {view === 'transfers' && (
+                        <InventoryTransferSection
+                            page={page}
+                            pageSize={pageSize}
+                            search={search}
+                        />
+                    )}
+                    {view === 'adjustments' && (
+                        <InventoryAdjustmentSection
+                            page={page}
+                            pageSize={pageSize}
+                            search={search}
+                        />
+                    )}
+                    {view === 'opname' && (
+                        <InventoryOpnameSection
+                            page={page}
+                            pageSize={pageSize}
+                            search={search}
+                        />
+                    )}
+                </div>
+            </InventoryContentWrapper>
         </div>
     );
 }

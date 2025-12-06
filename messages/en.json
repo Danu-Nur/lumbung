@@ -88,7 +88,8 @@
       "footer": "© 2025 Inventory Pro",
       "toggleMenu": "Toggle Menu",
       "navMenu": "Navigation Menu",
-      "mobileNavDesc": "Mobile navigation menu for Inventory Pro"
+      "mobileNavDesc": "Mobile navigation menu for Inventory Pro",
+      "defaultOrg": "Inventory Pro"
     },
     "statsCard": {
       "fromLastMonth": "from last month"
@@ -218,7 +219,8 @@
     "tabs": {
       "stock": "Inventory List",
       "transfers": "Stock Transfers",
-      "adjustments": "Stock Adjustments"
+      "adjustments": "Stock Adjustments",
+      "opname": "Stock Opname"
     },
     "columns": {
       "product": "Product",
@@ -679,6 +681,43 @@
       "sendSuccess": "Transfer sent successfully",
       "toWarehouse": "To Warehouse",
       "fromWarehouse": "From Warehouse"
+    }
+  },
+  "opname": {
+    "title": "Stock Opname",
+    "description": "Physical count and stock verification",
+    "columns": {
+      "opnameNumber": "Opname #",
+      "warehouse": "Warehouse",
+      "date": "Date",
+      "status": "Status",
+      "progress": "Progress"
+    },
+    "form": {
+      "createTitle": "New Opname",
+      "createDescription": "Start a new physical count session.",
+      "selectWarehouse": "Select warehouse",
+      "notes": "Notes",
+      "notesPlaceholder": "Add notes here..."
+    },
+    "show": {
+      "title": "Opname #{number}",
+      "start": "Start Opname",
+      "finalize": "Finalize",
+      "cancel": "Cancel",
+      "systemQty": "System Qty",
+      "actualQty": "Actual Qty",
+      "difference": "Difference",
+      "product": "Product",
+      "status": "Status",
+      "finalizeSuccess": "Opname finalized successfully",
+      "startSuccess": "Opname started successfully"
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
     }
   },
   "adjustments": {

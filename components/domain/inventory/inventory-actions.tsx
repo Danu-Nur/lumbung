@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SerializedProduct } from "@/types/serialized";
 import { deleteProduct } from "@/features/inventory/actions";
 import { ActionColumn } from "@/components/shared/action-column";
@@ -22,6 +22,7 @@ export function InventoryActions({ product, warehouses }: InventoryActionsProps)
     const [adjustmentOpen, setAdjustmentOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
     const t = useTranslations("inventory");
     const tCommon = useTranslations("common");
 
@@ -40,19 +41,23 @@ export function InventoryActions({ product, warehouses }: InventoryActionsProps)
         }
     };
 
-    const handleView = () => {
-        router.push(`?modal=show&id=${product.id}`, { scroll: false });
-    };
 
-    const handleEdit = () => {
-        router.push(`?modal=edit&id=${product.id}`, { scroll: false });
-    };
 
     return (
         <div className="flex items-center gap-2 justify-center">
             <ActionColumn
-                onView={handleView}
-                onEdit={handleEdit}
+                onView={() => {
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set('modal', 'show');
+                    params.set('id', product.id);
+                    router.push(`?${params.toString()}`, { scroll: false });
+                }}
+                onEdit={() => {
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set('modal', 'edit');
+                    params.set('id', product.id);
+                    router.push(`?${params.toString()}`, { scroll: false });
+                }}
                 onDelete={() => setDeleteOpen(true)}
                 customActions={[
                     {
