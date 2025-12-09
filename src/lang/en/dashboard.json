@@ -1,0 +1,74 @@
+{
+    "title": "Dashboard",
+    "welcome_back": "Welcome back",
+    "metrics": {
+        "financial": {
+            "title": "Financial Overview",
+            "purchase": "Total Purchase",
+            "stockValue": "Total Stock Value",
+            "sales": "Total Sales",
+            "profit": "Profit"
+        },
+        "activity": {
+            "title": "Activity & Status",
+            "recentlyAdded": {
+                "title": "Recently Added",
+                "empty": "No products added recently"
+            },
+            "sku": "SKU"
+        }
+    },
+    "widgets": {
+        "suppliers": {
+            "newest": "Newest Suppliers",
+            "title": "Suppliers Overview",
+            "totalSuppliers": "Total Suppliers"
+        },
+        "transfers": {
+            "title": "Transfer Overview",
+            "pending": "Pending Transfers",
+            "completed": "Completed Today"
+        },
+        "adjustments": {
+            "title": "Stock Adjustments",
+            "today": "Adjustments Today",
+            "recent": "Recent Adjustments"
+        },
+        "recentChanges": {
+            "title": "Recent Inventory Changes",
+            "empty": "No recent changes",
+            "adjustment": "Adjustment",
+            "transfer": "Transfer",
+            "sale": "Sale",
+            "purchase": "Purchase",
+            "by": "by"
+        },
+        "settings": {
+            "title": "Quick Settings",
+            "organization": "Organization",
+            "users": "Users",
+            "roles": "Roles"
+        },
+        "lowStock": {
+            "title": "Low Stock Items",
+            "viewAll": "View All",
+            "empty": "All items are well stocked!",
+            "min": "Min:"
+        },
+        "customers": {
+            "newest": "Newest Customers",
+            "title": "Customers Overview",
+            "totalCustomers": "Total Customers"
+        }
+    },
+    "charts": {
+        "sales": {
+            "title": "Sales Last 7 Days",
+            "sales": "Sales"
+        },
+        "stockDistribution": {
+            "title": "Stock Value by Warehouse",
+            "empty": "No stock data available"
+        }
+    }
+}

@@ -85,7 +85,21 @@ export async function InventoryListSection({ page, pageSize, search }: Inventory
                     <ImportModal
                         type="stock"
                         onImport={importStockBatch}
-                        sampleData={[{ Name: 'Product A', SKU: 'SKU123', Category: 'General', Warehouse: 'Main', Quantity: 100, Unit: 'pcs', 'Cost Price': 1000, 'Selling Price': 1500, 'Min Stock': 10 }]}
+                        sampleData={[
+                            {
+                                Name: 'Product A',
+                                SKU: 'SKU123',
+                                Barcode: '881234567890',
+                                Description: 'Description of Product A',
+                                Category: 'General',
+                                Warehouse: 'Main',
+                                Quantity: 100,
+                                Unit: 'pcs',
+                                'Cost Price': 1000,
+                                'Selling Price': 1500,
+                                'Min Stock': 10
+                            }
+                        ]}
                     />
                     <Link href="?view=stock&modal=create">
                         <Button className="shrink-0 w-10 h-10 p-0 sm:w-auto sm:h-10 sm:px-4 sm:py-2">

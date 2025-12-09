@@ -1,0 +1,334 @@
+{
+    "title": "Inventaris",
+    "description": "Kelola inventaris produk di seluruh gudang",
+    "tabs": {
+        "stock": "Daftar Inventaris",
+        "categories": "Kategori",
+        "transfers": "Transfer Stok",
+        "adjustments": "Penyesuaian Stok",
+        "opname": "Stok Opname",
+        "warehouses": "Gudang"
+    },
+    "menu": {
+        "stock": {
+            "description": "Kelola level stok produk di seluruh gudang"
+        },
+        "transfers": {
+            "description": "Kelola perpindahan stok"
+        },
+        "adjustments": {
+            "description": "Koreksi selisih stok"
+        },
+        "opname": {
+            "description": "Perhitungan fisik stok"
+        },
+        "categories": {
+            "description": "Kelola kategori produk"
+        }
+    },
+    "form": {
+        "title": "Produk",
+        "createTitle": "Buat Produk",
+        "editTitle": "Edit Produk",
+        "createDescription": "Tambahkan produk baru ke inventaris Anda.",
+        "editDescription": "Ubah detail produk di sini.",
+        "name": "Nama",
+        "namePlaceholder": "Masukkan nama produk",
+        "sku": "SKU",
+        "skuPlaceholder": "Masukkan SKU",
+        "barcode": "Barcode",
+        "barcodePlaceholder": "Masukkan barcode (opsional)",
+        "category": "Kategori",
+        "selectCategory": "Pilih kategori",
+        "addCategory": "Buat Kategori",
+        "description": "Deskripsi",
+        "descriptionPlaceholder": "Masukkan deskripsi (opsional)",
+        "unit": "Satuan",
+        "sellingPrice": "Harga Jual",
+        "costPrice": "Harga Beli",
+        "lowStockThreshold": "Batas Stok Rendah",
+        "initialStockTitle": "Stok Awal",
+        "warehouse": "Gudang",
+        "selectWarehouse": "Pilih gudang",
+        "addWarehouse": "Buat Gudang",
+        "quantity": "Jumlah",
+        "units": {
+            "meter": "Meter",
+            "box": "Kotak",
+            "pcs": "Pcs",
+            "liter": "Liter",
+            "kg": "Kilogram (kg)"
+        }
+    },
+    "show": {
+        "unit": "Satuan",
+        "lowStockThreshold": "Batas Stok Rendah",
+        "date": "Tanggal",
+        "quantity": "Jumlah",
+        "totalStock": "Total Stok",
+        "category": "Kategori",
+        "noStock": "Stok tidak tersedia",
+        "priceHistory": "Riwayat Harga",
+        "sellingPrice": "Harga Jual",
+        "newPrice": "Harga Baru",
+        "noHistory": "Tidak ada riwayat",
+        "type": "Tipe",
+        "warehouse": "Gudang",
+        "costPrice": "Harga Beli",
+        "description": "Deskripsi",
+        "stockOverview": "Ringkasan Stok",
+        "failedToLoadHistory": "Gagal memuat riwayat",
+        "history": "Riwayat Produk",
+        "reference": "Referensi",
+        "oldPrice": "Harga Lama",
+        "stockMovements": "Pergerakan Stok"
+    },
+    "stock": {
+        "title": "Manajemen Stok",
+        "adjust": "Sesuaikan Stok",
+        "history": "Riwayat",
+        "adjustmentPlaceholder": "Masukkan jumlah penambahan atau pengurangan",
+        "warehouse": "Gudang",
+        "description": "Sesuaikan level stok untuk produk ini",
+        "adjustment": "Penyesuaian",
+        "currentStock": "Stok Saat Ini",
+        "reasonPlaceholder": "Alasan penyesuaian",
+        "reason": "Alasan",
+        "selectWarehouse": "Pilih gudang",
+        "addStock": "Tambah Stok",
+        "removeStock": "Kurangi Stok",
+        "action": "Tindakan",
+        "quantity": "Jumlah",
+        "selectReason": "Pilih alasan"
+    },
+    "reasons": {
+        "correction": "Koreksi",
+        "damage": "Rusak",
+        "lost": "Hilang",
+        "found": "Ditemukan",
+        "audit": "Audit",
+        "expired": "Kadaluarsa",
+        "other": "Lainnya"
+    },
+    "categories": {
+        "title": "Kategori",
+        "description": "Kelola kategori produk Anda",
+        "columns": {
+            "name": "Nama",
+            "description": "Deskripsi"
+        },
+        "help": {
+            "buttonLabel": "Bantuan",
+            "title": "Panduan Kategori",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Kategori digunakan untuk mengelompokkan produk agar lebih terorganisir."
+            }
+        },
+        "form": {
+            "namePlaceholder": "Nama Kategori",
+            "createDescription": "Tambah kategori produk baru.",
+            "descriptionPlaceholder": "Deskripsi kategori",
+            "editTitle": "Edit Kategori",
+            "createTitle": "Buat Kategori",
+            "editDescription": "Perbarui informasi kategori.",
+            "description": "Deskripsi",
+            "name": "Nama"
+        },
+        "show": {
+            "description": "Deskripsi",
+            "createdAt": "Dibuat Pada",
+            "productCount": "Produk",
+            "name": "Nama"
+        }
+    },
+    "warehouses": {
+        "title": "Gudang",
+        "description": "Kelola lokasi gudang Anda.",
+        "columns": {
+            "name": "Nama",
+            "description": "Deskripsi",
+            "location": "Lokasi",
+            "code": "Kode",
+            "items": "Item",
+            "status": "Status",
+            "actions": "Aksi"
+        },
+        "form": {
+            "createTitle": "Buat Gudang",
+            "editTitle": "Edit Gudang",
+            "name": "Nama",
+            "namePlaceholder": "Nama Gudang",
+            "code": "Kode",
+            "codePlaceholder": "Kode Gudang",
+            "phone": "Telepon",
+            "phonePlaceholder": "Nomor Telepon",
+            "city": "Kota",
+            "cityPlaceholder": "Kota",
+            "address": "Alamat",
+            "addressPlaceholder": "Alamat Lengkap"
+        }
+    },
+    "transfers": {
+        "title": "Transfer Stok",
+        "description": "Pindahkan stok antar gudang",
+        "columns": {
+            "reference": "Referensi",
+            "date": "Tanggal",
+            "source": "Asal",
+            "destination": "Tujuan",
+            "items": "Item",
+            "status": "Status"
+        },
+        "help": {
+            "title": "Panduan Transfer",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Pindahkan inventaris dari satu gudang ke gudang lain."
+            },
+            "buttonLabel": "Panduan"
+        },
+        "form": {
+            "createTitle": "Transfer Baru",
+            "createDescription": "Buat permintaan transfer stok baru.",
+            "sourceWarehouse": "Gudang Asal",
+            "destinationWarehouse": "Gudang Tujuan",
+            "items": "Item",
+            "selectSource": "Pilih asal",
+            "selectDestination": "Pilih tujuan",
+            "notes": "Catatan",
+            "notesPlaceholder": "Tambahkan catatan di sini...",
+            "selectProduct": "Pilih produk",
+            "quantity": "Jumlah",
+            "addItem": "Tambah Item",
+            "noItems": "Belum ada item ditambahkan"
+        },
+        "show": {
+            "title": "Transfer #{number}",
+            "process": "Proses Transfer",
+            "cancel": "Batalkan Transfer",
+            "status": "Status",
+            "source": "Asal",
+            "destination": "Tujuan",
+            "items": "Item",
+            "processSuccess": "Transfer berhasil diproses",
+            "cancelSuccess": "Transfer berhasil dibatalkan",
+            "product": "Produk",
+            "quantity": "Jumlah"
+        },
+        "status": {
+            "PENDING": "Pending",
+            "COMPLETED": "Selesai",
+            "CANCELLED": "Dibatalkan"
+        }
+    },
+    "adjustments": {
+        "title": "Penyesuaian Stok",
+        "description": "Koreksi level stok secara manual",
+        "columns": {
+            "reference": "Referensi",
+            "date": "Tanggal",
+            "product": "Produk",
+            "warehouse": "Gudang",
+            "type": "Tipe",
+            "quantity": "Jumlah",
+            "reason": "Alasan",
+            "by": "Oleh",
+            "status": "Status"
+        },
+        "help": {
+            "title": "Panduan Penyesuaian",
+            "purpose": {
+                "heading": "Tujuan",
+                "content": "Sesuaikan level stok secara manual untuk penyusutan, kerusakan, atau koreksi."
+            },
+            "buttonLabel": "Panduan"
+        },
+        "form": {
+            "createTitle": "Buat Penyesuaian",
+            "createDescription": "Sesuaikan level stok secara manual.",
+            "editTitle": "Ubah Penyesuaian",
+            "editDescription": "Perbarui informasi penyesuaian.",
+            "product": "Produk",
+            "selectProduct": "Pilih produk",
+            "warehouse": "Gudang",
+            "selectWarehouse": "Pilih gudang",
+            "type": "Tipe",
+            "increase": "Tambah (+)",
+            "decrease": "Kurang (-)",
+            "quantity": "Jumlah",
+            "reason": "Alasan",
+            "selectReason": "Pilih alasan",
+            "notes": "Catatan",
+            "notesPlaceholder": "Tambahkan catatan di sini..."
+        },
+        "show": {
+            "title": "Detail Penyesuaian",
+            "reverseAdjustment": "Batalkan Penyesuaian",
+            "product": "Produk",
+            "warehouse": "Gudang",
+            "type": "Tipe",
+            "quantity": "Jumlah",
+            "reason": "Alasan",
+            "notes": "Catatan",
+            "createdBy": "Dibuat Oleh",
+            "details": "Detail",
+            "reverseSuccess": "Penyesuaian berhasil dibatalkan",
+            "reverseError": "Gagal membatalkan penyesuaian"
+        },
+        "types": {
+            "increase": "Penambahan",
+            "decrease": "Pengurangan"
+        },
+        "reasons": {
+            "AUDIT": "Koreksi Audit",
+            "OTHER": "Lainnya",
+            "CORRECTION": "Koreksi Data",
+            "EXPIRED": "Kadaluarsa",
+            "LOST": "Hilang",
+            "DAMAGE": "Rusak",
+            "FOUND": "Ditemukan"
+        },
+        "history": {
+            "title": "Riwayat",
+            "empty": "Tidak ada riwayat"
+        }
+    },
+    "opname": {
+        "title": "Stok Opname",
+        "description": "Sesi perhitungan fisik stok",
+        "columns": {
+            "number": "Opname #",
+            "warehouse": "Gudang",
+            "date": "Tanggal",
+            "status": "Status",
+            "progress": "Progres"
+        },
+        "form": {
+            "createTitle": "Opname Baru",
+            "createDescription": "Mulai sesi perhitungan fisik baru.",
+            "selectWarehouse": "Pilih gudang",
+            "notes": "Catatan",
+            "notesPlaceholder": "Tambahkan catatan di sini..."
+        },
+        "show": {
+            "title": "Opname #{number}",
+            "start": "Mulai Opname",
+            "finalize": "Selesaikan",
+            "cancel": "Batalkan",
+            "status": "Status",
+            "product": "Produk",
+            "systemQty": "Stok Sistem",
+            "actualQty": "Stok Fisik",
+            "difference": "Selisih",
+            "startSuccess": "Opname berhasil dimulai",
+            "finalizeSuccess": "Opname berhasil diselesaikan"
+        },
+        "status": {
+            "DRAFT": "Draft",
+            "IN_PROGRESS": "Dalam Proses",
+            "COMPLETED": "Selesai",
+            "CANCELLED": "Dibatalkan"
+        }
+    }
+}

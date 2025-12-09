@@ -1,0 +1,58 @@
+{
+    "title": "Penjualan",
+    "description": "Kelola pesanan pelanggan",
+    "columns": {
+        "orderNumber": "No. Pesanan",
+        "customer": "Pelanggan",
+        "date": "Tanggal",
+        "status": "Status",
+        "total": "Total",
+        "items": "Item"
+    },
+    "help": {
+        "title": "Panduan Penjualan",
+        "purpose": {
+            "heading": "Tujuan",
+            "content": "Kelola pesanan penjualan Anda di sini."
+        },
+        "buttonLabel": "Panduan"
+    },
+    "form": {
+        "createTitle": "Buat Pesanan Penjualan",
+        "createDescription": "Buat pesanan penjualan baru untuk pelanggan.",
+        "editTitle": "Ubah Pesanan Penjualan",
+        "customer": "Pelanggan",
+        "walkInCustomer": "Pelanggan Langsung",
+        "warehouse": "Gudang",
+        "selectWarehouse": "Pilih gudang",
+        "notes": "Catatan",
+        "notesPlaceholder": "Tambahkan catatan di sini...",
+        "lineItems": "Item Pesanan",
+        "selectProduct": "Pilih produk untuk ditambahkan",
+        "noItems": "Belum ada item ditambahkan",
+        "subtotal": "Subtotal",
+        "discount": "Diskon",
+        "total": "Total"
+    },
+    "show": {
+        "title": "Pesanan Penjualan #{orderNumber}",
+        "invoice": "Faktur",
+        "confirm": "Konfirmasi Pesanan",
+        "fulfill": "Penuhi Pesanan",
+        "cancel": "Batalkan Pesanan",
+        "confirmSuccess": "Pesanan berhasil dikonfirmasi",
+        "fulfillSuccess": "Pesanan berhasil dipenuhi",
+        "cancelSuccess": "Pesanan berhasil dibatalkan",
+        "customer": "Pelanggan",
+        "walkInCustomer": "Pelanggan Langsung",
+        "warehouse": "Gudang",
+        "orderItems": "Item Pesanan",
+        "product": "Produk",
+        "qty": "Jml",
+        "price": "Harga",
+        "total": "Total",
+        "subtotal": "Subtotal",
+        "discount": "Diskon",
+        "notes": "Catatan"
+    }
+}

@@ -21,7 +21,7 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface ImportModalProps {
-    type: 'categories' | 'stock' | 'adjustments' | 'opname';
+    type: 'categories' | 'stock' | 'transfers' | 'adjustments' | 'opname' | 'warehouses';
     trigger?: React.ReactNode;
     onImport: (data: any[]) => Promise<{ success: boolean; errors?: string[] }>;
     onSuccess?: () => void;
@@ -39,18 +39,20 @@ export function ImportModal({
     templateFileName = 'template.xlsx',
     sampleData
 }: ImportModalProps) {
-    const t = useTranslations('common.actions');
+    const t = useTranslations('common');
     const [open, setOpen] = useState(false);
     const [file, setFile] = useState<File | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [stats, setStats] = useState<{ total: number; success: number; failed: number } | null>(null);
+    const [errorList, setErrorList] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setFile(e.target.files[0]);
             setStats(null);
+            setErrorList([]);
             setProgress(0);
         }
     };
@@ -70,11 +72,13 @@ export function ImportModal({
     };
 
     const processFile = async () => {
-        if (!file) return;
+        if (!file || isLoading) return;
 
         setIsLoading(true);
         setProgress(0);
+        setProgress(0);
         setStats(null);
+        setErrorList([]);
 
         try {
             const data = await parseExcel(file);
@@ -90,8 +94,9 @@ export function ImportModal({
                 const start = i * batchSize;
                 const end = Math.min(start + batchSize, totalRows);
                 const batch = data.slice(start, end);
+                const sanitizedBatch = JSON.parse(JSON.stringify(batch));
 
-                const result = await onImport(batch);
+                const result = await onImport(sanitizedBatch);
 
                 if (result.success) {
                     successCount += batch.length;
@@ -109,18 +114,19 @@ export function ImportModal({
                 success: successCount,
                 failed: failedCount
             });
+            setErrorList(allErrors);
 
             if (failedCount === 0) {
-                toast.success(t('importSuccess', { count: totalRows }));
+                toast.success(t('actions.importSuccess', { count: totalRows }));
                 if (onSuccess) onSuccess();
                 setTimeout(() => setOpen(false), 2000);
             } else {
-                toast.warning(t('importPartialSuccess', { success: successCount, failed: failedCount }));
+                toast.warning(t('actions.importPartialSuccess', { success: successCount, failed: failedCount }));
             }
 
         } catch (error: any) {
             console.error('Import failed:', error);
-            toast.error(error.message || t('importError'));
+            toast.error(error.message || t('actions.importError'));
         } finally {
             setIsLoading(false);
         }
@@ -152,15 +158,15 @@ export function ImportModal({
                 {trigger || (
                     <Button variant="outline">
                         <Upload className="w-4 h-4 mr-2" />
-                        Import Excel
+                        {t('import.trigger')}
                     </Button>
                 )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Import {type === 'stock' ? 'Inventory' : type === 'categories' ? 'Categories' : type}</DialogTitle>
+                    <DialogTitle>{t('import.title', { type: t(`import.types.${type}`) })}</DialogTitle>
                     <DialogDescription>
-                        Upload an Excel file to import data in bulk.
+                        {t('import.description')}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -169,18 +175,18 @@ export function ImportModal({
                         <div className="flex items-center gap-3">
                             <FileSpreadsheet className="w-8 h-8 text-green-600" />
                             <div>
-                                <p className="font-medium text-sm">Download Template</p>
-                                <p className="text-xs text-muted-foreground">Use this file as a starting point</p>
+                                <p className="font-medium text-sm">{t('import.downloadTemplate')}</p>
+                                <p className="text-xs text-muted-foreground">{t('import.templateHelper')}</p>
                             </div>
                         </div>
                         <Button variant="secondary" size="sm" onClick={generateTemplate}>
                             <Download className="w-4 h-4 mr-2" />
-                            Template
+                            {t('import.templateButton')}
                         </Button>
                     </div>
 
                     <div className="grid w-full max-w-sm items-center gap-1.5">
-                        <Label htmlFor="file">Excel File</Label>
+                        <Label htmlFor="file">{t('import.fileLabel')}</Label>
                         <Input
                             ref={fileInputRef}
                             id="file"
@@ -193,14 +199,14 @@ export function ImportModal({
 
                     {file && (
                         <div className="text-sm text-muted-foreground">
-                            Selected: {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                            {t('import.selected', { name: file.name, size: (file.size / 1024).toFixed(1) })}
                         </div>
                     )}
 
                     {isLoading && (
                         <div className="space-y-2">
                             <div className="flex justify-between text-xs text-muted-foreground">
-                                <span>Processing...</span>
+                                <span>{t('import.processing')}</span>
                                 <span>{progress}%</span>
                             </div>
                             <Progress value={progress} />
@@ -208,23 +214,36 @@ export function ImportModal({
                     )}
 
                     {stats && (
-                        <Alert variant={stats.failed > 0 ? "destructive" : "default"} className={stats.failed === 0 ? "border-green-500 text-green-600" : ""}>
-                            {stats.failed === 0 ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                            <AlertTitle>{stats.failed === 0 ? "Success" : "Completed with errors"}</AlertTitle>
-                            <AlertDescription>
-                                Processed: {stats.total} | Success: {stats.success} | Failed: {stats.failed}
-                            </AlertDescription>
-                        </Alert>
+                        <div className="space-y-2">
+                            <Alert variant={stats.failed > 0 ? "destructive" : "default"} className={stats.failed === 0 ? "border-green-500 text-green-600" : ""}>
+                                {stats.failed === 0 ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                                <AlertTitle>{stats.failed === 0 ? t('import.status.successTitle') : t('import.status.partialTitle')}</AlertTitle>
+                                <AlertDescription>
+                                    {t('import.status.details', { total: stats.total, success: stats.success, failed: stats.failed })}
+                                </AlertDescription>
+                            </Alert>
+
+                            {errorList.length > 0 && (
+                                <div className="max-h-40 overflow-y-auto p-3 bg-red-50 text-red-700 text-xs rounded-md border border-red-200">
+                                    <p className="font-semibold mb-1">{t('import.errors.title')}</p>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        {errorList.map((err, i) => (
+                                            <li key={i} className="break-words">{err}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
 
                 <DialogFooter>
                     <Button variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-                        Cancel
+                        {t('import.cancel')}
                     </Button>
                     <Button onClick={processFile} disabled={!file || isLoading}>
                         {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                        Import Data
+                        {t('import.submit')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

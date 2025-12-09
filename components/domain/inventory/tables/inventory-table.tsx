@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/shared/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/shared/data-table/data-table-column-header';
@@ -25,7 +26,7 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
     const tCommon = useTranslations('common');
 
     // Columns Definition
-    const columns: ColumnDef<SerializedProduct>[] = [
+    const columns: ColumnDef<SerializedProduct>[] = useMemo(() => [
         {
             id: 'select',
             header: ({ table }) => (
@@ -56,62 +57,103 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
                 <DataTableColumnHeader column={column} title={t('columns.product')} />
             ),
             cell: ({ row }) => (
-                <div>
-                    <p className="font-medium text-foreground">{row.getValue('name')}</p>
-                    {row.original.description && (
-                        <p className="text-sm text-muted-foreground truncate max-w-xs">{row.original.description}</p>
-                    )}
+                <div className="flex flex-col">
+                    <span className="font-medium truncate max-w-[200px]" title={row.getValue('name')}>
+                        {row.getValue('name')}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{row.original.sku}</span>
                 </div>
             ),
         },
         {
-            accessorKey: 'sku',
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title={t('columns.sku')} />
-            ),
-        },
-        {
-            accessorKey: 'category.name', // Access nested
-            id: 'category',
+            accessorKey: 'category',
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title={t('columns.category')} />
             ),
-            cell: ({ row }) => row.original.category?.name || '-',
+            cell: ({ row }) => {
+                const category = row.original.category;
+                return (
+                    <div className="flex items-center">
+                        {category ? (
+                            <Badge variant="outline" className="text-xs">
+                                {category.name}
+                            </Badge>
+                        ) : (
+                            <span className="text-muted-foreground text-xs">-</span>
+                        )}
+                    </div>
+                );
+            },
         },
         {
             accessorKey: 'sellingPrice',
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title={t('columns.sellingPrice')} className='justify-end' />
             ),
-            cell: ({ row }) => <div className="text-right font-medium">{formatCurrency(row.getValue('sellingPrice'))}</div>,
+            cell: ({ row }) => {
+                const formattedPrice = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                }).format(row.getValue('sellingPrice'));
+                return <div className="font-medium">{formattedPrice}</div>;
+            },
         },
         {
-            accessorKey: 'totalStock', // Custom accessor for calculation? Or use cell
-            id: 'totalStock',
+            accessorKey: 'totalStock',
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title={t('columns.totalStock')} className='justify-end' />
             ),
             cell: ({ row }) => {
-                const totalStock = row.original.inventoryItems.reduce((acc, item) => acc + item.quantityOnHand, 0);
-                const isLow = totalStock <= row.original.lowStockThreshold;
+                const stock = row.getValue('totalStock') as number;
+                const minStock = row.original.lowStockThreshold;
+                const isLowStock = stock <= minStock;
+
                 return (
-                    <div className="text-right">
-                        <Badge variant={isLow ? 'destructive' : 'default'}>
-                            {totalStock} {row.original.unit}
-                        </Badge>
+                    <div className="flex items-center gap-2">
+                        <span className={isLowStock ? "text-destructive font-bold" : ""}>
+                            {stock} {row.original.unit}
+                        </span>
+                        {isLowStock && (
+                            <Badge variant="destructive" className="h-5 px-1.5 text-[10px]">
+                                Low
+                            </Badge>
+                        )}
                     </div>
-                )
+                );
             },
-            accessorFn: (row) => row.inventoryItems.reduce((acc, item) => acc + item.quantityOnHand, 0), // Enable sorting by stock
+        },
+        {
+            accessorKey: 'warehouse',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title={t('columns.warehouse')} />
+            ),
+            cell: ({ row }) => {
+                const stock = row.original.inventoryItems;
+                if (!stock || stock.length === 0) return <span className="text-muted-foreground">-</span>;
+
+                // Show first warehouse and count of others
+                const firstWarehouse = stock[0].warehouse.name;
+                const otherCount = stock.length - 1;
+
+                return (
+                    <div className="flex flex-col text-xs">
+                        <span>{firstWarehouse}</span>
+                        {otherCount > 0 && (
+                            <span className="text-muted-foreground">+{otherCount} others</span>
+                        )}
+                    </div>
+                );
+            },
         },
         {
             id: 'actions',
             cell: ({ row }) => <div className='text-center'><InventoryActions product={row.original} warehouses={warehouses} /></div>,
             header: () => <div className="text-center">{tCommon('table.actions')}</div>
         },
-    ];
+    ], [t, tCommon, warehouses]);
 
-    // Export Handlers
     // Export Handlers
     const handleExportExcel = (rows: SerializedProduct[]) => {
         const exportData = rows.map(row => ({
@@ -152,14 +194,6 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
     };
 
     const handlePrint = (rows: SerializedProduct[]) => {
-        // Simple window print or creating a print window. 
-        // For better experience, we can use a print stylesheet or a dedicated print component. 
-        // Using basic window.print() usually prints the viewing page. 
-        // To print *just* the table, we might need a hidden print area. 
-        // For now, let's just trigger window.print() but maybe users expect a report format.
-        // A better approach is often generating a PDF in a new tab to print.
-        // Let's reuse PDF generation blob to open in new tab? 
-        // Or simpler: just window.print() and rely on CSS @media print to hide sidebar/etc (Global enhancement).
         window.print();
     };
 
@@ -174,7 +208,6 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
             onPrint={handlePrint}
             onDelete={(rows) => {
                 console.log("Deleting rows", rows);
-                // Would implement batch delete server action here
                 alert(tCommon("actions.comingSoon"));
             }}
         />

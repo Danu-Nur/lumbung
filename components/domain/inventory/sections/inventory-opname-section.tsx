@@ -12,6 +12,8 @@ import { getTranslations } from 'next-intl/server';
 import { OpnameTable } from '@/components/domain/inventory/tables/opname-table';
 import { CreateOpnameDialog } from '@/components/domain/inventory/modals/create-opname-dialog';
 import { SerializedStockOpname, SerializedStockOpnameItem } from '@/types/serialized';
+import { ImportModal } from '@/components/shared/import-modal';
+import { importOpnameBatch } from '@/features/opnames/import-actions';
 
 interface InventoryOpnameSectionProps {
     page: number;
@@ -86,6 +88,18 @@ export async function InventoryOpnameSection({ page, pageSize, search }: Invento
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                     {/* <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} /> */}
+                    <ImportModal
+                        type="opname"
+                        onImport={importOpnameBatch}
+                        sampleData={[{
+                            'Opname Number': 'OP-001',
+                            'Warehouse': 'Main Warehouse',
+                            'Product Name': 'Product A',
+                            'SKU': 'SKU-001',
+                            'Actual Qty': 50,
+                            'Notes': 'End of Year Count'
+                        }]}
+                    />
                     <CreateOpnameDialog warehouses={warehouses} />
                 </div>
             </div>

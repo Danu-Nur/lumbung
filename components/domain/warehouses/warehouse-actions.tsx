@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Warehouse } from "@prisma/client";
 import { deleteWarehouse } from "@/features/warehouses/actions";
 import { ActionColumn } from "@/components/shared/action-column";
@@ -19,7 +19,12 @@ export function WarehouseActions({ warehouse }: WarehouseActionsProps) {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
+    const isDeletingRef = useRef(false);
+    const searchParams = useSearchParams();
+
     const handleDelete = async () => {
+        if (isDeletingRef.current) return;
+        isDeletingRef.current = true;
         setIsDeleting(true);
         try {
             await deleteWarehouse(warehouse.id);
@@ -31,14 +36,22 @@ export function WarehouseActions({ warehouse }: WarehouseActionsProps) {
             toast.error(error.message || t("actions.deleteError"));
         } finally {
             setIsDeleting(false);
+            isDeletingRef.current = false;
         }
+    };
+
+    const handleAction = (modal: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('modal', modal);
+        params.set('id', warehouse.id);
+        router.push(`?${params.toString()}`, { scroll: false });
     };
 
     return (
         <>
             <ActionColumn
-                onView={() => router.push(`?modal=show&id=${warehouse.id}`, { scroll: false })}
-                onEdit={() => router.push(`?modal=edit&id=${warehouse.id}`, { scroll: false })}
+                onView={() => handleAction('show')}
+                onEdit={() => handleAction('edit')}
                 onDelete={() => setDeleteOpen(true)}
             />
 

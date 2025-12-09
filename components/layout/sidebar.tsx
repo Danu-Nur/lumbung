@@ -65,10 +65,10 @@ export function Sidebar({ className }: SidebarProps) {
         // { name: t('categories'), href: '/categories', icon: Layers },
         { name: t('sales'), href: '/sales-orders', icon: ShoppingCart },
         { name: t('purchases'), href: '/purchase-orders', icon: ShoppingBag },
-        { name: t('warehouses'), href: '/warehouses', icon: Warehouse },
 
-        { name: t('customers'), href: '/customers', icon: Users },
-        { name: t('suppliers'), href: '/suppliers', icon: Building2 },
+
+        // { name: t('customers'), href: '/customers', icon: Users },
+        // { name: t('suppliers'), href: '/suppliers', icon: Building2 },
         { name: t('settings'), href: '/settings', icon: Settings },
     ];
 
@@ -150,7 +150,7 @@ export function MobileSidebar() {
         // { name: t('categories'), href: '/categories', icon: Layers },
         { name: t('sales'), href: '/sales-orders', icon: ShoppingCart },
         { name: t('purchases'), href: '/purchase-orders', icon: ShoppingBag },
-        { name: t('warehouses'), href: '/warehouses', icon: Warehouse },
+
 
         { name: t('customers'), href: '/customers', icon: Users },
         { name: t('suppliers'), href: '/suppliers', icon: Building2 },

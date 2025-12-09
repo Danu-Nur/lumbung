@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ActionColumn } from "@/components/shared/action-column";
 import { DeleteConfirmationModal } from "@/components/shared/delete-confirmation-modal";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ interface SalesOrderActionsProps {
 
 export function SalesOrderActions({ order }: SalesOrderActionsProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const t = useTranslations("common");
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -41,8 +42,18 @@ export function SalesOrderActions({ order }: SalesOrderActionsProps) {
     return (
         <>
             <ActionColumn
-                onView={() => router.push(`?modal=show&id=${order.id}`, { scroll: false })}
-                onEdit={order.status === 'DRAFT' ? () => router.push(`?modal=edit&id=${order.id}`, { scroll: false }) : undefined}
+                onView={() => {
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set('modal', 'show');
+                    params.set('id', order.id);
+                    router.push(`?${params.toString()}`, { scroll: false });
+                }}
+                onEdit={order.status === 'DRAFT' ? () => {
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set('modal', 'edit');
+                    params.set('id', order.id);
+                    router.push(`?${params.toString()}`, { scroll: false });
+                } : undefined}
                 onDelete={canDelete ? () => setDeleteOpen(true) : undefined}
             />
 

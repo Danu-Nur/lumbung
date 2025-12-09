@@ -29,138 +29,151 @@ export async function importStockBatch(data: any[]): Promise<{ success: boolean;
         const categoryMap = new Map(categories.map(c => [c.name.toLowerCase(), c.id]));
         const warehouseMap = new Map(warehouses.map(w => [w.name.toLowerCase(), w.id]));
 
-        for (const item of data) {
-            const name = item['Name'];
-            const sku = item['SKU']; // SKU is optional? Usually required for products. use Name as SKU if missing?
+        // Normalize keys to support case-insensitive and trimmed headers
+        const normalizedData = data.map(item => {
+            const newItem: any = {};
+            Object.keys(item).forEach(key => {
+                newItem[key.trim().toLowerCase()] = item[key];
+            });
+            return newItem;
+        });
+
+        for (const item of normalizedData) {
+            const name = item['name']; // Normalized key
+            const sku = item['sku'];
 
             if (!name) continue;
 
-            // Map Category
-            let categoryId = null;
-            if (item['Category']) {
-                const catName = String(item['Category']).toLowerCase();
-                categoryId = categoryMap.get(catName);
-                // If not found, skip or create? Let's skip for speed/safety for now, or maybe create?
-                // Creating inside loop is slow. Better to create missing categories beforehand.
-                // For this MVP, let's assume category must match or be null.
-            }
+            const categoryName = item['category'] ? String(item['category']).toLowerCase() : null;
+            let categoryId = categoryName ? categoryMap.get(categoryName) : null;
 
-            // Map Warehouse
-            let warehouseId = null;
-            if (item['Warehouse']) {
-                const whName = String(item['Warehouse']).toLowerCase();
-                warehouseId = warehouseMap.get(whName);
-            }
-
-            // If warehouse specified but not found, error?
-            if (item['Warehouse'] && !warehouseId) {
-                // Warning: warehouse not found
-            }
+            const warehouseName = item['warehouse'] ? String(item['warehouse']).toLowerCase() : null;
+            let warehouseId = warehouseName ? warehouseMap.get(warehouseName) : null;
 
             // Prepare Product Data
             validItems.push({
                 name: String(name),
                 sku: sku ? String(sku) : undefined,
                 categoryId,
-                unit: item['Unit'] || 'pcs',
-                costPrice: Number(item['Cost Price']) || 0,
-                sellingPrice: Number(item['Selling Price']) || 0,
+                unit: item['unit'] || 'pcs',
+                costPrice: Number(item['cost price']) || 0,
+                sellingPrice: Number(item['selling price']) || 0,
                 warehouseId,
-                quantity: Number(item['Quantity']) || 0,
-                minStock: Number(item['Min Stock']) || 0,
+                quantity: Number(item['quantity']) || 0,
+                minStock: Number(item['min stock']) || 0,
+                barcode: item['barcode'] ? String(item['barcode']) : undefined,
+                description: item['description'] ? String(item['description']) : undefined,
             });
+        }
+
+        if (validItems.length === 0 && data.length > 0) {
+            return { success: false, errors: ["No valid items found. Please check column headers (Name, SKU, etc)."] };
+        }
+
+        if (validItems.length === 0 && data.length > 0) {
+            return { success: false, errors: ["No valid items found. Please check column headers (Name, SKU, etc)."] };
         }
 
         if (validItems.length === 0) return { success: true };
 
-        // Process in transaction? Too big.
-        // Process individually or find existing products first.
+        const importErrors: string[] = [];
 
-        // Strategy: 
-        // 1. Identify existing products by SKU (if provided) or Name.
-        // 2. Create new products.
-        // 3. Create/Update Inventory records.
-
-        // This is simplified. Real world needs robust handling.
         for (const item of validItems) {
             let productId = null;
 
             // Find or Create Product
-            // Try by SKU first
-            if (item.sku) {
-                const existing = await prisma.product.findFirst({
-                    where: { organizationId, sku: item.sku }
-                });
-                if (existing) productId = existing.id;
-            }
+            try {
+                // Try by SKU first
+                if (item.sku) {
+                    const existing = await prisma.product.findFirst({
+                        where: { organizationId, sku: item.sku }
+                    });
+                    if (existing) productId = existing.id;
+                }
 
-            // Try by Name if no SKU or not found
-            if (!productId) {
-                const existingByName = await prisma.product.findFirst({
-                    where: { organizationId, name: item.name }
-                });
-                if (existingByName) productId = existingByName.id;
-            }
+                // Try by Name if no SKU or not found
+                if (!productId) {
+                    const existingByName = await prisma.product.findFirst({
+                        where: { organizationId, name: item.name }
+                    });
+                    if (existingByName) productId = existingByName.id;
+                }
 
-            if (!productId) {
-                try {
+                if (!productId) {
                     const newProduct = await prisma.product.create({
                         data: {
-                            organizationId,
+                            organization: { connect: { id: organizationId } },
                             name: item.name,
-                            sku: item.sku || `SKU-${Date.now()}-${Math.floor(Math.random() * 1000)}`, // Fallback SKU
-                            categoryId: item.categoryId,
+                            sku: item.sku || `SKU-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                            category: item.categoryId ? { connect: { id: item.categoryId } } : undefined,
+                            createdBy: { connect: { id: session.user.id } }, // Required field
                             unit: item.unit,
                             costPrice: item.costPrice,
                             sellingPrice: item.sellingPrice,
-                            lowStockThreshold: item.minStock, // Mapped from minStock
+                            lowStockThreshold: item.minStock,
+                            barcode: item.barcode,
+                            description: item.description,
                         }
                     });
                     productId = newProduct.id;
-                } catch (e) {
-                    console.error("Failed to create product", item.name, e);
-                    continue;
                 }
+            } catch (e: any) {
+                console.error("Failed to create product", item.name, e);
+                let errorMessage = e.message;
+                if (e.message.includes("Unique constraint")) {
+                    errorMessage = "Name or SKU already exists.";
+                } else if (e.message.includes("Argument")) {
+                    errorMessage = "Invalid data format (missing required fields).";
+                } else {
+                    // Try to capture the last meaningful line to avoid stack trace
+                    const lines = e.message.split('\n');
+                    errorMessage = lines.length > 0 ? lines[lines.length - 1] : "Unknown database error";
+                }
+                importErrors.push(`Failed to create product '${item.name}': ${errorMessage}`);
+                continue;
             }
 
             // Update Inventory if Warehouse Provided
             if (item.warehouseId && productId) {
-                // Upsert inventory
-                await prisma.inventoryItem.upsert({
-                    where: {
-                        productId_warehouseId: {
+                try {
+                    await prisma.inventoryItem.upsert({
+                        where: {
+                            productId_warehouseId: {
+                                productId,
+                                warehouseId: item.warehouseId
+                            }
+                        },
+                        create: {
                             productId,
-                            warehouseId: item.warehouseId
+                            warehouseId: item.warehouseId,
+                            quantityOnHand: item.quantity,
+                            availableQty: item.quantity,
+                        },
+                        update: {
+                            quantityOnHand: item.quantity,
+                            availableQty: item.quantity,
                         }
-                    },
-                    create: {
-                        productId,
-                        warehouseId: item.warehouseId,
-                        quantityOnHand: item.quantity,
-                        availableQty: item.quantity,
-                    },
-                    update: {
-                        quantityOnHand: item.quantity,
-                        availableQty: item.quantity, // Reset available to on hand? Or re-calculate? 
-                        // For import, usually we override. Assuming allocated is handled elsewhere or is reset?
-                        // If we have active orders, this might be dangerous.
-                        // Ideally: availableQty = quantityOnHand - allocatedQty.
-                        // But we don't know allocatedQty here easily without fetching.
-                        // For simplicity in this "Import" feature, we update onHand.
-                        // BUT standard behavior: update onHand, and recalculate available.
-                        // Let's modify to increment/update properly.
-                        // Actually, prisma update allows using existing values.
-                        // However, let's just use what user provides for onHand.
-                    }
-                });
+                    });
+                } catch (e: any) {
+                    importErrors.push(`Failed to update stock for '${item.name}': ${e.message}`);
+                }
+            } else if (item.quantity > 0 && !item.warehouseId) {
+                // Warn if quantity provided but no valid warehouse
+                importErrors.push(`Skipped stock for '${item.name}': Warehouse not specified or not found.`);
             }
         }
 
         revalidatePath('/inventory');
+
+        if (importErrors.length > 0) {
+            // If we have some errors, return partial success
+            return { success: importErrors.length < validItems.length, errors: importErrors };
+        }
+
         return { success: true };
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Stock import error:", error);
-        return { success: false, errors: ["Stock import failed"] };
+        return { success: false, errors: ["Stock import failed: " + error.message] };
     }
 }

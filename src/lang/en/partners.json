@@ -1,0 +1,86 @@
+{
+    "suppliers": {
+        "title": "Suppliers",
+        "description": "Manage your supplier database",
+        "columns": {
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "city": "City"
+        },
+        "help": {
+            "title": "Supplier Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "This page lists suppliers you purchase items from."
+            },
+            "buttonLabel": "Guide"
+        },
+        "form": {
+            "namePlaceholder": "Supplier Name",
+            "address": "Address",
+            "createDescription": "Add a new supplier to the database.",
+            "emailPlaceholder": "supplier@example.com",
+            "editTitle": "Edit Supplier",
+            "createTitle": "Create Supplier",
+            "editDescription": "Update supplier information.",
+            "phone": "Phone",
+            "addressPlaceholder": "Full address",
+            "cityPlaceholder": "City name",
+            "phonePlaceholder": "+62 xxx xxxx xxxx",
+            "name": "Name",
+            "email": "Email",
+            "city": "City"
+        },
+        "show": {
+            "phone": "Phone",
+            "name": "Name",
+            "email": "Email",
+            "city": "City",
+            "address": "Address",
+            "createdAt": "Created At"
+        }
+    },
+    "customers": {
+        "title": "Customers",
+        "description": "Manage your customer database",
+        "columns": {
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "city": "City"
+        },
+        "help": {
+            "title": "Customer Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "This page lists customers who purchase items from you."
+            },
+            "buttonLabel": "Guide"
+        },
+        "form": {
+            "namePlaceholder": "Customer Name",
+            "address": "Address",
+            "createDescription": "Add a new customer to the database.",
+            "emailPlaceholder": "customer@example.com",
+            "editTitle": "Edit Customer",
+            "createTitle": "Create Customer",
+            "editDescription": "Update customer information.",
+            "phone": "Phone",
+            "addressPlaceholder": "Full address",
+            "cityPlaceholder": "City name",
+            "phonePlaceholder": "+62 xxx xxxx xxxx",
+            "name": "Name",
+            "email": "Email",
+            "city": "City"
+        },
+        "show": {
+            "phone": "Phone",
+            "name": "Name",
+            "email": "Email",
+            "city": "City",
+            "address": "Address",
+            "createdAt": "Created At"
+        }
+    }
+}

@@ -24,16 +24,18 @@ import {
 } from "@/components/ui/dialog";
 import { createProduct } from "@/features/inventory/actions";
 import { useRouter } from "next/navigation";
-import { Category } from "@prisma/client";
+import { Category, Warehouse } from "@prisma/client";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
-import { CategoryCreateModal } from "../categories/category-create-modal";
+import { CategoryCreateModal } from "@/components/domain/categories/category-create-modal";
+import { WarehouseCreateModal } from "@/components/domain/warehouses/warehouse-create-modal";
 
 interface InventoryCreateModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     categories: Category[];
+    warehouses: Warehouse[];
     onSuccess?: () => void;
 }
 
@@ -41,6 +43,7 @@ export function InventoryCreateModal({
     open,
     onOpenChange,
     categories,
+    warehouses,
     onSuccess,
 }: InventoryCreateModalProps) {
     const router = useRouter();
@@ -48,6 +51,7 @@ export function InventoryCreateModal({
     const tCommon = useTranslations("common");
     const tValidation = useTranslations("common.validation");
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+    const [warehouseModalOpen, setWarehouseModalOpen] = useState(false);
 
     const formSchema = z.object({
         name: z.string().min(1, tValidation("required")),
@@ -59,6 +63,17 @@ export function InventoryCreateModal({
         sellingPrice: z.coerce.number().min(0, tValidation("positive")),
         costPrice: z.coerce.number().min(0, tValidation("positive")),
         lowStockThreshold: z.coerce.number().min(0).default(10),
+        // Initial Stock (Optional)
+        initialStock: z.coerce.number().min(0).optional(),
+        warehouseId: z.string().optional().or(z.literal("")),
+    }).refine((data) => {
+        if (data.initialStock && data.initialStock > 0 && !data.warehouseId) {
+            return false;
+        }
+        return true;
+    }, {
+        message: tValidation("required"),
+        path: ["warehouseId"],
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -73,6 +88,8 @@ export function InventoryCreateModal({
             sellingPrice: 0,
             costPrice: 0,
             lowStockThreshold: 10,
+            initialStock: 0,
+            warehouseId: "",
         },
     });
 
@@ -262,6 +279,57 @@ export function InventoryCreateModal({
                                 )}
                             />
 
+                            <div className="border-t pt-4 mt-4">
+                                <h3 className="text-sm font-medium mb-3">{t("form.initialStockTitle") || "Initial Stock"}</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="warehouseId"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t("form.warehouse") || "Warehouse"}</FormLabel>
+                                                <div className="flex gap-2">
+                                                    <select
+                                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                        {...field}
+                                                    >
+                                                        <option value="">{t("form.selectWarehouse") || "Select Warehouse"}</option>
+                                                        {warehouses.map((warehouse) => (
+                                                            <option key={warehouse.id} value={warehouse.id}>
+                                                                {warehouse.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="icon"
+                                                        onClick={() => setWarehouseModalOpen(true)}
+                                                        title={t("form.addWarehouse") || "Add Warehouse"}
+                                                    >
+                                                        <Plus className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="initialStock"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{t("form.quantity") || "Quantity"}</FormLabel>
+                                                <FormControl>
+                                                    <Input type="number" placeholder="0" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </div>
+
                             <DialogFooter>
                                 <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                                     {tCommon("actions.cancel")}
@@ -282,6 +350,14 @@ export function InventoryCreateModal({
                     if (newCategory) {
                         form.setValue("categoryId", newCategory.id);
                     }
+                }}
+            />
+
+            <WarehouseCreateModal
+                open={warehouseModalOpen}
+                onOpenChange={setWarehouseModalOpen}
+                onSuccess={() => {
+                    router.refresh();
                 }}
             />
         </>

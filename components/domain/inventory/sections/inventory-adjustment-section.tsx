@@ -14,6 +14,8 @@ import { getTranslations } from 'next-intl/server';
 import { AdjustmentModalManager } from '@/components/domain/adjustments/adjustment-modal-manager';
 import { AdjustmentActions } from '@/components/domain/adjustments/adjustment-actions';
 import { AdjustmentTable } from '@/components/domain/inventory/tables/adjustment-table';
+import { ImportModal } from '@/components/shared/import-modal';
+import { importAdjustmentBatch } from '@/features/adjustments/import-actions';
 
 interface InventoryAdjustmentSectionProps {
     page: number;
@@ -97,6 +99,19 @@ export async function InventoryAdjustmentSection({ page, pageSize, search }: Inv
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                     {/* <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} /> */}
+                    <ImportModal
+                        type="adjustments"
+                        onImport={importAdjustmentBatch}
+                        sampleData={[{
+                            'Warehouse': 'Main Warehouse',
+                            'Product Name': 'Product A',
+                            'SKU': 'SKU-001',
+                            'Quantity': 5,
+                            'Type': 'Add',
+                            'Reason': 'Found',
+                            'Notes': 'Stock Audit'
+                        }]}
+                    />
                     <Link href="?view=adjustments&modal=create">
                         <Button className="shrink-0 w-10 h-10 p-0 sm:w-auto sm:h-10 sm:px-4 sm:py-2">
                             <Plus className="w-4 h-4 sm:mr-2" />

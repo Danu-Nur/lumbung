@@ -6,6 +6,8 @@ import { InventoryTransferSection } from '@/components/domain/inventory/sections
 import { InventoryAdjustmentSection } from '@/components/domain/inventory/sections/inventory-adjustment-section';
 import { InventoryOpnameSection } from '@/components/domain/inventory/sections/inventory-opname-section';
 import { CategoriesListSection } from '@/components/domain/categories/sections/categories-list-section';
+import { WarehouseListSection } from '@/components/domain/warehouses/sections/warehouse-list-section';
+import { SupplierListSection } from '@/components/domain/suppliers/sections/supplier-list-section';
 import { InventoryHeader } from '@/components/domain/inventory/inventory-header';
 import { InventoryContentWrapper } from '@/components/domain/inventory/inventory-content-wrapper';
 
@@ -64,6 +66,20 @@ export default async function InventoryPage({
                     )}
                     {view === 'opname' && (
                         <InventoryOpnameSection
+                            page={page}
+                            pageSize={pageSize}
+                            search={search}
+                        />
+                    )}
+                    {view === 'warehouses' && (
+                        <WarehouseListSection
+                            page={page}
+                            pageSize={pageSize}
+                            search={search}
+                        />
+                    )}
+                    {view === 'suppliers' && (
+                        <SupplierListSection
                             page={page}
                             pageSize={pageSize}
                             search={search}

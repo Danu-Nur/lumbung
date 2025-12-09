@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
-import { Package, ArrowRightLeft, ClipboardList, Info, ClipboardCheck, Layers } from 'lucide-react';
+import { Package, ArrowRightLeft, ClipboardList, Info, ClipboardCheck, Layers, Warehouse as WarehouseIcon, Building2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function InventoryHeader() {
@@ -21,6 +21,24 @@ export function InventoryHeader() {
             color: "text-blue-500",
             bg: "bg-blue-50 dark:bg-blue-950/20",
             border: "border-blue-200 dark:border-blue-800"
+        },
+        {
+            id: 'warehouses',
+            label: t('tabs.warehouses') === 'tabs.warehouses' ? 'Warehouses' : t('tabs.warehouses'), // Fallback if missing
+            description: t('menu.warehouses.description') === 'menu.warehouses.description' ? 'Manage storage locations' : t('menu.warehouses.description'),
+            icon: WarehouseIcon,
+            color: "text-indigo-500",
+            bg: "bg-indigo-50 dark:bg-indigo-950/20",
+            border: "border-indigo-200 dark:border-indigo-800"
+        },
+        {
+            id: 'suppliers',
+            label: t('tabs.suppliers') === 'tabs.suppliers' ? 'Suppliers' : t('tabs.suppliers'),
+            description: t('menu.suppliers.description') === 'menu.suppliers.description' ? 'Manage suppliers' : t('menu.suppliers.description'),
+            icon: Building2,
+            color: "text-cyan-500",
+            bg: "bg-cyan-50 dark:bg-cyan-950/20",
+            border: "border-cyan-200 dark:border-cyan-800"
         },
         {
             id: 'categories',
@@ -72,7 +90,7 @@ export function InventoryHeader() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
 
             {/* Navigation Cards (Bento Grid) */}
-            <div className="col-span-1 md:col-span-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            <div className="col-span-1 md:col-span-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
                 {menuItems.map((item) => {
                     const isActive = activeView === item.id;
                     const Icon = item.icon;

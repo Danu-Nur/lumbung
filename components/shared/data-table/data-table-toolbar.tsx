@@ -1,6 +1,7 @@
 'use client';
 
 import { Table } from '@tanstack/react-table';
+import { useState, useEffect } from 'react';
 import { X, FileSpreadsheet, FileText, Printer, Trash, Settings2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -38,16 +39,29 @@ export function DataTableToolbar<TData>({
     const isFiltered = table.getState().columnFilters.length > 0;
     const selectedRows = table.getFilteredSelectedRowModel().rows.length;
 
+    // Local state for search input to prevent jumping/clearing
+    const [searchValue, setSearchValue] = useState(
+        (table.getColumn(searchKey ?? "")?.getFilterValue() as string) ?? ""
+    );
+
+    useEffect(() => {
+        if (searchKey) {
+            const filterValue = table.getColumn(searchKey)?.getFilterValue() as string;
+            setSearchValue(filterValue ?? "");
+        }
+    }, [table.getState().columnFilters, searchKey, table]);
+
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-1 items-center space-x-2">
                 {searchKey && (
                     <Input
                         placeholder={searchPlaceholder || "Filter..."}
-                        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
-                        onChange={(event) =>
-                            table.getColumn(searchKey)?.setFilterValue(event.target.value)
-                        }
+                        value={searchValue}
+                        onChange={(event) => {
+                            setSearchValue(event.target.value);
+                            table.getColumn(searchKey)?.setFilterValue(event.target.value);
+                        }}
                         className="h-8 w-[150px] lg:w-[250px]"
                     />
                 )}

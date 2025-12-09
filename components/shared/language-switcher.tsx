@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/routing';
+import { useSearchParams } from 'next/navigation';
 import {
     Select,
     SelectContent,
@@ -15,10 +16,13 @@ export function LanguageSwitcher() {
     const locale = useLocale();
     const router = useRouter();
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const t = useTranslations('common.buttons');
 
     const handleLocaleChange = (newLocale: string) => {
-        router.replace(pathname, { locale: newLocale });
+        const queryString = searchParams.toString();
+        const path = queryString ? `${pathname}?${queryString}` : pathname;
+        router.replace(path, { locale: newLocale });
     };
 
     return (

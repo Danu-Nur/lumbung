@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SerializedProduct } from "@/types/serialized";
 import { deleteProduct } from "@/features/inventory/actions";
@@ -26,7 +26,11 @@ export function InventoryActions({ product, warehouses }: InventoryActionsProps)
     const t = useTranslations("inventory");
     const tCommon = useTranslations("common");
 
+    const isDeletingRef = useRef(false);
+
     const handleDelete = async () => {
+        if (isDeletingRef.current) return;
+        isDeletingRef.current = true;
         setLoading(true);
         try {
             await deleteProduct(product.id);
@@ -38,6 +42,7 @@ export function InventoryActions({ product, warehouses }: InventoryActionsProps)
             toast.error(error.message || tCommon("actions.deleteError"));
         } finally {
             setLoading(false);
+            isDeletingRef.current = false;
         }
     };
 

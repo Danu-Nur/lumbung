@@ -1,0 +1,74 @@
+{
+    "title": "Dasbor",
+    "welcome_back": "Selamat datang kembali",
+    "metrics": {
+        "financial": {
+            "title": "Ringkasan Keuangan",
+            "purchase": "Total Pembelian",
+            "stockValue": "Total Nilai Stok",
+            "sales": "Total Penjualan",
+            "profit": "Keuntungan"
+        },
+        "activity": {
+            "title": "Aktivitas & Status",
+            "recentlyAdded": {
+                "title": "Baru Ditambahkan",
+                "empty": "Tidak ada produk yang baru ditambahkan"
+            },
+            "sku": "SKU"
+        }
+    },
+    "widgets": {
+        "suppliers": {
+            "newest": "Pemasok Terbaru",
+            "title": "Ringkasan Pemasok",
+            "totalSuppliers": "Total Pemasok"
+        },
+        "transfers": {
+            "title": "Ringkasan Transfer",
+            "pending": "Transfer Pending",
+            "completed": "Selesai Hari Ini"
+        },
+        "adjustments": {
+            "title": "Penyesuaian Stok",
+            "today": "Penyesuaian Hari Ini",
+            "recent": "Penyesuaian Terakhir"
+        },
+        "recentChanges": {
+            "title": "Perubahan Stok Terakhir",
+            "empty": "Tidak ada perubahan",
+            "adjustment": "Penyesuaian",
+            "transfer": "Transfer",
+            "sale": "Penjualan",
+            "purchase": "Pembelian",
+            "by": "oleh"
+        },
+        "settings": {
+            "title": "Pengaturan Cepat",
+            "organization": "Organisasi",
+            "users": "Pengguna",
+            "roles": "Peran"
+        },
+        "lowStock": {
+            "title": "Stok Menipis",
+            "viewAll": "Lihat Semua",
+            "empty": "Stok aman!",
+            "min": "Min:"
+        },
+        "customers": {
+            "newest": "Pelanggan Terbaru",
+            "title": "Ringkasan Pelanggan",
+            "totalCustomers": "Total Pelanggan"
+        }
+    },
+    "charts": {
+        "sales": {
+            "title": "Penjualan 7 Hari Terakhir",
+            "sales": "Penjualan"
+        },
+        "stockDistribution": {
+            "title": "Nilai Stok per Gudang",
+            "empty": "Tidak ada data stok"
+        }
+    }
+}

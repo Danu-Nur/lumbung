@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Category } from "@prisma/client";
 import { deleteCategory } from "@/features/categories/actions";
@@ -27,7 +27,11 @@ export function CategoryActions({ category }: CategoryActionsProps) {
         router.push(`?${params.toString()}`, { scroll: false });
     };
 
+    const isDeletingRef = useRef(false);
+
     const handleDelete = async () => {
+        if (isDeletingRef.current) return;
+        isDeletingRef.current = true;
         setIsDeleting(true);
         try {
             await deleteCategory(category.id);
@@ -39,6 +43,7 @@ export function CategoryActions({ category }: CategoryActionsProps) {
             toast.error(error.message || t("actions.deleteError"));
         } finally {
             setIsDeleting(false);
+            isDeletingRef.current = false;
         }
     };
 

@@ -47,6 +47,7 @@ export function InventoryModalManager({ products, categories, warehouses }: Inve
                 open={createOpen}
                 onOpenChange={(open) => !open && handleClose()}
                 categories={categories}
+                warehouses={warehouses}
                 onSuccess={handleSuccess}
             />
 

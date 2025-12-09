@@ -13,6 +13,8 @@ import { getTranslations } from 'next-intl/server';
 import { TransferModalManager } from '@/components/domain/transfers/transfer-modal-manager';
 import { TransferActions } from '@/components/domain/transfers/transfer-actions';
 import { TransferTable } from '@/components/domain/inventory/tables/transfer-table';
+import { ImportModal } from '@/components/shared/import-modal';
+import { importTransferBatch } from '@/features/transfers/import-actions';
 
 interface InventoryTransferSectionProps {
     page: number;
@@ -104,6 +106,19 @@ export async function InventoryTransferSection({ page, pageSize, search }: Inven
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                     {/* <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} /> */}
+                    <ImportModal
+                        type="transfers"
+                        onImport={importTransferBatch}
+                        sampleData={[{
+                            'Transfer Number': 'TRF-001',
+                            'From Warehouse': 'Main Warehouse',
+                            'To Warehouse': 'Store A',
+                            'Product Name': 'Product A',
+                            'SKU': 'SKU-001',
+                            'Quantity': 10,
+                            'Notes': 'Monthly replenishment'
+                        }]}
+                    />
                     <Link href="?view=transfers&modal=create">
                         <Button className="shrink-0 w-10 h-10 p-0 sm:w-auto sm:h-10 sm:px-4 sm:py-2">
                             <Plus className="h-4 w-4 sm:mr-2" />

@@ -179,3 +179,408 @@ Aplikasi mendukung multi-bahasa menggunakan `next-intl`.
 ## Lisensi
 
 [MIT License](LICENSE)****
+
+
+
+
+```
+lumbung
+├─ app
+│  ├─ api
+│  │  └─ auth
+│  │     ├─ register
+│  │     │  └─ route.ts
+│  │     └─ [...nextauth]
+│  │        └─ route.ts
+│  ├─ favicon.ico
+│  ├─ globals.css
+│  └─ [locale]
+│     ├─ (auth)
+│     │  ├─ layout.tsx
+│     │  ├─ login
+│     │  │  ├─ login-form.tsx
+│     │  │  └─ page.tsx
+│     │  ├─ register
+│     │  │  ├─ page.tsx
+│     │  │  └─ register-form.tsx
+│     │  └─ template.tsx
+│     ├─ (dashboard)
+│     │  ├─ customers
+│     │  │  └─ page.tsx
+│     │  ├─ dashboard
+│     │  │  └─ page.tsx
+│     │  ├─ help
+│     │  │  └─ page.tsx
+│     │  ├─ inventory
+│     │  │  └─ page.tsx
+│     │  ├─ layout.tsx
+│     │  ├─ purchase-orders
+│     │  │  ├─ new
+│     │  │  │  ├─ new-purchase-order-form.tsx
+│     │  │  │  └─ page.tsx
+│     │  │  ├─ page.tsx
+│     │  │  └─ [id]
+│     │  │     └─ page.tsx
+│     │  ├─ sales-orders
+│     │  │  ├─ new
+│     │  │  │  ├─ new-sales-order-form.tsx
+│     │  │  │  └─ page.tsx
+│     │  │  ├─ page.tsx
+│     │  │  └─ [id]
+│     │  │     ├─ invoice
+│     │  │     │  ├─ invoice-content.tsx
+│     │  │     │  └─ page.tsx
+│     │  │     └─ page.tsx
+│     │  ├─ settings
+│     │  │  ├─ billing
+│     │  │  │  └─ page.tsx
+│     │  │  └─ page.tsx
+│     │  ├─ suppliers
+│     │  │  └─ page.tsx
+│     │  └─ template.tsx
+│     ├─ (marketing)
+│     │  ├─ about
+│     │  │  └─ page.tsx
+│     │  ├─ layout.tsx
+│     │  ├─ page.tsx
+│     │  └─ pricing
+│     │     └─ page.tsx
+│     ├─ layout.tsx
+│     ├─ superadmin
+│     │  ├─ layout.tsx
+│     │  ├─ organizations
+│     │  │  ├─ page.tsx
+│     │  │  └─ [id]
+│     │  │     └─ page.tsx
+│     │  ├─ page.tsx
+│     │  └─ users
+│     │     └─ page.tsx
+│     └─ test-import
+│        └─ page.tsx
+├─ auth-debug.log
+├─ components
+│  ├─ common
+│  │  └─ CrudModal.tsx
+│  ├─ domain
+│  │  ├─ adjustments
+│  │  │  ├─ adjustment-actions.tsx
+│  │  │  ├─ adjustment-create-modal.tsx
+│  │  │  ├─ adjustment-edit-modal.tsx
+│  │  │  ├─ adjustment-modal-manager.tsx
+│  │  │  ├─ adjustment-row-modal.tsx
+│  │  │  └─ adjustment-show-modal.tsx
+│  │  ├─ categories
+│  │  │  ├─ category-actions.tsx
+│  │  │  ├─ category-create-modal.tsx
+│  │  │  ├─ category-edit-modal.tsx
+│  │  │  ├─ category-modal-manager.tsx
+│  │  │  ├─ category-show-modal.tsx
+│  │  │  ├─ sections
+│  │  │  │  └─ categories-list-section.tsx
+│  │  │  └─ tables
+│  │  │     └─ categories-table.tsx
+│  │  ├─ customers
+│  │  │  ├─ customer-actions.tsx
+│  │  │  ├─ customer-create-modal.tsx
+│  │  │  ├─ customer-edit-modal.tsx
+│  │  │  ├─ customer-modal-manager.tsx
+│  │  │  ├─ customer-show-modal.tsx
+│  │  │  └─ sections
+│  │  │     └─ customer-list-section.tsx
+│  │  ├─ dashboard
+│  │  │  ├─ AdjustmentOverviewCard.tsx
+│  │  │  ├─ CustomersOverviewCard.tsx
+│  │  │  ├─ dashboard-activity-section.tsx
+│  │  │  ├─ dashboard-charts-section.tsx
+│  │  │  ├─ financial-stats-row.tsx
+│  │  │  ├─ LowStockItemsCard.tsx
+│  │  │  ├─ operational-stats-row.tsx
+│  │  │  ├─ PurchaseOverviewCard.tsx
+│  │  │  ├─ RecentInventoryChangesCard.tsx
+│  │  │  ├─ SalesChart.tsx
+│  │  │  ├─ SalesOverviewCard.tsx
+│  │  │  ├─ SettingsQuickLinksCard.tsx
+│  │  │  ├─ StockDistributionChart.tsx
+│  │  │  ├─ SuppliersOverviewCard.tsx
+│  │  │  ├─ TransferOverviewCard.tsx
+│  │  │  └─ WarehouseOverviewCard.tsx
+│  │  ├─ inventory
+│  │  │  ├─ category-selector.tsx
+│  │  │  ├─ delete-product-button.tsx
+│  │  │  ├─ inventory-actions.tsx
+│  │  │  ├─ inventory-content-wrapper.tsx
+│  │  │  ├─ inventory-create-modal.tsx
+│  │  │  ├─ inventory-dialog.tsx
+│  │  │  ├─ inventory-edit-modal.tsx
+│  │  │  ├─ inventory-header.tsx
+│  │  │  ├─ inventory-modal-manager.tsx
+│  │  │  ├─ inventory-show-modal.tsx
+│  │  │  ├─ inventory-stock-modal.tsx
+│  │  │  ├─ modals
+│  │  │  │  └─ create-opname-dialog.tsx
+│  │  │  ├─ sections
+│  │  │  │  ├─ inventory-adjustment-section.tsx
+│  │  │  │  ├─ inventory-list-section.tsx
+│  │  │  │  ├─ inventory-opname-section.tsx
+│  │  │  │  └─ inventory-transfer-section.tsx
+│  │  │  └─ tables
+│  │  │     ├─ adjustment-table.tsx
+│  │  │     ├─ inventory-table.tsx
+│  │  │     ├─ opname-execution-table.tsx
+│  │  │     ├─ opname-table.tsx
+│  │  │     └─ transfer-table.tsx
+│  │  ├─ purchase-orders
+│  │  │  ├─ purchase-order-actions.tsx
+│  │  │  ├─ purchase-order-create-modal.tsx
+│  │  │  ├─ purchase-order-dialog.tsx
+│  │  │  ├─ purchase-order-edit-modal.tsx
+│  │  │  ├─ purchase-order-modal-manager.tsx
+│  │  │  └─ purchase-order-show-modal.tsx
+│  │  ├─ sales-orders
+│  │  │  ├─ sales-header.tsx
+│  │  │  ├─ sales-order-actions.tsx
+│  │  │  ├─ sales-order-create-modal.tsx
+│  │  │  ├─ sales-order-dialog.tsx
+│  │  │  ├─ sales-order-edit-modal.tsx
+│  │  │  ├─ sales-order-modal-manager.tsx
+│  │  │  ├─ sales-order-show-modal.tsx
+│  │  │  └─ sections
+│  │  │     └─ sales-order-list-section.tsx
+│  │  ├─ settings
+│  │  │  ├─ organization-form.tsx
+│  │  │  ├─ user-create-modal.tsx
+│  │  │  ├─ user-edit-modal.tsx
+│  │  │  ├─ user-modal-manager.tsx
+│  │  │  ├─ user-show-modal.tsx
+│  │  │  └─ users-table.tsx
+│  │  ├─ suppliers
+│  │  │  ├─ sections
+│  │  │  │  └─ supplier-list-section.tsx
+│  │  │  ├─ supplier-actions.tsx
+│  │  │  ├─ supplier-create-modal.tsx
+│  │  │  ├─ supplier-edit-modal.tsx
+│  │  │  ├─ supplier-modal-manager.tsx
+│  │  │  └─ supplier-show-modal.tsx
+│  │  ├─ transfers
+│  │  │  ├─ transfer-actions.tsx
+│  │  │  ├─ transfer-create-modal.tsx
+│  │  │  ├─ transfer-edit-modal.tsx
+│  │  │  ├─ transfer-modal-manager.tsx
+│  │  │  └─ transfer-show-modal.tsx
+│  │  └─ warehouses
+│  │     ├─ sections
+│  │     │  └─ warehouse-list-section.tsx
+│  │     ├─ tables
+│  │     │  └─ warehouse-table.tsx
+│  │     ├─ warehouse-actions.tsx
+│  │     ├─ warehouse-create-modal.tsx
+│  │     ├─ warehouse-edit-modal.tsx
+│  │     ├─ warehouse-import-button.tsx
+│  │     ├─ warehouse-modal-manager.tsx
+│  │     └─ warehouse-show-modal.tsx
+│  ├─ layout
+│  │  ├─ ambient-background.tsx
+│  │  ├─ sidebar.tsx
+│  │  ├─ theme-toggle.tsx
+│  │  └─ topbar.tsx
+│  ├─ marketing
+│  │  ├─ bento-grid.tsx
+│  │  └─ hero-section.tsx
+│  ├─ shared
+│  │  ├─ action-column.tsx
+│  │  ├─ data-table
+│  │  │  ├─ data-table-column-header.tsx
+│  │  │  ├─ data-table-toolbar.tsx
+│  │  │  └─ data-table.tsx
+│  │  ├─ delete-confirmation-modal.tsx
+│  │  ├─ dialog
+│  │  │  └─ form-dialog.tsx
+│  │  ├─ dialog-form.tsx
+│  │  ├─ form
+│  │  │  └─ line-items-form.tsx
+│  │  ├─ help-sheet.tsx
+│  │  ├─ import-modal.tsx
+│  │  ├─ language-switcher.tsx
+│  │  ├─ page-header.tsx
+│  │  ├─ page-help.tsx
+│  │  ├─ page-transition.tsx
+│  │  ├─ pagination.tsx
+│  │  ├─ search-input.tsx
+│  │  └─ stats-card.tsx
+│  └─ ui
+│     ├─ accordion.tsx
+│     ├─ alert-dialog.tsx
+│     ├─ alert.tsx
+│     ├─ avatar.tsx
+│     ├─ badge.tsx
+│     ├─ button.tsx
+│     ├─ card.tsx
+│     ├─ checkbox.tsx
+│     ├─ dialog.tsx
+│     ├─ dropdown-menu.tsx
+│     ├─ form.tsx
+│     ├─ input.tsx
+│     ├─ label.tsx
+│     ├─ progress.tsx
+│     ├─ scroll-animation.tsx
+│     ├─ scroll-area.tsx
+│     ├─ select.tsx
+│     ├─ separator.tsx
+│     ├─ sheet.tsx
+│     ├─ sonner.tsx
+│     ├─ switch.tsx
+│     ├─ table.tsx
+│     ├─ tabs.tsx
+│     ├─ textarea.tsx
+│     └─ tooltip.tsx
+├─ components.json
+├─ docs
+│  ├─ ARCHITECTURE.md
+│  └─ TEST_SCENARIOS.md
+├─ emails
+├─ eslint.config.mjs
+├─ features
+│  ├─ adjustments
+│  │  ├─ actions.ts
+│  │  └─ import-actions.ts
+│  ├─ auth
+│  ├─ categories
+│  │  ├─ actions.ts
+│  │  └─ import-actions.ts
+│  ├─ customers
+│  │  └─ actions.ts
+│  ├─ dashboard
+│  ├─ inventory
+│  │  ├─ actions.ts
+│  │  ├─ components
+│  │  └─ import-actions.ts
+│  ├─ opnames
+│  │  └─ import-actions.ts
+│  ├─ purchase-orders
+│  │  └─ actions.ts
+│  ├─ sales-orders
+│  │  └─ actions.ts
+│  ├─ settings
+│  │  └─ actions.ts
+│  ├─ suppliers
+│  │  └─ actions.ts
+│  ├─ transfers
+│  │  ├─ actions.ts
+│  │  └─ import-actions.ts
+│  ├─ users
+│  └─ warehouses
+│     ├─ actions.ts
+│     └─ import-actions.ts
+├─ generate_test_excel.js
+├─ hooks
+│  └─ use-media-query.ts
+├─ i18n
+│  ├─ request.ts
+│  └─ routing.ts
+├─ lib
+│  ├─ actions
+│  │  └─ opname.ts
+│  ├─ auth.config.ts
+│  ├─ auth.ts
+│  ├─ email.ts
+│  ├─ guards
+│  │  └─ subscription.ts
+│  ├─ performance
+│  │  ├─ cache.ts
+│  │  ├─ drivers
+│  │  │  ├─ memory.ts
+│  │  │  └─ redis.ts
+│  │  ├─ queue.ts
+│  │  └─ types.ts
+│  ├─ prisma.ts
+│  ├─ rbac.ts
+│  ├─ services
+│  │  ├─ categoryService.ts
+│  │  ├─ customerService.ts
+│  │  ├─ dashboardService.ts
+│  │  ├─ inventoryService.ts
+│  │  ├─ notificationService.ts
+│  │  ├─ pricingService.ts
+│  │  ├─ productService.ts
+│  │  ├─ purchaseOrderService.ts
+│  │  ├─ salesOrderService.ts
+│  │  ├─ subscriptionService.ts
+│  │  ├─ supplierService.ts
+│  │  └─ transferService.ts
+│  ├─ utils.ts
+│  ├─ validations
+│  │  ├─ adjustment.ts
+│  │  ├─ purchase-order.ts
+│  │  ├─ sales-order.ts
+│  │  └─ transfer.ts
+│  └─ workers
+│     └─ emailWorker.ts
+├─ messages_backup
+│  ├─ en.json
+│  └─ id.json
+├─ next.config.ts
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.mjs
+├─ prisma
+│  ├─ migrations
+│  │  ├─ 20251129050733_init
+│  │  │  └─ migration.sql
+│  │  ├─ 20251201031558_init_inventory_price_history
+│  │  │  └─ migration.sql
+│  │  ├─ 20251201033403_init_inventory_price_history_and_supplier_link
+│  │  │  └─ migration.sql
+│  │  ├─ 20251201065449_make_customer_optional
+│  │  │  └─ migration.sql
+│  │  └─ migration_lock.toml
+│  ├─ schema.prisma
+│  └─ seed.ts
+├─ prisma.config.ts
+├─ proxy.ts
+├─ proxy.ts.bak
+├─ public
+│  ├─ file.svg
+│  ├─ globe.svg
+│  ├─ next.svg
+│  ├─ vercel.svg
+│  └─ window.svg
+├─ README.md
+├─ scripts
+│  ├─ check-roles.ts
+│  ├─ check-users-debug.ts
+│  ├─ check-users.ts
+│  ├─ create-test-user.ts
+│  ├─ create-user-test.ts
+│  ├─ fix-seed-data.ts
+│  ├─ test-smtp.ts
+│  └─ verify-auth.ts
+├─ smtp-debug.log
+├─ src
+│  └─ lang
+│     ├─ en
+│     │  ├─ auth.json
+│     │  ├─ common.json
+│     │  ├─ dashboard.json
+│     │  ├─ inventory.json
+│     │  ├─ marketing.json
+│     │  ├─ partners.json
+│     │  ├─ purchases.json
+│     │  └─ sales.json
+│     └─ id
+│        ├─ auth.json
+│        ├─ common.json
+│        ├─ dashboard.json
+│        ├─ inventory.json
+│        ├─ marketing.json
+│        ├─ partners.json
+│        ├─ purchases.json
+│        └─ sales.json
+├─ tailwind.config.ts
+├─ test_inventory_import.xlsx
+├─ tsconfig.json
+└─ types
+   ├─ domain.ts
+   ├─ next-auth.d.ts
+   └─ serialized.ts
+
+```

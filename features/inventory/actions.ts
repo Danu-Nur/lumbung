@@ -22,24 +22,70 @@ export async function createProduct(formData: FormData) {
     const sellingPrice = parseFloat(formData.get('sellingPrice') as string);
     const costPrice = parseFloat(formData.get('costPrice') as string);
     const lowStockThreshold = parseInt(formData.get('lowStockThreshold') as string);
+    const initialStock = parseFloat(formData.get('initialStock') as string) || 0;
+    const warehouseId = formData.get('warehouseId') as string;
 
     // Validate
     if (!name || !sku || !unit || isNaN(sellingPrice) || isNaN(costPrice)) {
         throw new Error('Missing required fields');
     }
 
-    await productService.createProduct({
-        organizationId: session.user.organizationId,
-        name,
-        sku,
-        barcode: barcode || null,
-        description: description || null,
-        categoryId: categoryId || null,
-        unit,
-        sellingPrice,
-        costPrice,
-        lowStockThreshold: lowStockThreshold || 10,
-        createdById: session.user.id,
+    // Transaction for product creation and initial stock
+    await prisma.$transaction(async (tx) => {
+        // Check SKU overlap
+        const existing = await tx.product.findFirst({
+            where: { organizationId: session.user.organizationId, sku, deletedAt: null }
+        });
+        if (existing) throw new Error('SKU already exists');
+
+        const product = await tx.product.create({
+            data: {
+                organizationId: session.user.organizationId,
+                name,
+                sku,
+                barcode: barcode || null,
+                description: description || null,
+                categoryId: categoryId || null,
+                unit,
+                sellingPrice,
+                costPrice,
+                lowStockThreshold: lowStockThreshold || 10,
+                createdById: session.user.id,
+            }
+        });
+
+        // Add Initial Stock if provided
+        if (initialStock > 0 && warehouseId) {
+            await tx.inventoryItem.create({
+                data: {
+                    productId: product.id,
+                    warehouseId,
+                    quantityOnHand: initialStock,
+                    availableQty: initialStock,
+                    allocatedQty: 0
+                }
+            });
+
+            await tx.inventoryMovement.create({
+                data: {
+                    organizationId: session.user.organizationId!, // Ensure organizationId is passed if schema requires it? Checking schema... Usually movements don't need orgId if not strictly enforced, but good practice. Checking stockAdjustment.. 
+                    // Wait, actions.ts createStockAdjustment uses inventoryMovement.create WITHOUT organizationId in my view? 
+                    // Let's check view of createStockAdjustment in step 2136.
+                    // It has: data: { productId, warehouseId, movementType, ... createdById }
+                    // It implicitly has relation? No.
+                    // The InventoryMovement model usually links to Warehouse or Product which has OrgId.
+                    // I will follow the pattern in createStockAdjustment.
+                    productId: product.id,
+                    warehouseId,
+                    movementType: 'IN', // 'IN' for initial stock? or 'ADJUST' ? usually 'IN' for purchase/initial.
+                    quantity: initialStock,
+                    referenceType: 'InitialStock',
+                    referenceId: product.id, // Reference self? Or null?
+                    notes: 'Initial Stock',
+                    createdById: session.user.id,
+                }
+            });
+        }
     });
 
     revalidatePath('/inventory');
