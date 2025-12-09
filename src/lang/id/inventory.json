@@ -7,7 +7,8 @@
         "transfers": "Transfer Stok",
         "adjustments": "Penyesuaian Stok",
         "opname": "Stok Opname",
-        "warehouses": "Gudang"
+        "warehouses": "Gudang",
+        "suppliers": "Pemasok"
     },
     "menu": {
         "stock": {

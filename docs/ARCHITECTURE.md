@@ -186,10 +186,30 @@ Dokumen ini menjelaskan arsitektur aplikasi **Lumbung** (Warehouse & Inventory S
  │    ├── [Action] createWarehouse (features/warehouses/actions.ts)
  │    └── [UI] WarehouseTable
  │
- └── [View: Suppliers] SupplierListSection
-      ├── [Lang] Namespace: 'Suppliers' (src/lang/{locale}/suppliers.json)
-      ├── [Action] createSupplier (features/suppliers/actions.ts)
-      └── [UI] SupplierTable
+ ├── [View: Suppliers] SupplierListSection
+ │    ├── [Lang] Namespace: 'Suppliers' (src/lang/{locale}/suppliers.json)
+ │    ├── [UI] SupplierModalManager
+ │    │    ├── SupplierCreateModal
+ │    │    │    └── [Action] createSupplier (features/suppliers/actions.ts)
+ │    │    └── SupplierEditModal, SupplierShowModal
+ │    └── [UI] SupplierTable (components/domain/suppliers/tables/supplier-table.tsx)
+ │         ├── [UI] DataTable
+ │         └── [UI] SupplierActions
+ │
+ ├── [View: Opname] InventoryOpnameSection (components/domain/inventory/sections/inventory-opname-section.tsx)
+ │    ├── [Lang] Namespace: 'Opname' (src/lang/{locale}/opname.json)
+ │    ├── [UI] CreateOpnameDialog (components/domain/inventory/modals/create-opname-dialog.tsx)
+ │    │    └── [Action] createOpname (features/opnames/actions.ts)
+ │    ├── [UI] ImportModal (components/shared/import-modal.tsx)
+ │    │    └── [Action] importOpnameBatch (features/opnames/import-actions.ts)
+ │    └── [UI] OpnameTable (components/domain/inventory/tables/opname-table.tsx)
+ │
+ └── [View: Categories] CategoryListSection (components/domain/categories/sections/category-list-section.tsx)
+      ├── [Lang] Namespace: 'Categories' (src/lang/{locale}/categories.json)
+      ├── [UI] CategoryCreateModal (components/domain/categories/category-create-modal.tsx)
+      │    └── [Action] createCategory (features/categories/actions.ts)
+      └── [UI] CategoryTable
+
 ```
 
 ---

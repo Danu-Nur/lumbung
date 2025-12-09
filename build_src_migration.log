@@ -1,0 +1,227 @@
+
+> lumbung@0.1.0 build
+> next build
+
+ ΓÜá Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\laragon\www\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\laragon\www\lumbung\package-lock.json
+
+   Γû▓ Next.js 16.0.7 (Turbopack)
+   - Environments: .env
+
+   Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 9 errors:
+./lumbung/proxy.ts:7:1
+Module not found: Can't resolve './i18n/routing'
+   5 | import { authConfig } from '@/lib/auth.config';
+   6 | import createMiddleware from 'next-intl/middleware';
+>  7 | import { routing } from './i18n/routing';
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   8 |
+   9 | const { auth } = NextAuth(authConfig);
+  10 | const intlMiddleware = createMiddleware(routing);
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./lumbung/src/i18n/request.ts:13:31
+Module not found: Can't resolve ('../src/lang/' <dynamic> '/auth.json' | '../src/lang/id/auth.json')
+  11 |
+  12 |     const commonModule = (await import(`../src/lang/${locale}/common.json`)).default;
+> 13 |     const authModule = (await import(`../src/lang/${locale}/auth.json`)).default;
+     |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  14 |     const dashboardModule = (await import(`../src/lang/${locale}/dashboard.json`)).default;
+  15 |     const inventoryModule = (await import(`../src/lang/${locale}/inventory.json`)).default;
+  16 |     const salesModule = (await import(`../src/lang/${locale}/sales.json`)).default;
+
+
+
+Import trace:
+  Server Component:
+    ./lumbung/src/i18n/request.ts
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getConfig.js
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getTranslations.js
+    ./lumbung/src/app/[locale]/(marketing)/pricing/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./lumbung/src/i18n/request.ts:12:33
+Module not found: Can't resolve ('../src/lang/' <dynamic> '/common.json' | '../src/lang/id/common.json')
+  10 |     }
+  11 |
+> 12 |     const commonModule = (await import(`../src/lang/${locale}/common.json`)).default;
+     |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 |     const authModule = (await import(`../src/lang/${locale}/auth.json`)).default;
+  14 |     const dashboardModule = (await import(`../src/lang/${locale}/dashboard.json`)).default;
+  15 |     const inventoryModule = (await import(`../src/lang/${locale}/inventory.json`)).default;
+
+
+
+Import trace:
+  Server Component:
+    ./lumbung/src/i18n/request.ts
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getConfig.js
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getTranslations.js
+    ./lumbung/src/app/[locale]/(marketing)/pricing/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./lumbung/src/i18n/request.ts:14:36
+Module not found: Can't resolve ('../src/lang/' <dynamic> '/dashboard.json' | '../src/lang/id/dashboard.json')
+  12 |     const commonModule = (await import(`../src/lang/${locale}/common.json`)).default;
+  13 |     const authModule = (await import(`../src/lang/${locale}/auth.json`)).default;
+> 14 |     const dashboardModule = (await import(`../src/lang/${locale}/dashboard.json`)).default;
+     |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 |     const inventoryModule = (await import(`../src/lang/${locale}/inventory.json`)).default;
+  16 |     const salesModule = (await import(`../src/lang/${locale}/sales.json`)).default;
+  17 |     const purchasesModule = (await import(`../src/lang/${locale}/purchases.json`)).default;
+
+
+
+Import trace:
+  Server Component:
+    ./lumbung/src/i18n/request.ts
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getConfig.js
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getTranslations.js
+    ./lumbung/src/app/[locale]/(marketing)/pricing/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./lumbung/src/i18n/request.ts:15:36
+Module not found: Can't resolve ('../src/lang/' <dynamic> '/inventory.json' | '../src/lang/id/inventory.json')
+  13 |     const authModule = (await import(`../src/lang/${locale}/auth.json`)).default;
+  14 |     const dashboardModule = (await import(`../src/lang/${locale}/dashboard.json`)).default;
+> 15 |     const inventoryModule = (await import(`../src/lang/${locale}/inventory.json`)).default;
+     |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 |     const salesModule = (await import(`../src/lang/${locale}/sales.json`)).default;
+  17 |     const purchasesModule = (await import(`../src/lang/${locale}/purchases.json`)).default;
+  18 |     const marketingModule = (await import(`../src/lang/${locale}/marketing.json`)).default;
+
+
+
+Import trace:
+  Server Component:
+    ./lumbung/src/i18n/request.ts
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getConfig.js
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getTranslations.js
+    ./lumbung/src/app/[locale]/(marketing)/pricing/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./lumbung/src/i18n/request.ts:18:36
+Module not found: Can't resolve ('../src/lang/' <dynamic> '/marketing.json' | '../src/lang/id/marketing.json')
+  16 |     const salesModule = (await import(`../src/lang/${locale}/sales.json`)).default;
+  17 |     const purchasesModule = (await import(`../src/lang/${locale}/purchases.json`)).default;
+> 18 |     const marketingModule = (await import(`../src/lang/${locale}/marketing.json`)).default;
+     |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  19 |     const partnersModule = (await import(`../src/lang/${locale}/partners.json`)).default;
+  20 |
+  21 |     // Destructure to restore original top-level keys
+
+
+
+Import trace:
+  Server Component:
+    ./lumbung/src/i18n/request.ts
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getConfig.js
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getTranslations.js
+    ./lumbung/src/app/[locale]/(marketing)/pricing/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./lumbung/src/i18n/request.ts:19:35
+Module not found: Can't resolve ('../src/lang/' <dynamic> '/partners.json' | '../src/lang/id/partners.json')
+  17 |     const purchasesModule = (await import(`../src/lang/${locale}/purchases.json`)).default;
+  18 |     const marketingModule = (await import(`../src/lang/${locale}/marketing.json`)).default;
+> 19 |     const partnersModule = (await import(`../src/lang/${locale}/partners.json`)).default;
+     |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  20 |
+  21 |     // Destructure to restore original top-level keys
+  22 |     const { help, Footer, ...common } = commonModule;
+
+
+
+Import trace:
+  Server Component:
+    ./lumbung/src/i18n/request.ts
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getConfig.js
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getTranslations.js
+    ./lumbung/src/app/[locale]/(marketing)/pricing/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./lumbung/src/i18n/request.ts:17:36
+Module not found: Can't resolve ('../src/lang/' <dynamic> '/purchases.json' | '../src/lang/id/purchases.json')
+  15 |     const inventoryModule = (await import(`../src/lang/${locale}/inventory.json`)).default;
+  16 |     const salesModule = (await import(`../src/lang/${locale}/sales.json`)).default;
+> 17 |     const purchasesModule = (await import(`../src/lang/${locale}/purchases.json`)).default;
+     |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  18 |     const marketingModule = (await import(`../src/lang/${locale}/marketing.json`)).default;
+  19 |     const partnersModule = (await import(`../src/lang/${locale}/partners.json`)).default;
+  20 |
+
+
+
+Import trace:
+  Server Component:
+    ./lumbung/src/i18n/request.ts
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getConfig.js
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getTranslations.js
+    ./lumbung/src/app/[locale]/(marketing)/pricing/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./lumbung/src/i18n/request.ts:16:32
+Module not found: Can't resolve ('../src/lang/' <dynamic> '/sales.json' | '../src/lang/id/sales.json')
+  14 |     const dashboardModule = (await import(`../src/lang/${locale}/dashboard.json`)).default;
+  15 |     const inventoryModule = (await import(`../src/lang/${locale}/inventory.json`)).default;
+> 16 |     const salesModule = (await import(`../src/lang/${locale}/sales.json`)).default;
+     |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  17 |     const purchasesModule = (await import(`../src/lang/${locale}/purchases.json`)).default;
+  18 |     const marketingModule = (await import(`../src/lang/${locale}/marketing.json`)).default;
+  19 |     const partnersModule = (await import(`../src/lang/${locale}/partners.json`)).default;
+
+
+
+Import trace:
+  Server Component:
+    ./lumbung/src/i18n/request.ts
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getConfig.js
+    ./lumbung/node_modules/next-intl/dist/esm/production/server/react-server/getTranslations.js
+    ./lumbung/src/app/[locale]/(marketing)/pricing/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./lumbung/proxy.ts:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./lumbung/src/i18n/request.ts:13:31)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./lumbung/src/i18n/request.ts:12:33)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./lumbung/src/i18n/request.ts:14:36)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./lumbung/src/i18n/request.ts:15:36)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./lumbung/src/i18n/request.ts:18:36)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./lumbung/src/i18n/request.ts:19:35)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./lumbung/src/i18n/request.ts:17:36)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./lumbung/src/i18n/request.ts:16:32)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)

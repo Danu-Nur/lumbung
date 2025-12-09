@@ -22,6 +22,8 @@ These files/folders have **no imports**, are **not in documentation**, and have 
 | :--- | :--- | :--- | :--- |
 | **Route** | `app/[locale]/test-import/` | Folder contains a test page not linked anywhere. | **DELETE** |
 | **Folder** | `messages_backup/` | Contains `en.json.bak` etc. Legacy backups. | **DELETE** |
+| **File** | `proxy.ts` | Not imported by app. Likely legacy dev proxy script. | **DELETE** |
+| **File** | `proxy.ts.bak` | Backup file. | **DELETE** |
 | **File** | `auth-debug.log` | Log file. Should not be in repo. | **DELETE** |
 | **File** | `smtp-debug.log` | Log file. Should not be in repo. | **DELETE** |
 | **File** | `generate_test_excel.js` | Root script. Likely for generating seed data. | **MOVE to `scripts/` or DELETE** |
@@ -54,3 +56,30 @@ These features/components are **active** (imported and used) but **missing** fro
 1.  **Cleanup**: Execute the deletion of "High Confidence" items.
 2.  **Fix Logic**: Update `revalidatePath` in `features/categories/actions.ts` to point to `/inventory` (or wherever categories are listed).
 3.  **Update Docs**: Add `StockOpname` and `Category` features to `ARCHITECTURE.md`.
+
+---
+
+## 6. Execution Status (2025-12-09)
+
+- [x] Removed `app/[locale]/test-import/`
+- [x] Removed `messages_backup/` and log/legacy files (`proxy.ts`, etc.)
+- [x] Handled `generate_test_excel.js` (Moved to `scripts/generate-test-excel.js`)
+- [x] Removed `test_inventory_import.xlsx`
+- [x] Fixed `revalidatePath` in `features/categories/actions.ts` (Pointed to `/inventory`)
+- [x] Fixed `revalidatePath` in `features/inventory/actions.ts` (Removed call to non-existent `/inventory/[id]`)
+- [x] Fixed `revalidatePath` in `features/opnames/import-actions.ts` (Pointed to `/inventory`)
+- [x] Updated `ARCHITECTURE.md` with Opnames & Categories subsections in Inventory
+- [x] Verified `DATABASE.md` (Already consistent with Opname/Category models)
+
+## 7. Build Verification Fixes (Executed)
+
+During the final build verification, several type errors were identified and fixed:
+
+1.  **Missing Type**: Added `SerializedCategory` export to `types/serialized.ts`.
+2.  **DataTable Options**: Removed invalid `autoResetFilters`, `autoResetPageIndex`, `autoResetAll` from `DataTable` (incompatible with installed `tanstack/react-table` version).
+3.  **Animation Types**: Fixed `ScrollAnimation` variant type error by asserting `ease: "easeOut" as const`.
+4.  **Inventory Actions**:
+    *   Added non-null assertion (`!`) to `session.user.organizationId` in `createProduct` to satisfy Prisma types.
+    *   Removed `organizationId` field from `InventoryMovement` creation (field does not exist in schema).
+5.  **Warehouse Import**: Removed `description` field from import logic (field does not exist in `Warehouse` model).
+
