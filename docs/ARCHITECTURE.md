@@ -3,7 +3,7 @@
 ## 1. Overview
 Dokumen ini menjelaskan arsitektur aplikasi **Lumbung** (Warehouse & Inventory SaaS) secara mendetail, mencakup struktur file, komponen UI, logic (Service/Server Actions), dan pustaka pihak ketiga yang digunakan.
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16.0.7 (App Router)
 - **Database**: PostgreSQL via Prisma ORM
 - **State Management**: Server Component State + URL Search Params
 - **Auth**: NextAuth.js (v5)
