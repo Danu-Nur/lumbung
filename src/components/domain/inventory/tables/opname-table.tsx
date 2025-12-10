@@ -63,7 +63,7 @@ export function OpnameTable({ data }: OpnameTableProps) {
         {
             id: 'actions',
             cell: ({ row }) => (
-                <div className="text-right">
+                <div className="text-center">
                     <Link href={`/inventory/opname/${row.original.id}`}>
                         <Button variant="ghost" size="sm">
                             <Eye className="w-4 h-4 mr-2" />
@@ -72,7 +72,7 @@ export function OpnameTable({ data }: OpnameTableProps) {
                     </Link>
                 </div>
             ),
-            header: () => <div className="text-right">{tCommon('table.actions')}</div>
+            header: () => <div className="text-center">{tCommon('table.actions')}</div>
         }
     ];
 

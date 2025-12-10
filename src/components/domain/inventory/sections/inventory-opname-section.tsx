@@ -19,9 +19,11 @@ interface InventoryOpnameSectionProps {
     page: number;
     pageSize: number;
     search: string;
+    modal?: string;
+    id?: string;
 }
 
-export async function InventoryOpnameSection({ page, pageSize, search }: InventoryOpnameSectionProps) {
+export async function InventoryOpnameSection({ page, pageSize, search, modal, id }: InventoryOpnameSectionProps) {
     const session = await auth();
     const t = await getTranslations('opname');
     const tCommon = await getTranslations('common');
@@ -45,8 +47,9 @@ export async function InventoryOpnameSection({ page, pageSize, search }: Invento
             include: {
                 warehouse: true,
                 items: {
-                    include: {
-                        product: true
+                    select: {
+                        id: true,
+                        actualQty: true
                     }
                 },
                 createdBy: true,
@@ -67,16 +70,9 @@ export async function InventoryOpnameSection({ page, pageSize, search }: Invento
     const totalPages = Math.ceil(total / pageSize);
 
     // Serialize Decimal fields
-    const serializedOpnames: SerializedStockOpname[] = opnames.map((op: any) => ({
+    const serializedOpnames: any[] = opnames.map((op: any) => ({
         ...op,
-        items: op.items.map((item: any) => ({
-            ...item,
-            product: {
-                ...item.product,
-                sellingPrice: Number(item.product.sellingPrice),
-                costPrice: Number(item.product.costPrice),
-            }
-        }))
+        items: op.items // No product mapping needed as we didn't fetch it
     }));
 
     return (

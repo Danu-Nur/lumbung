@@ -51,6 +51,12 @@
         },
         "categories": {
             "description": "Manage product categories"
+        },
+        "suppliers": {
+            "description": "Manage suppliers"
+        },
+        "warehouses": {
+            "description": "Manage warehouses"
         }
     },
     "form": {
@@ -128,6 +134,13 @@
         "quantity": "Quantity",
         "selectReason": "Select reason"
     },
+    "units": {
+        "meter": "Meter",
+        "box": "Box",
+        "pcs": "Pieces (pcs)",
+        "liter": "Liter",
+        "kg": "Kilogram (kg)"
+    },
     "reasons": {
         "correction": "Correction",
         "damage": "Damage",
@@ -183,6 +196,7 @@
         },
         "form": {
             "createTitle": "Create Warehouse",
+            "createDescription": "Add a new warehouse.",
             "editTitle": "Edit Warehouse",
             "name": "Name",
             "namePlaceholder": "Warehouse Name",
@@ -200,12 +214,14 @@
         "title": "Stock Transfers",
         "description": "Move stock between warehouses",
         "columns": {
+            "from": "From",
+            "to": "To",
             "reference": "Reference",
             "date": "Date",
-            "source": "Source",
             "destination": "Destination",
             "items": "Items",
-            "status": "Status"
+            "status": "Status",
+            "actions": "Actions"
         },
         "help": {
             "title": "Transfer Guide",
@@ -329,7 +345,8 @@
             "warehouse": "Warehouse",
             "date": "Date",
             "status": "Status",
-            "progress": "Progress"
+            "progress": "Progress",
+            "opnameNumber": "Opname #"
         },
         "form": {
             "createTitle": "New Opname",

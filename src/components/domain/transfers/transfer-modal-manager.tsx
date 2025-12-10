@@ -7,23 +7,25 @@ import { TransferShowModal } from "./transfer-show-modal";
 import { SerializedStockTransfer } from "@/types/serialized";
 
 interface TransferModalManagerProps {
-    transfers: SerializedStockTransfer[];
+    transfers?: SerializedStockTransfer[];
+    selectedTransfer?: SerializedStockTransfer;
     warehouses: Array<{ id: string; name: string }>;
     products: Array<{ id: string; name: string; sku: string }>;
 }
 
-export function TransferModalManager({ transfers, warehouses, products }: TransferModalManagerProps) {
+export function TransferModalManager({ transfers, selectedTransfer, warehouses, products }: TransferModalManagerProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
     const modal = searchParams.get("modal");
+
+    // If selectedTransfer is provided, use it. Otherwise try to find it in transfers list (fallback)
     const id = searchParams.get("id");
+    const activeTransfer = selectedTransfer || (id && transfers ? transfers.find((t) => t.id === id) : undefined);
 
     const createOpen = modal === "create";
     const editOpen = modal === "edit";
     const showOpen = modal === "show";
-
-    const selectedTransfer = id ? transfers.find((t) => t.id === id) : undefined;
 
     const handleClose = () => {
         const params = new URLSearchParams(searchParams.toString());
@@ -47,12 +49,12 @@ export function TransferModalManager({ transfers, warehouses, products }: Transf
                 onSuccess={handleSuccess}
             />
 
-            {selectedTransfer && (
+            {activeTransfer && (
                 <>
                     <TransferEditModal
                         open={editOpen}
                         onOpenChange={(open) => !open && handleClose()}
-                        transfer={selectedTransfer}
+                        transfer={activeTransfer}
                         warehouses={warehouses}
                         products={products}
                         onSuccess={handleSuccess}
@@ -60,7 +62,7 @@ export function TransferModalManager({ transfers, warehouses, products }: Transf
                     <TransferShowModal
                         open={showOpen}
                         onOpenChange={(open) => !open && handleClose()}
-                        transfer={selectedTransfer}
+                        transfer={activeTransfer}
                         onSuccess={handleSuccess}
                     />
                 </>

@@ -4,11 +4,10 @@ import { Metadata } from 'next';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
-type Props = {
-    params: { locale: string };
-};
 
-export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale } = await params;
     const t = await getTranslations({ locale, namespace: 'auth.register' });
     return {
         title: `${t('title')} - Inventory Pro`,

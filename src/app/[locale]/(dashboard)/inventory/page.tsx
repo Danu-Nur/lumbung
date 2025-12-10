@@ -14,7 +14,7 @@ import { InventoryContentWrapper } from '@/components/domain/inventory/inventory
 export default async function InventoryPage({
     searchParams,
 }: {
-    searchParams: Promise<{ page?: string; pageSize?: string; q?: string; view?: string }>;
+    searchParams: Promise<{ page?: string; pageSize?: string; q?: string; view?: string; modal?: string; id?: string }>;
 }) {
     const session = await auth();
     const t = await getTranslations('inventory');
@@ -27,8 +27,9 @@ export default async function InventoryPage({
     const page = Number(resolvedSearchParams.page) || 1;
     const pageSize = Number(resolvedSearchParams.pageSize) || 10;
     const search = resolvedSearchParams.q || '';
-    // Default view is 'stock'
     const view = resolvedSearchParams.view || 'stock';
+    const modal = resolvedSearchParams.modal;
+    const id = resolvedSearchParams.id;
 
     return (
         <div className="w-full space-y-6">
@@ -41,6 +42,8 @@ export default async function InventoryPage({
                             page={page}
                             pageSize={pageSize}
                             search={search}
+                            modal={modal}
+                            id={id}
                         />
                     )}
                     {view === 'categories' && (
@@ -55,6 +58,8 @@ export default async function InventoryPage({
                             page={page}
                             pageSize={pageSize}
                             search={search}
+                            modal={modal}
+                            id={id}
                         />
                     )}
                     {view === 'adjustments' && (
@@ -69,6 +74,8 @@ export default async function InventoryPage({
                             page={page}
                             pageSize={pageSize}
                             search={search}
+                            modal={modal}
+                            id={id}
                         />
                     )}
                     {view === 'warehouses' && (

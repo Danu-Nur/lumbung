@@ -30,8 +30,8 @@ export function CategoriesTable({ data }: CategoriesTableProps) {
         },
         {
             id: 'actions',
-            cell: ({ row }) => <div className="text-right"><CategoryActions category={row.original} /></div>,
-            header: () => <div className="text-right">{tCommon('table.actions')}</div>
+            cell: ({ row }) => <div className="text-center"><CategoryActions category={row.original} /></div>,
+            header: () => <div className="text-center">{tCommon('table.actions')}</div>
         }
     ];
 

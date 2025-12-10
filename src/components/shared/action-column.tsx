@@ -39,7 +39,7 @@ export function ActionColumn({
     const t = useTranslations("common");
 
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex justify-center items-center gap-2">
             <TooltipProvider>
                 {customActions.map((action, index) => (
                     <Tooltip key={index}>

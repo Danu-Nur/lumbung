@@ -88,7 +88,7 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
         {
             accessorKey: 'sellingPrice',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title={t('columns.sellingPrice')} className='justify-end' />
+                <DataTableColumnHeader column={column} title={t('columns.sellingPrice')} className='justify-start' />
             ),
             cell: ({ row }) => {
                 const formattedPrice = new Intl.NumberFormat('id-ID', {
@@ -103,7 +103,7 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
         {
             accessorKey: 'totalStock',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title={t('columns.totalStock')} className='justify-end' />
+                <DataTableColumnHeader column={column} title={t('columns.totalStock')} className='justify-start' />
             ),
             cell: ({ row }) => {
                 const stock = row.getValue('totalStock') as number;

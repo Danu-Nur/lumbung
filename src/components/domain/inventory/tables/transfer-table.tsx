@@ -59,8 +59,8 @@ export function TransferTable({ data }: TransferTableProps) {
         },
         {
             id: 'actions',
-            cell: ({ row }) => <div className="text-right"><TransferActions transfer={row.original} /></div>,
-            header: () => <div className="text-right">{tCommon('table.actions')}</div>
+            cell: ({ row }) => <div className="text-center"><TransferActions transfer={row.original} /></div>,
+            header: () => <div className="text-center">{tCommon('table.actions')}</div>
         }
     ];
 

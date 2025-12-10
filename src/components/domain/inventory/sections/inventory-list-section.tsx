@@ -22,9 +22,11 @@ interface InventoryListSectionProps {
     page: number;
     pageSize: number;
     search: string;
+    modal?: string;
+    id?: string;
 }
 
-export async function InventoryListSection({ page, pageSize, search }: InventoryListSectionProps) {
+export async function InventoryListSection({ page, pageSize, search, modal, id }: InventoryListSectionProps) {
     const session = await auth();
     const t = await getTranslations('inventory');
     const tCommon = await getTranslations('common');
@@ -43,6 +45,8 @@ export async function InventoryListSection({ page, pageSize, search }: Inventory
         );
     }
 
+    const shouldFetchOptions = modal === 'create' || modal === 'edit' || modal === 'stock';
+
     const [inventoryData, categories, warehouses] = await Promise.all([
         inventoryService.getInventory(
             session.user.organizationId,
@@ -50,14 +54,14 @@ export async function InventoryListSection({ page, pageSize, search }: Inventory
             pageSize,
             search
         ),
-        prisma.category.findMany({
+        shouldFetchOptions ? prisma.category.findMany({
             where: { organizationId: session.user.organizationId, deletedAt: null },
             orderBy: { name: 'asc' },
-        }),
-        prisma.warehouse.findMany({
+        }) : Promise.resolve([]),
+        shouldFetchOptions ? prisma.warehouse.findMany({
             where: { organizationId: session.user.organizationId, deletedAt: null, isActive: true },
             orderBy: { name: 'asc' },
-        }),
+        }) : Promise.resolve([]),
     ]);
 
     const { products, total } = inventoryData;

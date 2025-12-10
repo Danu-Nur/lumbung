@@ -65,8 +65,8 @@ export function AdjustmentTable({ data }: { data: SerializedStockAdjustment[] })
         },
         {
             id: 'actions',
-            cell: ({ row }) => <div className="text-right"><AdjustmentActions adjustment={row.original} /></div>,
-            header: () => <div className="text-right">{tCommon('table.actions')}</div>
+            cell: ({ row }) => <div className="text-center"><AdjustmentActions adjustment={row.original} /></div>,
+            header: () => <div className="text-center">{tCommon('table.actions')}</div>
         }
     ];
 

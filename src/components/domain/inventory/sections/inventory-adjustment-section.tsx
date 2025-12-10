@@ -21,9 +21,11 @@ interface InventoryAdjustmentSectionProps {
     page: number;
     pageSize: number;
     search: string;
+    modal?: string;
+    id?: string;
 }
 
-export async function InventoryAdjustmentSection({ page, pageSize, search }: InventoryAdjustmentSectionProps) {
+export async function InventoryAdjustmentSection({ page, pageSize, search, modal, id }: InventoryAdjustmentSectionProps) {
     const session = await auth();
     const t = await getTranslations('adjustments');
     const tInventory = await getTranslations('inventory');
@@ -45,6 +47,8 @@ export async function InventoryAdjustmentSection({ page, pageSize, search }: Inv
         ];
     }
 
+    const shouldFetchOptions = modal === 'create' || modal === 'edit';
+
     const [adjustments, total, products, warehouses] = await Promise.all([
         prisma.stockAdjustment.findMany({
             where,
@@ -60,16 +64,16 @@ export async function InventoryAdjustmentSection({ page, pageSize, search }: Inv
         prisma.stockAdjustment.count({
             where,
         }),
-        prisma.product.findMany({
+        shouldFetchOptions ? prisma.product.findMany({
             where: { organizationId: session.user.organizationId, deletedAt: null },
             select: { id: true, name: true, sku: true, unit: true },
             orderBy: { name: 'asc' },
-        }),
-        prisma.warehouse.findMany({
+        }) : Promise.resolve([]),
+        shouldFetchOptions ? prisma.warehouse.findMany({
             where: { organizationId: session.user.organizationId, deletedAt: null, isActive: true },
             select: { id: true, name: true },
             orderBy: { name: 'asc' },
-        }),
+        }) : Promise.resolve([]),
     ]);
 
     const totalPages = Math.ceil(total / pageSize);

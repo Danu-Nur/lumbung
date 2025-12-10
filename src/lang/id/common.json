@@ -1,28 +1,30 @@
 {
     "actions": {
-        "create": "Sedang membuat...",
+        "create": "Tambah",
         "createFailed": "Gagal membuat",
         "createSuccess": "Berhasil dibuat",
         "createError": "Gagal membuat",
-        "update": "Sedang memperbarui...",
+        "update": "Ubah",
         "updateFailed": "Gagal memperbarui",
         "updateSuccess": "Berhasil diperbarui",
         "updateError": "Gagal memperbarui",
-        "delete": "Sedang menghapus...",
+        "delete": "Hapus",
+        "deleteTitle": "Konfirmasi Hapus",
+        "deleteDescription": "Yakin ingin menghapus {name}? Tindakan ini tidak dapat dibatalkan.",
         "deleteFailed": "Gagal menghapus",
         "deleteSuccess": "Berhasil dihapus",
         "deleteConfirmTitle": "Konfirmasi Hapus",
-        "deleteConfirmDescription": "Apakah Anda yakin ingin menghapus {name}? Tindakan ini tidak dapat dibatalkan.",
+        "deleteConfirmDescription": "Yakin ingin menghapus {name}? Tindakan ini tidak dapat dibatalkan.",
         "operationFailed": "Operasi gagal",
         "comingSoon": "Segera hadir",
-        "cancel": "Sedang membatalkan...",
+        "cancel": "Batal",
         "cancelSuccess": "Berhasil dibatalkan",
         "cancelError": "Gagal membatalkan",
         "cancelTitle": "Konfirmasi Pembatalan",
-        "cancelDescription": "Apakah Anda yakin ingin membatalkan {name}? Tindakan ini tidak dapat dibatalkan.",
+        "cancelDescription": "Yakin ingin membatalkan {name}? Tindakan ini tidak dapat dibatalkan.",
         "saving": "Menyimpan...",
         "importSuccess": "Berhasil mengimpor {count} item",
-        "importPartialSuccess": "Mengimpor {success} item, {failed} gagal",
+        "importPartialSuccess": "Berhasil mengimpor {success} item, {failed} gagal",
         "importError": "Impor gagal"
     },
     "import": {
@@ -33,15 +35,15 @@
         "templateHelper": "Gunakan file ini sebagai titik awal",
         "templateButton": "Template",
         "fileLabel": "File Excel",
-        "selected": "Dipilih: {name} ({size} KB)",
-        "processing": "Sedang memproses...",
+        "selected": "Terpilih: {name} ({size} KB)",
+        "processing": "Memproses...",
         "status": {
             "successTitle": "Sukses",
-            "partialTitle": "Selesai dengan kesalahan",
+            "partialTitle": "Selesai dengan error",
             "details": "Diproses: {total} | Sukses: {success} | Gagal: {failed}"
         },
         "errors": {
-            "title": "Detail Kesalahan:"
+            "title": "Detail Error:"
         },
         "submit": "Impor Data",
         "cancel": "Batal",
@@ -50,9 +52,28 @@
             "categories": "Kategori",
             "transfers": "Transfer",
             "adjustments": "Penyesuaian",
-            "opname": "Stok Opname",
+            "opname": "Opname Stok",
             "warehouses": "Gudang"
         }
+    },
+    "validation": {
+        "required": "Kolom ini wajib diisi",
+        "email": "Alamat email tidak valid",
+        "minLength": "Minimal {min} karakter",
+        "maxLength": "Maksimal {max} karakter",
+        "numeric": "Harus berupa angka",
+        "min": "Minimal {min}",
+        "max": "Maksimal {max}",
+        "positive": "Harus angka positif",
+        "integer": "Harus bilangan bulat",
+        "url": "URL tidak valid",
+        "phone": "Nomor telepon tidak valid",
+        "unique": "Nilai ini sudah digunakan",
+        "confirmPassword": "Konfirmasi password tidak cocok",
+        "generic": "Terjadi kesalahan. Silakan coba lagi.",
+        "network": "Error jaringan. Periksa koneksi Anda.",
+        "server": "Error server. Coba lagi nanti.",
+        "sameWarehouseError": "Gudang asal dan tujuan tidak boleh sama"
     },
     "buttons": {
         "save": "Simpan",
@@ -74,7 +95,7 @@
         "create": "Buat"
     },
     "table": {
-        "noData": "Tidak ada data tersedia",
+        "noData": "Tidak ada data",
         "actions": "Aksi",
         "name": "Nama",
         "description": "Deskripsi",
@@ -84,12 +105,14 @@
         "total": "Total"
     },
     "paginations": {
-    "showing": "Menampilkan {from} hingga {to} dari {total} item",
-    "prev": "Sebelumnya",
-    "next": "Selanjutnya",
-    "show": "Tampilkan",
-    "rowsPerPage": "Baris per halaman",
-    "pageOf": "Halaman {current} dari {total}"
+        "first": "Pertama",
+        "last": "Terakhir",
+        "previous": "Sebelumnya",
+        "next": "Selanjutnya",
+        "showing": "Menampilkan {from} hingga {to} dari {total} item",
+        "show": "Tampilkan",
+        "rowsPerPage": "Baris per halaman",
+        "pageOf": "Halaman {current} dari {total}"
     },
     "nav": {
         "dashboard": "Dasbor",
@@ -115,11 +138,11 @@
         "buttonLabel": "Bantuan Halaman"
     },
     "sidebar": {
-        "logo": "Lumbung",
-        "footer": "© 2025 Lumbung",
-        "toggleMenu": "Alihkan Menu",
+        "logo": "Inventory Pro",
+        "footer": "© 2025 Inventory Pro",
+        "toggleMenu": "Toggle Menu",
         "navMenu": "Menu Navigasi",
-        "mobileNavDesc": "Menu navigasi seluler untuk Lumbung",
+        "mobileNavDesc": "Menu navigasi mobile untuk Inventory Pro",
         "dashboard": "Dasbor",
         "inventory": "Inventaris",
         "categories": "Kategori",
@@ -129,11 +152,13 @@
         "purchases": "Pembelian",
         "transfers": "Transfer",
         "adjustments": "Penyesuaian",
-        "stockOpname": "Stok Opname",
+        "stockOpname": "Opname Stok",
         "warehouses": "Gudang",
         "settings": "Pengaturan",
         "logout": "Keluar",
-        "profile": "Profil"
+        "profile": "Profil",
+        "defaultOrg": "Organisasi Default",
+        "guest": "Tamu"
     },
     "errors": {
         "required": "Kolom ini wajib diisi",
@@ -143,22 +168,22 @@
         "numeric": "Harus berupa angka",
         "min": "Minimal {min}",
         "max": "Maksimal {max}",
-        "positive": "Harus berupa angka positif",
-        "integer": "Harus berupa bilangan bulat",
+        "positive": "Harus angka positif",
+        "integer": "Harus bilangan bulat",
         "url": "URL tidak valid",
         "phone": "Nomor telepon tidak valid",
         "unique": "Nilai ini sudah digunakan",
-        "confirmPassword": "Kata sandi tidak cocok",
+        "confirmPassword": "Konfirmasi password tidak cocok",
         "generic": "Terjadi kesalahan. Silakan coba lagi.",
-        "network": "Kesalahan jaringan. Periksa koneksi Anda.",
-        "server": "Kesalahan server. Silakan coba lagi nanti.",
+        "network": "Error jaringan. Periksa koneksi Anda.",
+        "server": "Error server. Coba lagi nanti.",
         "unauthorized": "Anda tidak memiliki izin untuk melakukan tindakan ini.",
-        "forbidden": "Anda tidak memiliki akses ke sumber daya ini.",
-        "notFound": "Sumber daya tidak ditemukan.",
-        "validation": "Kesalahan validasi. Periksa input Anda."
+        "forbidden": "Anda tidak memiliki akses ke sumber ini.",
+        "notFound": "Sumber tidak ditemukan.",
+        "validation": "Error validasi. Periksa input Anda."
     },
     "Footer": {
-        "rights": "Hak cipta dilindungi undang-undang.",
+        "rights": "Hak cipta dilindungi.",
         "links": {
             "features": "Fitur",
             "pricing": "Harga",
