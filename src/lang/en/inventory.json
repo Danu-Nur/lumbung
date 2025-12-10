@@ -10,6 +10,32 @@
         "warehouses": "Warehouses",
         "suppliers": "Suppliers"
     },
+    "columns": {
+        "product": "Product",
+        "sku": "SKU",
+        "barcode": "Barcode",
+        "category": "Category",
+        "unit": "Unit",
+        "sellingPrice": "Selling Price",
+        "costPrice": "Cost Price",
+        "lowStockThreshold": "Low Stock Threshold",
+        "initialStockTitle": "Initial Stock",
+        "warehouse": "Warehouse",
+        "quantity": "Quantity",
+        "totalStock": "Total Stock",
+        "noStock": "No stock available",
+        "priceHistory": "Price History",
+        "newPrice": "New Price",
+        "noHistory": "No history available",
+        "type": "Type",
+        "description": "Description",
+        "stockOverview": "Stock Overview",
+        "failedToLoadHistory": "Failed to load history",
+        "history": "Product History",
+        "reference": "Reference",
+        "oldPrice": "Old Price",
+        "stockMovements": "Stock Movements"
+    },
     "menu": {
         "stock": {
             "description": "Manage your product stock levels across warehouses"

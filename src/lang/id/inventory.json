@@ -1,27 +1,53 @@
 {
     "title": "Inventaris",
-    "description": "Kelola inventaris produk di seluruh gudang",
+    "description": "Kelola inventaris produk Anda di seluruh gudang",
     "tabs": {
         "stock": "Daftar Inventaris",
         "categories": "Kategori",
         "transfers": "Transfer Stok",
         "adjustments": "Penyesuaian Stok",
-        "opname": "Stok Opname",
+        "opname": "Opname Stok",
         "warehouses": "Gudang",
         "suppliers": "Pemasok"
     },
+    "columns": {
+        "product": "Produk",
+        "sku": "SKU",
+        "barcode": "Barcode",
+        "category": "Kategori",
+        "unit": "Satuan",
+        "sellingPrice": "Harga Jual",
+        "costPrice": "Harga Beli",
+        "lowStockThreshold": "Ambang Stok Rendah",
+        "initialStockTitle": "Stok Awal",
+        "warehouse": "Gudang",
+        "quantity": "Jumlah",
+        "totalStock": "Total Stok",
+        "noStock": "Tidak ada stok tersedia",
+        "priceHistory": "Riwayat Harga",
+        "newPrice": "Harga Baru",
+        "noHistory": "Tidak ada riwayat",
+        "type": "Tipe",
+        "description": "Keterangan",
+        "stockOverview": "Ikhtisar Stok",
+        "failedToLoadHistory": "Gagal memuat riwayat",
+        "history": "Riwayat Produk",
+        "reference": "Referensi",
+        "oldPrice": "Harga Lama",
+        "stockMovements": "Pergerakan Stok"
+    },
     "menu": {
         "stock": {
-            "description": "Kelola level stok produk di seluruh gudang"
+            "description": "Kelola tingkat stok produk di seluruh gudang"
         },
         "transfers": {
             "description": "Kelola perpindahan stok"
         },
         "adjustments": {
-            "description": "Koreksi selisih stok"
+            "description": "Perbaiki selisih stok"
         },
         "opname": {
-            "description": "Perhitungan fisik stok"
+            "description": "Penghitungan fisik stok"
         },
         "categories": {
             "description": "Kelola kategori produk"
@@ -30,9 +56,9 @@
     "form": {
         "title": "Produk",
         "createTitle": "Buat Produk",
-        "editTitle": "Edit Produk",
-        "createDescription": "Tambahkan produk baru ke inventaris Anda.",
-        "editDescription": "Ubah detail produk di sini.",
+        "editTitle": "Ubah Produk",
+        "createDescription": "Tambah produk baru ke inventaris Anda.",
+        "editDescription": "Ubah data produk di sini.",
         "name": "Nama",
         "namePlaceholder": "Masukkan nama produk",
         "sku": "SKU",
@@ -47,7 +73,7 @@
         "unit": "Satuan",
         "sellingPrice": "Harga Jual",
         "costPrice": "Harga Beli",
-        "lowStockThreshold": "Batas Stok Rendah",
+        "lowStockThreshold": "Ambang Stok Rendah",
         "initialStockTitle": "Stok Awal",
         "warehouse": "Gudang",
         "selectWarehouse": "Pilih gudang",
@@ -55,7 +81,7 @@
         "quantity": "Jumlah",
         "units": {
             "meter": "Meter",
-            "box": "Kotak",
+            "box": "Box",
             "pcs": "Pcs",
             "liter": "Liter",
             "kg": "Kilogram (kg)"
@@ -63,12 +89,12 @@
     },
     "show": {
         "unit": "Satuan",
-        "lowStockThreshold": "Batas Stok Rendah",
+        "lowStockThreshold": "Ambang Stok Rendah",
         "date": "Tanggal",
         "quantity": "Jumlah",
         "totalStock": "Total Stok",
         "category": "Kategori",
-        "noStock": "Stok tidak tersedia",
+        "noStock": "Tidak ada stok",
         "priceHistory": "Riwayat Harga",
         "sellingPrice": "Harga Jual",
         "newPrice": "Harga Baru",
@@ -77,7 +103,7 @@
         "warehouse": "Gudang",
         "costPrice": "Harga Beli",
         "description": "Deskripsi",
-        "stockOverview": "Ringkasan Stok",
+        "stockOverview": "Ikhtisar Stok",
         "failedToLoadHistory": "Gagal memuat riwayat",
         "history": "Riwayat Produk",
         "reference": "Referensi",
@@ -88,9 +114,9 @@
         "title": "Manajemen Stok",
         "adjust": "Sesuaikan Stok",
         "history": "Riwayat",
-        "adjustmentPlaceholder": "Masukkan jumlah penambahan atau pengurangan",
+        "adjustmentPlaceholder": "Masukkan jumlah tambah/kurangi",
         "warehouse": "Gudang",
-        "description": "Sesuaikan level stok untuk produk ini",
+        "description": "Sesuaikan stok produk ini",
         "adjustment": "Penyesuaian",
         "currentStock": "Stok Saat Ini",
         "reasonPlaceholder": "Alasan penyesuaian",
@@ -98,7 +124,7 @@
         "selectWarehouse": "Pilih gudang",
         "addStock": "Tambah Stok",
         "removeStock": "Kurangi Stok",
-        "action": "Tindakan",
+        "action": "Aksi",
         "quantity": "Jumlah",
         "selectReason": "Pilih alasan"
     },

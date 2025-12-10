@@ -15,7 +15,7 @@
         "deleteConfirmDescription": "Are you sure you want to delete {name}? This action cannot be undone.",
         "operationFailed": "Operation failed",
         "comingSoon": "Coming soon",
-        "cancel": "Cancelling...",
+        "cancel": "Cancel",
         "cancelSuccess": "Cancelled successfully",
         "cancelError": "Failed to cancel",
         "cancelTitle": "Confirm Cancellation",
@@ -83,6 +83,14 @@
         "date": "Date",
         "total": "Total"
     },
+    "paginations": {
+        "showing": "Showing {from} to {to} of {total} items",
+        "prev": "Previous",
+        "next": "Next",
+        "show": "Show",
+        "rowsPerPage": "Rows per page",
+        "pageOf": "Page {current} of {total}"
+    },
     "nav": {
         "dashboard": "Dashboard",
         "inventory": "Inventory",
@@ -125,7 +133,9 @@
         "warehouses": "Warehouses",
         "settings": "Settings",
         "logout": "Logout",
-        "profile": "Profile"
+        "profile": "Profile",
+        "defaultOrg": "Default Organization",
+        "guest": "Guest"
     },
     "errors": {
         "required": "This field is required",

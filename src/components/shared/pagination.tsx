@@ -33,7 +33,7 @@ export function Pagination({
 }: PaginationProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const t = useTranslations('common.pagination');
+    const t = useTranslations('common.paginations');
 
     const createPageURL = (pageNumber: number | string) => {
         const params = new URLSearchParams(searchParams);

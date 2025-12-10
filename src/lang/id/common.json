@@ -83,6 +83,14 @@
         "date": "Tanggal",
         "total": "Total"
     },
+    "paginations": {
+    "showing": "Menampilkan {from} hingga {to} dari {total} item",
+    "prev": "Sebelumnya",
+    "next": "Selanjutnya",
+    "show": "Tampilkan",
+    "rowsPerPage": "Baris per halaman",
+    "pageOf": "Halaman {current} dari {total}"
+    },
     "nav": {
         "dashboard": "Dasbor",
         "inventory": "Inventaris",

@@ -16,7 +16,7 @@
       "deleteConfirmDescription": "Are you sure you want to delete {name}? This action cannot be undone.",
       "operationFailed": "Operation failed",
       "comingSoon": "Coming soon",
-      "cancel": "Cancelling...",
+      "cancel": "Cancel",
       "cancelSuccess": "Cancelled successfully",
       "cancelError": "Failed to cancel",
       "cancelTitle": "Confirm Cancellation",
