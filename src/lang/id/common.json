@@ -156,5 +156,8 @@
             "pricing": "Harga",
             "faq": "FAQ"
         }
+    },
+    "statsCard": {
+        "fromLastMonth": "dari bulan lalu"
     }
 }

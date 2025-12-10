@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AlertCircle, Eye, EyeOff, ArrowRight, ShieldCheck, User } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 // Data akun demo kita simpan di array agar kodenya bersih (tidak berulang-ulang)
 const DEMO_ACCOUNTS = [
@@ -17,6 +18,7 @@ const DEMO_ACCOUNTS = [
 ];
 
 export function LoginForm() {
+    const t = useTranslations('auth.login');
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -37,13 +39,13 @@ export function LoginForm() {
             });
 
             if (result?.error) {
-                setError('Invalid email or password');
+                setError(t('errors.invalidCredentials'));
             } else {
                 router.push('/dashboard');
                 router.refresh();
             }
         } catch {
-            setError('An error occurred. Please try again.');
+            setError(t('errors.generic'));
         } finally {
             setLoading(false);
         }
@@ -68,11 +70,11 @@ export function LoginForm() {
             {/* Form Input */}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('email')}</Label>
                     <Input
                         id="email"
                         type="email"
-                        placeholder="name@example.com"
+                        placeholder={t('emailPlaceholder')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
@@ -82,19 +84,19 @@ export function LoginForm() {
 
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="password">{t('password')}</Label>
                         <Link
                             href="/forgot-password"
                             className="text-xs font-medium text-primary hover:underline"
                         >
-                            Forgot password?
+                            {t('forgotPassword')}
                         </Link>
                     </div>
                     <div className="relative">
                         <Input
                             id="password"
                             type={showPassword ? 'text' : 'password'}
-                            placeholder="••••••••"
+                            placeholder={t('passwordPlaceholder')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -116,11 +118,11 @@ export function LoginForm() {
                     {loading ? (
                         <>
                             <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
-                            Signing in...
+                            {t('submitting')}
                         </>
                     ) : (
                         <>
-                            Sign In <ArrowRight className="w-4 h-4 ml-2" />
+                            {t('submit')} <ArrowRight className="w-4 h-4 ml-2" />
                         </>
                     )}
                 </Button>
@@ -128,9 +130,9 @@ export function LoginForm() {
 
             {/* Bagian Footer: Register Link */}
             <div className="text-center text-sm">
-                <span className="text-muted-foreground">Don&apos;t have an account? </span>
+                <span className="text-muted-foreground">{t('noAccount')} </span>
                 <Link href="/register" className="font-semibold text-primary hover:underline">
-                    Register here
+                    {t('register')}
                 </Link>
             </div>
 
@@ -141,7 +143,7 @@ export function LoginForm() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                     <span className="bg-card px-2 text-muted-foreground flex items-center gap-1">
-                        <ShieldCheck className="w-3 h-3" /> Demo Accounts
+                        <ShieldCheck className="w-3 h-3" /> {t('demoAccounts')}
                     </span>
                 </div>
             </div>
@@ -166,7 +168,7 @@ export function LoginForm() {
                             </div>
                         </div>
                         <div className="text-xs font-medium text-primary bg-primary/5 px-2 py-1 rounded group-hover:bg-background/20">
-                            Auto-fill
+                            {t('autoFill')}
                         </div>
                     </button>
                 ))}

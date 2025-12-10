@@ -26,7 +26,7 @@ export function DashboardActivitySection({
     recentChanges,
     warehouseData
 }: DashboardActivitySectionProps) {
-    const t = useTranslations('dashboard.activity');
+    const t = useTranslations('dashboard.widgets.activity');
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">

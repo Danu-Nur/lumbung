@@ -1,13 +1,24 @@
 import { Package } from 'lucide-react';
 import { LoginForm } from './login-form';
 import { Metadata } from 'next';
+import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-    title: 'Login - Inventory Pro',
-    description: 'Login to your account',
+type Props = {
+    params: { locale: string };
 };
 
+export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
+    const t = await getTranslations({ locale, namespace: 'auth.login' });
+    return {
+        title: `${t('title')} - Inventory Pro`,
+        description: t('description'),
+    };
+}
+
 export default function LoginPage() {
+    const t = useTranslations('auth.login');
+
     return (
         // Wrapper Utama: 
         // Tidak perlu 'min-h-screen' atau 'flex-center' lagi karena AuthLayout sudah menanganinya.
@@ -29,9 +40,9 @@ export default function LoginPage() {
 
                     {/* Sub-judul */}
                     <div className="space-y-1">
-                        <h1 className="text-xl font-semibold tracking-tight">Welcome back</h1>
+                        <h1 className="text-xl font-semibold tracking-tight">{t('subtitle')}</h1>
                         <p className="text-sm text-muted-foreground">
-                            Enter your credentials to access your account
+                            {t('description')}
                         </p>
                     </div>
                 </div>

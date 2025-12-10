@@ -13,30 +13,30 @@ interface FinancialStatsRowProps {
 }
 
 export function FinancialStatsRow({ data }: FinancialStatsRowProps) {
-    const t = useTranslations('dashboard.metrics'); // Assuming standard keys, will fallback or need update
+    const t = useTranslations('dashboard.financial'); // Assuming standard keys, will fallback or need update
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             <StatsCard
-                title={t('financial.purchase')}
+                title={t('purchase')}
                 value={formatCurrency(data.totalPurchases)}
                 icon={ShoppingCart}
                 color="blue"
             />
             <StatsCard
-                title={t('financial.stockValue')}
+                title={t('stockValue')}
                 value={formatCurrency(data.totalStockValue)}
                 icon={Package}
                 color="purple"
             />
             <StatsCard
-                title={t('financial.sales')}
+                title={t('sales')}
                 value={formatCurrency(data.totalSales)}
                 icon={DollarSign}
                 color="green"
             />
             <StatsCard
-                title={t('financial.profit')}
+                title={t('profit')}
                 value={formatCurrency(data.profit)}
                 icon={TrendingUp}
                 color="orange"

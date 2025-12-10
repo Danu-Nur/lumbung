@@ -1,46 +1,93 @@
 import { getRequestConfig } from 'next-intl/server';
 
+const SUPPORTED_LOCALES = ['en', 'id'] as const;
+type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
+
 export default getRequestConfig(async ({ requestLocale }) => {
-    // This typically corresponds to the `[locale]` segment
+    // requestLocale is a Promise in next-intl v4+
     let locale = await requestLocale;
 
-    // Ensure that a valid locale is used
-    if (!locale || !['en', 'id'].includes(locale)) {
+    if (!locale || !SUPPORTED_LOCALES.includes(locale as SupportedLocale)) {
         locale = 'id';
     }
 
-    const commonModule = (await import(`@/lang/${locale}/common.json`)).default;
-    const authModule = (await import(`@/lang/${locale}/auth.json`)).default;
-    const dashboardModule = (await import(`@/lang/${locale}/dashboard.json`)).default;
-    const inventoryModule = (await import(`@/lang/${locale}/inventory.json`)).default;
-    const salesModule = (await import(`@/lang/${locale}/sales.json`)).default;
-    const purchasesModule = (await import(`@/lang/${locale}/purchases.json`)).default;
-    const marketingModule = (await import(`@/lang/${locale}/marketing.json`)).default;
-    const partnersModule = (await import(`@/lang/${locale}/partners.json`)).default;
+    // Import semua module paralel biar cepet
+    const [
+        commonModule,
+        authModule,
+        dashboardModule,
+        inventoryModule,
+        salesModule,
+        purchasesModule,
+        marketingModule,
+        partnersModule
+    ] = await Promise.all([
+        import(`@/lang/${locale}/common.json`),
+        import(`@/lang/${locale}/auth.json`),
+        import(`@/lang/${locale}/dashboard.json`),
+        import(`@/lang/${locale}/inventory.json`),
+        import(`@/lang/${locale}/sales.json`),
+        import(`@/lang/${locale}/purchases.json`),
+        import(`@/lang/${locale}/marketing.json`),
+        import(`@/lang/${locale}/partners.json`)
+    ]);
 
-    // Destructure to restore original top-level keys
-    const { help, Footer, ...common } = commonModule;
-    const { charts, ...dashboard } = dashboardModule;
-    const { categories, warehouses, transfers, adjustments, opname, ...inventory } = inventoryModule;
+    const commonRaw = commonModule.default;
+    const dashboardRaw = dashboardModule.default;
+    const inventoryRaw = inventoryModule.default;
+    const salesRaw = salesModule.default;
+    const purchasesRaw = purchasesModule.default;
+    const marketingRaw = marketingModule.default;
+    const partnersRaw = partnersModule.default;
+    const authRaw = authModule.default;
 
-    // Combine into a single messages object matching the original structure
+    // Pisah key yang mau dijadiin top-level tapi tetap preserve struktur lama
+    const { help, Footer, ...common } = commonRaw;
+
+    // charts tetap di bawah namespace dashboard (bukan top-level)
+    const { charts, ...dashboard } = dashboardRaw;
+
+    // Beberapa bagian inventory dijadikan namespace sendiri
+    const {
+        categories,
+        warehouses,
+        transfers,
+        adjustments,
+        opname,
+        ...inventory
+    } = inventoryRaw;
+
     const messages = {
+        // common & turunannya
         common,
         help,
         Footer,
-        auth: authModule, // New namespace, accessible via t('auth.login')
-        dashboard,
-        charts,
+
+        // auth namespace → t('auth.login.title')
+        auth: authRaw,
+
+        // dashboard tetap satu namespace, charts di dalamnya
+        dashboard: {
+            ...dashboard,
+            charts
+        },
+
+        // inventory namespace + sub-namespace sesuai kebutuhan
         inventory,
         categories,
         warehouses,
         transfers,
         adjustments,
         opname,
-        sales: salesModule,
-        purchases: purchasesModule,
-        ...partnersModule, // suppliers, customers
-        ...marketingModule // Landing, Pricing, About
+
+        // sales & purchases per-domain
+        sales: salesRaw,
+        purchases: purchasesRaw,
+
+        // partners.json & marketing.json di-*spread* ke top-level
+        // misal: suppliers, customers, landing, pricing, about, dll.
+        ...partnersRaw,
+        ...marketingRaw
     };
 
     return {

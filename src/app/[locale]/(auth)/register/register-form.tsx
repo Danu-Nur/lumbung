@@ -7,8 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AlertCircle, CheckCircle, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function RegisterForm() {
+    const t = useTranslations('auth.register');
     const router = useRouter();
     const [formData, setFormData] = useState({
         organizationName: '',
@@ -33,13 +35,13 @@ export function RegisterForm() {
 
         // Client-side Validation
         if (formData.password !== formData.confirmPassword) {
-            setError('Passwords do not match');
+            setError(t('errors.passwordMatch'));
             setLoading(false);
             return;
         }
 
         if (formData.password.length < 8) {
-            setError('Password must be at least 8 characters');
+            setError(t('errors.passwordLength'));
             setLoading(false);
             return;
         }
@@ -53,7 +55,7 @@ export function RegisterForm() {
 
             if (!response.ok) {
                 const data = await response.json();
-                setError(data.error || 'Registration failed');
+                setError(data.error || t('errors.failed'));
             } else {
                 setSuccess(true);
                 // Redirect otomatis setelah 2 detik
@@ -62,7 +64,7 @@ export function RegisterForm() {
                 }, 2000);
             }
         } catch (err) {
-            setError('An error occurred. Please try again.');
+            setError(t('errors.generic'));
         } finally {
             setLoading(false);
         }
@@ -76,9 +78,9 @@ export function RegisterForm() {
                     <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div className="text-center space-y-2">
-                    <h3 className="text-xl font-semibold text-foreground">Registration Successful!</h3>
+                    <h3 className="text-xl font-semibold text-foreground">{t('successTitle')}</h3>
                     <p className="text-muted-foreground text-sm">
-                        Redirecting you to login page...
+                        {t('successDescription')}
                     </p>
                 </div>
                 <Loader2 className="w-5 h-5 animate-spin text-muted-foreground mt-4" />
@@ -98,11 +100,11 @@ export function RegisterForm() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="organizationName">Organization Name</Label>
+                    <Label htmlFor="organizationName">{t('organizationName')}</Label>
                     <Input
                         id="organizationName"
                         type="text"
-                        placeholder="My Company Inc."
+                        placeholder={t('organizationPlaceholder')}
                         value={formData.organizationName}
                         onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
                         required
@@ -111,11 +113,11 @@ export function RegisterForm() {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="name">Your Name</Label>
+                    <Label htmlFor="name">{t('name')}</Label>
                     <Input
                         id="name"
                         type="text"
-                        placeholder="John Doe"
+                        placeholder={t('namePlaceholder')}
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         required
@@ -124,11 +126,11 @@ export function RegisterForm() {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('email')}</Label>
                     <Input
                         id="email"
                         type="email"
-                        placeholder="admin@mycompany.com"
+                        placeholder={t('emailPlaceholder')}
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         required
@@ -138,12 +140,12 @@ export function RegisterForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="password">{t('password')}</Label>
                         <div className="relative">
                             <Input
                                 id="password"
                                 type={showPassword ? 'text' : 'password'}
-                                placeholder="••••••••"
+                                placeholder={t('passwordPlaceholder')}
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 required
@@ -162,12 +164,12 @@ export function RegisterForm() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="confirmPassword">Confirm</Label>
+                        <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
                         <div className="relative">
                             <Input
                                 id="confirmPassword"
                                 type={showConfirmPassword ? 'text' : 'password'}
-                                placeholder="••••••••"
+                                placeholder={t('passwordPlaceholder')}
                                 value={formData.confirmPassword}
                                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                                 required
@@ -189,20 +191,20 @@ export function RegisterForm() {
                 <Button type="submit" className="w-full h-11 text-base mt-2" disabled={loading}>
                     {loading ? (
                         <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Creating account...
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('submitting')}
                         </>
                     ) : (
                         <>
-                            Create Account <ArrowRight className="w-4 h-4 ml-2" />
+                            {t('submit')} <ArrowRight className="w-4 h-4 ml-2" />
                         </>
                     )}
                 </Button>
             </form>
 
             <div className="text-center text-sm">
-                <span className="text-muted-foreground">Already have an account? </span>
+                <span className="text-muted-foreground">{t('hasAccount')} </span>
                 <Link href="/login" className="font-semibold text-primary hover:underline">
-                    Sign In
+                    {t('login')}
                 </Link>
             </div>
         </div>

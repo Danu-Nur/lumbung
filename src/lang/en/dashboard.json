@@ -1,14 +1,31 @@
 {
     "title": "Dashboard",
     "welcome_back": "Welcome back",
-    "metrics": {
-        "financial": {
-            "title": "Financial Overview",
-            "purchase": "Total Purchase",
-            "stockValue": "Total Stock Value",
-            "sales": "Total Sales",
-            "profit": "Profit"
-        },
+    "financial": {
+        "title": "Financial Overview",
+        "purchase": "Total Purchase",
+        "stockValue": "Total Stock Value",
+        "sales": "Total Sales",
+        "profit": "Profit"
+    },
+    "operational": {
+        "customers": "Total Customers",
+        "suppliers": "Total Suppliers",
+        "products": "Total Products",
+        "invoices": "Total Sales Invoices"
+    },
+    "charts": {
+        "financial": "Financial Overview",
+        "composition": "Income Composition",
+        "sales": "Sales",
+        "purchase": "Purchase",
+        "profit": "Profit",
+        "stockDistribution": {
+            "title": "Stock Value by Warehouse",
+            "empty": "No stock data available"
+        }
+    },
+    "widgets": {
         "activity": {
             "title": "Activity & Status",
             "recentlyAdded": {
@@ -16,9 +33,7 @@
                 "empty": "No products added recently"
             },
             "sku": "SKU"
-        }
-    },
-    "widgets": {
+        },
         "suppliers": {
             "newest": "Newest Suppliers",
             "title": "Suppliers Overview",
@@ -26,13 +41,16 @@
         },
         "transfers": {
             "title": "Transfer Overview",
-            "pending": "Pending Transfers",
-            "completed": "Completed Today"
+            "pendingTransfers": "Pending Transfers",
+            "completed": "Completed Today",
+            "recent": "Recent Transfers",
+            "empty": "No transfers found"
         },
         "adjustments": {
             "title": "Stock Adjustments",
             "today": "Adjustments Today",
-            "recent": "Recent Adjustments"
+            "recent": "Recent Adjustments",
+            "empty": "No adjustments found"
         },
         "recentChanges": {
             "title": "Recent Inventory Changes",
@@ -42,12 +60,6 @@
             "sale": "Sale",
             "purchase": "Purchase",
             "by": "by"
-        },
-        "settings": {
-            "title": "Quick Settings",
-            "organization": "Organization",
-            "users": "Users",
-            "roles": "Roles"
         },
         "lowStock": {
             "title": "Low Stock Items",
@@ -59,16 +71,16 @@
             "newest": "Newest Customers",
             "title": "Customers Overview",
             "totalCustomers": "Total Customers"
+        },
+        "warehouses": {
+            "title": "Warehouse Overview",
+            "totalWarehouses": "Total Warehouses",
+            "topByValue": "Top By Value",
+            "items": "items"
         }
     },
-    "charts": {
-        "sales": {
-            "title": "Sales Last 7 Days",
-            "sales": "Sales"
-        },
-        "stockDistribution": {
-            "title": "Stock Value by Warehouse",
-            "empty": "No stock data available"
-        }
+    "superAdmin": {
+        "title": "Super Admin Dashboard",
+        "description": "Select an organization to view its dashboard"
     }
 }

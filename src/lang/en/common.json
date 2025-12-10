@@ -156,5 +156,8 @@
             "pricing": "Pricing",
             "faq": "FAQ"
         }
+    },
+    "statsCard": {
+        "fromLastMonth": "from last month"
     }
 }

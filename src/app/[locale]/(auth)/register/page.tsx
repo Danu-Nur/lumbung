@@ -1,13 +1,24 @@
 import { Package } from 'lucide-react';
 import { RegisterForm } from './register-form';
 import { Metadata } from 'next';
+import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-    title: 'Register - Inventory Pro',
-    description: 'Create your account',
+type Props = {
+    params: { locale: string };
 };
 
+export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
+    const t = await getTranslations({ locale, namespace: 'auth.register' });
+    return {
+        title: `${t('title')} - Inventory Pro`,
+        description: t('description'),
+    };
+}
+
 export default function RegisterPage() {
+    const t = useTranslations('auth.register');
+
     return (
         <div className="w-full max-w-[550px] bg-card border rounded-xl shadow-lg">
             <div className="p-6 sm:p-8 space-y-8">
@@ -21,9 +32,9 @@ export default function RegisterPage() {
                     <span className="text-2xl font-bold">Inventory Pro</span>
 
                     <div className="space-y-1">
-                        <h1 className="text-xl font-semibold tracking-tight">Create an account</h1>
+                        <h1 className="text-xl font-semibold tracking-tight">{t('subtitle')}</h1>
                         <p className="text-sm text-muted-foreground">
-                            Enter your information to get started
+                            {t('description')}
                         </p>
                     </div>
                 </div>

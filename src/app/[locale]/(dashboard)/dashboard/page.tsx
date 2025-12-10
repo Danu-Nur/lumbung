@@ -17,9 +17,9 @@ export default async function DashboardPage() {
         return (
             <div className="flex items-center justify-center h-96">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-2">Super Admin Dashboard</h2>
+                    <h2 className="text-2xl font-bold mb-2">{t('superAdmin.title')}</h2>
                     <p className="text-muted-foreground">
-                        Select an organization to view its dashboard
+                        {t('superAdmin.description')}
                     </p>
                 </div>
             </div>
