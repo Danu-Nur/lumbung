@@ -11,6 +11,7 @@ export const productService = {
         barcode,
         description,
         categoryId,
+        supplierId,
         unit,
         sellingPrice,
         costPrice,
@@ -23,6 +24,7 @@ export const productService = {
         barcode?: string | null;
         description?: string | null;
         categoryId?: string | null;
+        supplierId?: string | null;
         unit: string;
         sellingPrice: number;
         costPrice: number;
@@ -50,6 +52,7 @@ export const productService = {
                 barcode,
                 description,
                 categoryId,
+                supplierId,
                 unit,
                 sellingPrice,
                 costPrice,
@@ -76,6 +79,7 @@ export const productService = {
             barcode?: string | null;
             description?: string | null;
             categoryId?: string | null;
+            supplierId?: string | null;
             unit?: string;
             sellingPrice?: number;
             costPrice?: number;

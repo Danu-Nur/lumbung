@@ -47,7 +47,7 @@ export async function InventoryListSection({ page, pageSize, search, modal, id }
 
     const shouldFetchOptions = modal === 'create' || modal === 'edit' || modal === 'stock';
 
-    const [inventoryData, categories, warehouses] = await Promise.all([
+    const [inventoryData, categories, warehouses, suppliers] = await Promise.all([
         inventoryService.getInventory(
             session.user.organizationId,
             page,
@@ -60,6 +60,11 @@ export async function InventoryListSection({ page, pageSize, search, modal, id }
         }) : Promise.resolve([]),
         shouldFetchOptions ? prisma.warehouse.findMany({
             where: { organizationId: session.user.organizationId, deletedAt: null, isActive: true },
+            orderBy: { name: 'asc' },
+        }) : Promise.resolve([]),
+        shouldFetchOptions ? prisma.supplier.findMany({
+            where: { organizationId: session.user.organizationId, deletedAt: null },
+            select: { id: true, name: true },
             orderBy: { name: 'asc' },
         }) : Promise.resolve([]),
     ]);
@@ -77,7 +82,12 @@ export async function InventoryListSection({ page, pageSize, search, modal, id }
 
     return (
         <div className="space-y-4">
-            <InventoryModalManager products={serializedProducts} categories={categories} warehouses={warehouses} />
+            <InventoryModalManager
+                products={serializedProducts}
+                categories={categories}
+                warehouses={warehouses}
+                suppliers={suppliers}
+            />
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>

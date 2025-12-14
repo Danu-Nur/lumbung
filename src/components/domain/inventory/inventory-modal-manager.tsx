@@ -13,9 +13,10 @@ interface InventoryModalManagerProps {
     products: SerializedProduct[];
     categories: Category[];
     warehouses: Warehouse[];
+    suppliers?: { id: string; name: string }[];
 }
 
-export function InventoryModalManager({ products, categories, warehouses }: InventoryModalManagerProps) {
+export function InventoryModalManager({ products, categories, warehouses, suppliers = [] }: InventoryModalManagerProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -48,6 +49,7 @@ export function InventoryModalManager({ products, categories, warehouses }: Inve
                 onOpenChange={(open) => !open && handleClose()}
                 categories={categories}
                 warehouses={warehouses}
+                suppliers={suppliers}
                 onSuccess={handleSuccess}
             />
 
@@ -58,6 +60,7 @@ export function InventoryModalManager({ products, categories, warehouses }: Inve
                         onOpenChange={(open) => !open && handleClose()}
                         product={selectedProduct}
                         categories={categories}
+                        suppliers={suppliers}
                         onSuccess={handleSuccess}
                     />
                     <InventoryShowModal

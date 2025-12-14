@@ -86,6 +86,26 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
             },
         },
         {
+            accessorKey: 'supplier',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title={t('columns.supplier')} />
+            ),
+            cell: ({ row }) => {
+                const supplier = row.original.supplier;
+                return (
+                    <div className="flex items-center">
+                        {supplier ? (
+                            <span className="text-sm truncate max-w-[150px]" title={supplier.name}>
+                                {supplier.name}
+                            </span>
+                        ) : (
+                            <span className="text-muted-foreground text-xs">-</span>
+                        )}
+                    </div>
+                );
+            },
+        },
+        {
             accessorKey: 'sellingPrice',
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title={t('columns.sellingPrice')} className='justify-start' />

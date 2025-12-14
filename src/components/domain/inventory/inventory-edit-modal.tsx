@@ -36,6 +36,7 @@ interface InventoryEditModalProps {
     onOpenChange: (open: boolean) => void;
     product: SerializedProduct;
     categories: Category[];
+    suppliers?: { id: string; name: string }[];
     onSuccess?: () => void;
 }
 
@@ -44,6 +45,7 @@ export function InventoryEditModal({
     onOpenChange,
     product,
     categories,
+    suppliers = [],
     onSuccess,
 }: InventoryEditModalProps) {
     const router = useRouter();
@@ -57,6 +59,7 @@ export function InventoryEditModal({
         sku: z.string().min(1, tValidation("required")),
         barcode: z.string().optional().or(z.literal("")),
         categoryId: z.string().optional().or(z.literal("")),
+        supplierId: z.string().optional().or(z.literal("")),
         description: z.string().optional().or(z.literal("")),
         unit: z.string().min(1, tValidation("required")),
         sellingPrice: z.coerce.number().min(0, tValidation("positive")),
@@ -71,6 +74,7 @@ export function InventoryEditModal({
             sku: product.sku,
             barcode: product.barcode || "",
             categoryId: product.categoryId || "",
+            supplierId: product.supplierId || "",
             description: product.description || "",
             unit: product.unit,
             sellingPrice: product.sellingPrice,
@@ -87,6 +91,7 @@ export function InventoryEditModal({
                 sku: product.sku,
                 barcode: product.barcode || "",
                 categoryId: product.categoryId || "",
+                supplierId: product.supplierId || "",
                 description: product.description || "",
                 unit: product.unit,
                 sellingPrice: product.sellingPrice,
@@ -203,6 +208,30 @@ export function InventoryEditModal({
                                     )}
                                 />
                             </div>
+
+                            <FormField
+                                control={form.control}
+                                name="supplierId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{t("form.supplier") || "Preferred Supplier"}</FormLabel>
+                                        <div className="flex gap-2">
+                                            <select
+                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                {...field}
+                                            >
+                                                <option value="">{t("form.selectSupplier") || "Select Supplier"}</option>
+                                                {suppliers.map((supplier) => (
+                                                    <option key={supplier.id} value={supplier.id}>
+                                                        {supplier.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
                             <FormField
                                 control={form.control}

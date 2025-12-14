@@ -24,6 +24,7 @@ export async function createProduct(formData: FormData) {
     const lowStockThreshold = parseInt(formData.get('lowStockThreshold') as string);
     const initialStock = parseFloat(formData.get('initialStock') as string) || 0;
     const warehouseId = formData.get('warehouseId') as string;
+    const supplierId = formData.get('supplierId') as string;
 
     // Validate
     if (!name || !sku || !unit || isNaN(sellingPrice) || isNaN(costPrice)) {
@@ -46,6 +47,7 @@ export async function createProduct(formData: FormData) {
                 barcode: barcode || null,
                 description: description || null,
                 categoryId: categoryId || null,
+                supplierId: supplierId || null,
                 unit,
                 sellingPrice,
                 costPrice,
@@ -103,6 +105,7 @@ export async function updateProduct(productId: string, formData: FormData) {
     const barcode = formData.get('barcode') as string;
     const description = formData.get('description') as string;
     const categoryId = formData.get('categoryId') as string;
+    const supplierId = formData.get('supplierId') as string;
     const unit = formData.get('unit') as string;
     const sellingPrice = parseFloat(formData.get('sellingPrice') as string);
     const costPrice = parseFloat(formData.get('costPrice') as string);
@@ -117,6 +120,7 @@ export async function updateProduct(productId: string, formData: FormData) {
             barcode: barcode || null,
             description: description || null,
             categoryId: categoryId || null,
+            supplierId: supplierId || null,
             unit,
             sellingPrice,
             costPrice,

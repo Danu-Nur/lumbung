@@ -146,6 +146,7 @@ export const inventoryService = {
                 where,
                 include: {
                     category: true,
+                    supplier: true,
                     inventoryItems: {
                         include: {
                             warehouse: true,

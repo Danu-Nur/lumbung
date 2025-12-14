@@ -82,6 +82,7 @@ export type SerializedProduct = Omit<Product, "sellingPrice" | "costPrice"> & {
     sellingPrice: number;
     costPrice: number;
     category: Category | null;
+    supplier: Supplier | null;
     inventoryItems: (InventoryItem & { warehouse: Warehouse })[];
 };
 
