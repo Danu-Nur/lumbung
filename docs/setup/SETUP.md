@@ -20,7 +20,8 @@
 ### Frontend (Port 3000)
 1. **Fixed Next-Intl Configuration**:
    - Added `next-intl` plugin to `next.config.ts`
-   - Created `src/middleware.ts` combining next-auth and next-intl
+   - Replaced `middleware.ts` with `proxy.ts` for Next.js 16 compatibility
+   - Configured `postcss.config.mjs` for Tailwind v4 support
 
 2. **Refactored Services to Use Backend API**:
    - `subscriptionService.ts` - Now calls backend API instead of Prisma

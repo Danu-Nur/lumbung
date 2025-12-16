@@ -15,7 +15,7 @@ This is the refactored microservices architecture for the Lumbung Inventory Syst
 ## Structure
 
 - **`backend/`**: Node.js + Fastify API service. Handles Auth, Inventory, Products, and Orders.
-- **`frontend/`**: Next.js 15 + React Application. Handles UI, Client-side logic, and Offline Sync (Dexie.js).
+- **`frontend/`**: Next.js 16 + React Application. Handles UI, Client-side logic, and Offline Sync (Dexie.js).
 - **`docs/`**: Comprehensive documentation organized by category.
 - **`docker-compose.yml`**: Orchestration for backend, frontend, postgres, and redis.
 
@@ -73,8 +73,8 @@ See [SETUP.md](./docs/setup/SETUP.md) for detailed local development instruction
 - **Auth**: JWT (@fastify/jwt)
 
 ### Frontend
-- **Framework**: Next.js 15 (App Router)
-- **UI**: React 19 + Radix UI + Tailwind CSS
+- **Framework**: Next.js 16 (App Router)
+- **UI**: React 19 + Radix UI + Tailwind CSS (v4)
 - **State**: React Query
 - **Offline**: Dexie.js (IndexedDB)
 - **i18n**: next-intl (English & Indonesian)

@@ -62,6 +62,15 @@ docs/features/
 └── OFFLINE_COMPLETE.md      # Offline implementation summary
 ```
 
+### 📊 Historical Reports
+Cleanup and restructuring logs.
+
+```
+docs/reports/
+├── CLEANUP_COMPLETE.md    # Summary of cleanup actions
+└── FINAL_CLEANUP_REPORT.md # Final detailed report
+```
+
 ## 🔍 Find What You Need
 
 ### I want to...

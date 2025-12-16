@@ -81,18 +81,19 @@ test_*.csv
 *.test.xlsx
 
 # Old monolithic app files (if any remain)
-public/
-scripts/
-src/
-components.json
-next.config.ts
-tailwind.config.ts
-tsconfig.json
-eslint.config.mjs
-postcss.config.mjs
-prisma.config.ts
-next-env.d.ts
-proxy.ts.bak
+# Old monolithic app files (if any remain)
+/public/
+/scripts/
+/src/
+/components.json
+/next.config.ts
+/tailwind.config.ts
+/tsconfig.json
+/eslint.config.mjs
+/postcss.config.mjs
+/prisma.config.ts
+/next-env.d.ts
+/proxy.ts.bak
 
 # Keep only microservices project
 # Everything should be in lumbung-microservices/
