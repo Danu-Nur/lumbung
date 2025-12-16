@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
+/lumbung-microservices/backend/node_modules
+/lumbung-microservices/backend/dist
+/lumbung-microservices/frontend/node_modules
+/lumbung-microservices/frontend/.next

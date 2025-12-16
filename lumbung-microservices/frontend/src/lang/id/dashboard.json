@@ -1,0 +1,86 @@
+{
+    "title": "Dasbor",
+    "welcome_back": "Selamat datang kembali",
+    "financial": {
+        "title": "Ikhtisar Keuangan",
+        "purchase": "Total Pembelian",
+        "stockValue": "Total Nilai Stok",
+        "sales": "Total Penjualan",
+        "profit": "Keuntungan"
+    },
+    "operational": {
+        "customers": "Total Pelanggan",
+        "suppliers": "Total Pemasok",
+        "products": "Total Produk",
+        "invoices": "Total Faktur Penjualan"
+    },
+    "charts": {
+        "financial": "Ikhtisar Keuangan",
+        "composition": "Komposisi Pendapatan",
+        "sales": "Penjualan",
+        "purchase": "Pembelian",
+        "profit": "Keuntungan",
+        "stockDistribution": {
+            "title": "Nilai Stok per Gudang",
+            "empty": "Tidak ada data stok tersedia"
+        }
+    },
+    "widgets": {
+        "activity": {
+            "title": "Aktivitas & Status",
+            "recentlyAdded": {
+                "title": "Baru Ditambahkan",
+                "empty": "Belum ada produk yang baru ditambahkan"
+            },
+            "sku": "SKU"
+        },
+        "suppliers": {
+            "newest": "Pemasok Terbaru",
+            "title": "Ikhtisar Pemasok",
+            "totalSuppliers": "Total Pemasok"
+        },
+        "transfers": {
+            "title": "Ikhtisar Transfer",
+            "pendingTransfers": "Transfer Tertunda",
+            "completed": "Selesai Hari Ini",
+            "recent": "Transfer Terbaru",
+            "empty": "Tidak ada transfer ditemukan"
+        },
+        "adjustments": {
+            "title": "Penyesuaian Stok",
+            "today": "Penyesuaian Hari Ini",
+            "recent": "Penyesuaian Terbaru",
+            "empty": "Tidak ada penyesuaian ditemukan"
+        },
+        "recentChanges": {
+            "title": "Perubahan Inventaris Terbaru",
+            "empty": "Tidak ada perubahan terbaru",
+            "adjustment": "Penyesuaian",
+            "transfer": "Transfer",
+            "sale": "Penjualan",
+            "purchase": "Pembelian",
+            "by": "oleh"
+        },
+        "lowStock": {
+            "title": "Produk Stok Rendah",
+            "viewAll": "Lihat Semua",
+            "empty": "Semua stok dalam kondisi baik!",
+            "min": "Min:"
+        },
+        "customers": {
+            "newest": "Pelanggan Terbaru",
+            "title": "Ikhtisar Pelanggan",
+            "totalCustomers": "Total Pelanggan"
+        },
+        "warehouses": {
+            "title": "Ikhtisar Gudang",
+            "totalWarehouses": "Total Gudang",
+            "topByValue": "Teratas Berdasarkan Nilai",
+            "items": "item"
+        }
+    },
+    "superAdmin": {
+        "title": "Dasbor Super Admin",
+        "description": "Pilih organisasi untuk melihat dasbornya"
+    }
+}

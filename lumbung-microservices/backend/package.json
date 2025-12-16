@@ -1,0 +1,31 @@
+{
+    "name": "lumbung-backend",
+    "version": "1.0.0",
+    "description": "Lumbung Backend Microservice with Fastify",
+    "type": "module",
+    "main": "src/app.ts",
+    "scripts": {
+        "dev": "tsx watch src/app.ts",
+        "build": "tsc",
+        "start": "node dist/app.js",
+        "test": "vitest"
+    },
+    "dependencies": {
+        "fastify": "^5.0.0",
+        "@fastify/cors": "^10.0.0",
+        "@fastify/jwt": "^9.0.0",
+        "@fastify/cookie": "^11.0.0",
+        "@prisma/client": "^6.19.0",
+        "zod": "^3.24.0",
+        "dotenv": "^16.4.0",
+        "bcryptjs": "^2.4.3"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0",
+        "tsx": "^4.7.0",
+        "@types/node": "^20.0.0",
+        "@types/bcryptjs": "^2.4.6",
+        "prisma": "^6.19.0",
+        "vitest": "^1.0.0"
+    }
+}

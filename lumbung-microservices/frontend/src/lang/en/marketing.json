@@ -1,0 +1,163 @@
+{
+    "Landing": {
+        "hero": {
+            "title": "Manage Your Warehouse with Ease",
+            "subtitle": "The most complete solution for stock management, multi-warehouse, and direct sales.",
+            "getStarted": "Get Started",
+            "learnMore": "Learn More"
+        },
+        "features": {
+            "title": "Everything you need",
+            "subtitle": "Powerful features wrapped in a beautiful interface."
+        },
+        "metrics": {
+            "itemsTracked": "1M+",
+            "itemsTrackedLabel": "Items tracked across warehouses",
+            "timeSaved": "10h",
+            "timeSavedLabel": "Average weekly time saved",
+            "errorReduced": "80%",
+            "errorReducedLabel": "Reduction in stock errors"
+        },
+        "testimonials": {
+            "title": "Loved by Businesses",
+            "subtitle": "From distributors to manufacturers, Lumbung keeps operations lean and predictable.",
+            "budi": {
+                "name": "Budi Santoso",
+                "role": "Owner, Gudang Maju",
+                "content": "Lumbung changed how we manage our stock. No more lost items!"
+            },
+            "sarah": {
+                "name": "Sarah Wijaya",
+                "role": "Logistics Manager",
+                "content": "The reporting features are incredible. I save 10 hours a week."
+            },
+            "anton": {
+                "name": "Anton Pradana",
+                "role": "Electronics Distributor",
+                "content": "Easy to use, yet powerful enough for enterprise needs."
+            }
+        },
+        "pricing": {
+            "title": "Simple Pricing",
+            "subtitle": "Choose the plan that fits your business needs.",
+            "popularBadge": "Popular",
+            "perMonth": "month",
+            "choosePlan": "Choose",
+            "starter": {
+                "name": "Starter",
+                "price": "Rp290k",
+                "description": "For small businesses",
+                "features": [
+                    "Up to 1,000 SKUs",
+                    "1 Warehouse",
+                    "Basic Support"
+                ]
+            },
+            "pro": {
+                "name": "Pro",
+                "price": "Rp790k",
+                "description": "For growing teams",
+                "features": [
+                    "Unlimited SKUs",
+                    "5 Warehouses",
+                    "Priority Support",
+                    "API Access"
+                ]
+            },
+            "enterprise": {
+                "name": "Enterprise",
+                "price": "Custom",
+                "description": "For large organizations",
+                "features": [
+                    "Unlimited Everything",
+                    "Dedicated Manager",
+                    "Custom Integrations"
+                ]
+            }
+        },
+        "faq": {
+            "title": "Frequently Asked Questions",
+            "multiWarehouse": {
+                "question": "Can I manage multiple warehouses?",
+                "answer": "Yes, our Pro and Enterprise plans fully support multi-warehouse management with transfer features."
+            },
+            "trial": {
+                "question": "Is there a free trial?",
+                "answer": "Absolutely! You can try Lumbung free for 14 days, no credit card required."
+            },
+            "export": {
+                "question": "Can I export my data?",
+                "answer": "Yes, you can export all your inventory and sales data to CSV or Excel at any time."
+            }
+        },
+        "partners": {
+            "trustedBy": "TRUSTED BY INNOVATIVE COMPANIES",
+            "logo": "LOGO"
+        },
+        "cta": {
+            "title": "Ready to organize your warehouse?",
+            "subtitle": "Join thousands of businesses trusting Lumbung for their inventory management.",
+            "button": "Start Free Now"
+        }
+    },
+    "Pricing": {
+        "title": "Simple and transparent pricing",
+        "subtitle": "Choose the right plan for your business. No hidden fees.",
+        "compareTitle": "Compare Plans",
+        "feature": "Feature",
+        "warehouses": "Warehouses",
+        "users": "Users",
+        "apiAccess": "API Access",
+        "prioritySupport": "Priority Support",
+        "customIntegrations": "Custom Integrations",
+        "free": "Free",
+        "month": "month",
+        "choose": "Choose"
+    },
+    "About": {
+        "mission": {
+            "badge": "Our Mission",
+            "title": "Empowering businesses to master their inventory.",
+            "description": "We believe warehouse management shouldn't be complicated. Our mission is to provide powerful, accessible tools that assist business growth."
+        },
+        "values": {
+            "simplicity": {
+                "title": "Simplicity",
+                "desc": "We prioritize clean design and intuitive workflows over bloated features."
+            },
+            "reliability": {
+                "title": "Reliability",
+                "desc": "Your data is the backbone of your business. We treat it with utmost care."
+            },
+            "innovation": {
+                "title": "Innovation",
+                "desc": "We constantly evolve to bring the latest technology to your warehouse."
+            }
+        },
+        "journey": {
+            "title": "Our Journey",
+            "2023": {
+                "title": "Inception",
+                "desc": "Lumbung was born out of frustration with clunky, expensive warehouse software."
+            },
+            "2024": {
+                "title": "v1.0 Launch",
+                "desc": "We launched our MVP and secured our first 100 paying customers."
+            },
+            "2025": {
+                "title": "Scaling Up",
+                "desc": "Released v2.0 with advanced analytics and AI features. Reached 1000+ users."
+            }
+        },
+        "team": {
+            "title": "Our Team",
+            "subtitle": "Passionate individuals building the future of inventory management."
+        },
+        "cta": {
+            "title": "Join our journey",
+            "subtitle": "We're always looking for talented people to join our team and businesses to partner with.",
+            "getStarted": "Get Started",
+            "careers": "View Careers"
+        }
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "title": "Sales",
+    "description": "Manage customer orders",
+    "columns": {
+        "orderNumber": "Order #",
+        "customer": "Customer",
+        "date": "Date",
+        "status": "Status",
+        "total": "Total",
+        "items": "Items"
+    },
+    "help": {
+        "title": "Sales Guide",
+        "purpose": {
+            "heading": "Purpose",
+            "content": "Manage your sales orders here."
+        },
+        "buttonLabel": "Guide"
+    },
+    "form": {
+        "createTitle": "Create Sales Order",
+        "createDescription": "Create a new sales order for customer.",
+        "editTitle": "Edit Sales Order",
+        "customer": "Customer",
+        "walkInCustomer": "Walk-in Customer",
+        "warehouse": "Warehouse",
+        "selectWarehouse": "Select warehouse",
+        "notes": "Notes",
+        "notesPlaceholder": "Add notes here...",
+        "lineItems": "Line Items",
+        "selectProduct": "Select product to add",
+        "noItems": "No items added yet",
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "total": "Total"
+    },
+    "show": {
+        "title": "Sales Order #{orderNumber}",
+        "invoice": "Invoice",
+        "confirm": "Confirm Order",
+        "fulfill": "Fulfill Order",
+        "cancel": "Cancel Order",
+        "confirmSuccess": "Order confirmed successfully",
+        "fulfillSuccess": "Order fulfilled successfully",
+        "cancelSuccess": "Order cancelled successfully",
+        "customer": "Customer",
+        "walkInCustomer": "Walk-in Customer",
+        "warehouse": "Warehouse",
+        "orderItems": "Order Items",
+        "product": "Product",
+        "qty": "Qty",
+        "price": "Price",
+        "total": "Total",
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "notes": "Notes"
+    }
+}

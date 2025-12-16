@@ -1,0 +1,381 @@
+{
+    "title": "Inventory",
+    "description": "Manage your product inventory across warehouses",
+    "tabs": {
+        "stock": "Inventory List",
+        "categories": "Categories",
+        "transfers": "Stock Transfers",
+        "adjustments": "Stock Adjustments",
+        "opname": "Stock Opname",
+        "warehouses": "Warehouses",
+        "suppliers": "Suppliers"
+    },
+    "columns": {
+        "product": "Product",
+        "sku": "SKU",
+        "barcode": "Barcode",
+        "category": "Category",
+        "supplier": "Supplier",
+        "unit": "Unit",
+        "sellingPrice": "Selling Price",
+        "costPrice": "Cost Price",
+        "lowStockThreshold": "Low Stock Threshold",
+        "initialStockTitle": "Initial Stock",
+        "warehouse": "Warehouse",
+        "quantity": "Quantity",
+        "totalStock": "Total Stock",
+        "noStock": "No stock available",
+        "priceHistory": "Price History",
+        "newPrice": "New Price",
+        "noHistory": "No history available",
+        "type": "Type",
+        "description": "Description",
+        "stockOverview": "Stock Overview",
+        "failedToLoadHistory": "Failed to load history",
+        "history": "Product History",
+        "reference": "Reference",
+        "oldPrice": "Old Price",
+        "stockMovements": "Stock Movements"
+    },
+    "menu": {
+        "stock": {
+            "description": "Manage your product stock levels across warehouses"
+        },
+        "transfers": {
+            "description": "Manage stock movements"
+        },
+        "adjustments": {
+            "description": "Correct stock discrepancies"
+        },
+        "opname": {
+            "description": "Physical stock counting"
+        },
+        "categories": {
+            "description": "Manage product categories"
+        },
+        "suppliers": {
+            "description": "Manage suppliers"
+        },
+        "warehouses": {
+            "description": "Manage warehouses"
+        }
+    },
+    "form": {
+        "title": "Product",
+        "createTitle": "Create Product",
+        "editTitle": "Edit Product",
+        "createDescription": "Add a new product to your inventory.",
+        "editDescription": "Make changes to your product here.",
+        "name": "Name",
+        "namePlaceholder": "Enter product name",
+        "sku": "SKU",
+        "skuPlaceholder": "Enter SKU",
+        "supplier": "Supplier",
+        "selectSupplier": "Select a supplier",
+        "barcode": "Barcode",
+        "barcodePlaceholder": "Enter barcode (optional)",
+        "category": "Category",
+        "selectCategory": "Select a category",
+        "addCategory": "Create Category",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter description (optional)",
+        "unit": "Unit",
+        "sellingPrice": "Selling Price",
+        "costPrice": "Cost Price",
+        "lowStockThreshold": "Low Stock Threshold",
+        "initialStockTitle": "Initial Stock",
+        "warehouse": "Warehouse",
+        "selectWarehouse": "Select a warehouse",
+        "addWarehouse": "Create Warehouse",
+        "quantity": "Quantity",
+        "units": {
+            "meter": "Meter",
+            "box": "Box",
+            "pcs": "Pieces (pcs)",
+            "liter": "Liter",
+            "kg": "Kilogram (kg)"
+        }
+    },
+    "show": {
+        "unit": "Unit",
+        "lowStockThreshold": "Low Stock Threshold",
+        "date": "Date",
+        "quantity": "Quantity",
+        "totalStock": "Total Stock",
+        "category": "Category",
+        "noStock": "No stock available",
+        "priceHistory": "Price History",
+        "sellingPrice": "Selling Price",
+        "newPrice": "New Price",
+        "noHistory": "No history available",
+        "type": "Type",
+        "warehouse": "Warehouse",
+        "costPrice": "Cost Price",
+        "description": "Description",
+        "stockOverview": "Stock Overview",
+        "failedToLoadHistory": "Failed to load history",
+        "history": "Product History",
+        "reference": "Reference",
+        "oldPrice": "Old Price",
+        "stockMovements": "Stock Movements"
+    },
+    "stock": {
+        "title": "Stock Management",
+        "adjust": "Adjust Stock",
+        "history": "History",
+        "adjustmentPlaceholder": "Enter quantity to add or subtract",
+        "warehouse": "Warehouse",
+        "description": "Adjust stock levels for this product",
+        "adjustment": "Adjustment",
+        "currentStock": "Current Stock",
+        "reasonPlaceholder": "Reason for adjustment",
+        "reason": "Reason",
+        "selectWarehouse": "Select warehouse",
+        "addStock": "Add Stock",
+        "removeStock": "Remove Stock",
+        "action": "Action",
+        "quantity": "Quantity",
+        "selectReason": "Select reason"
+    },
+    "units": {
+        "meter": "Meter",
+        "box": "Box",
+        "pcs": "Pieces (pcs)",
+        "liter": "Liter",
+        "kg": "Kilogram (kg)"
+    },
+    "reasons": {
+        "correction": "Correction",
+        "damage": "Damage",
+        "lost": "Lost",
+        "found": "Found",
+        "audit": "Audit",
+        "expired": "Expired",
+        "other": "Other"
+    },
+    "categories": {
+        "title": "Categories",
+        "description": "Manage your product categories",
+        "columns": {
+            "name": "Name",
+            "description": "Description"
+        },
+        "help": {
+            "buttonLabel": "Help",
+            "title": "Category Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "Categories are used to group products for better organization and reporting."
+            }
+        },
+        "form": {
+            "namePlaceholder": "Category Name",
+            "createDescription": "Add a new product category.",
+            "descriptionPlaceholder": "Category description",
+            "editTitle": "Edit Category",
+            "createTitle": "Create Category",
+            "editDescription": "Update category information.",
+            "description": "Description",
+            "name": "Name"
+        },
+        "show": {
+            "description": "Description",
+            "createdAt": "Created At",
+            "productCount": "Products",
+            "name": "Name"
+        }
+    },
+    "warehouses": {
+        "title": "Warehouses",
+        "description": "Manage your warehouse locations.",
+        "columns": {
+            "name": "Name",
+            "description": "Description",
+            "location": "Location",
+            "code": "Code",
+            "items": "Items",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "form": {
+            "createTitle": "Create Warehouse",
+            "createDescription": "Add a new warehouse.",
+            "editTitle": "Edit Warehouse",
+            "name": "Name",
+            "namePlaceholder": "Warehouse Name",
+            "code": "Code",
+            "codePlaceholder": "Warehouse Code",
+            "phone": "Phone",
+            "phonePlaceholder": "Phone Number",
+            "city": "City",
+            "cityPlaceholder": "City",
+            "address": "Address",
+            "addressPlaceholder": "Full Address"
+        }
+    },
+    "transfers": {
+        "title": "Stock Transfers",
+        "description": "Move stock between warehouses",
+        "columns": {
+            "from": "From",
+            "to": "To",
+            "reference": "Reference",
+            "date": "Date",
+            "destination": "Destination",
+            "items": "Items",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "help": {
+            "title": "Transfer Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "Move inventory from one warehouse to another."
+            },
+            "buttonLabel": "Guide"
+        },
+        "form": {
+            "createTitle": "New Transfer",
+            "createDescription": "Create a new stock transfer request.",
+            "sourceWarehouse": "Source Warehouse",
+            "destinationWarehouse": "Destination Warehouse",
+            "items": "Items",
+            "selectSource": "Select source",
+            "selectDestination": "Select destination",
+            "notes": "Notes",
+            "notesPlaceholder": "Add notes here...",
+            "selectProduct": "Select product",
+            "quantity": "Quantity",
+            "addItem": "Add Item",
+            "noItems": "No items added yet"
+        },
+        "show": {
+            "title": "Transfer #{number}",
+            "process": "Process Transfer",
+            "cancel": "Cancel Transfer",
+            "status": "Status",
+            "source": "Source",
+            "destination": "Destination",
+            "items": "Items",
+            "processSuccess": "Transfer processed successfully",
+            "cancelSuccess": "Transfer cancelled successfully",
+            "product": "Product",
+            "quantity": "Quantity"
+        },
+        "status": {
+            "PENDING": "Pending",
+            "COMPLETED": "Completed",
+            "CANCELLED": "Cancelled"
+        }
+    },
+    "adjustments": {
+        "title": "Stock Adjustments",
+        "description": "Manually correct stock levels",
+        "columns": {
+            "reference": "Reference",
+            "date": "Date",
+            "product": "Product",
+            "warehouse": "Warehouse",
+            "type": "Type",
+            "quantity": "Quantity",
+            "reason": "Reason",
+            "by": "By",
+            "status": "Status"
+        },
+        "help": {
+            "title": "Adjustment Guide",
+            "purpose": {
+                "heading": "Purpose",
+                "content": "Manually adjust stock levels for shrinkage, damage, or corrections."
+            },
+            "buttonLabel": "Guide"
+        },
+        "form": {
+            "createTitle": "New Adjustment",
+            "createDescription": "Manually adjust stock levels.",
+            "editTitle": "Edit Adjustment",
+            "editDescription": "Update adjustment details.",
+            "product": "Product",
+            "selectProduct": "Select product",
+            "warehouse": "Warehouse",
+            "selectWarehouse": "Select warehouse",
+            "type": "Type",
+            "increase": "Increase (+)",
+            "decrease": "Decrease (-)",
+            "quantity": "Quantity",
+            "reason": "Reason",
+            "selectReason": "Select reason",
+            "notes": "Notes",
+            "notesPlaceholder": "Add notes here..."
+        },
+        "show": {
+            "title": "Adjustment Details",
+            "reverseAdjustment": "Reverse Adjustment",
+            "product": "Product",
+            "warehouse": "Warehouse",
+            "type": "Type",
+            "quantity": "Quantity",
+            "reason": "Reason",
+            "notes": "Notes",
+            "createdBy": "Created By",
+            "details": "Details",
+            "reverseSuccess": "Adjustment reversed successfully",
+            "reverseError": "Failed to reverse adjustment"
+        },
+        "types": {
+            "increase": "Increase",
+            "decrease": "Decrease"
+        },
+        "reasons": {
+            "AUDIT": "Audit Correction",
+            "OTHER": "Other",
+            "CORRECTION": "Data Correction",
+            "EXPIRED": "Expired",
+            "LOST": "Lost",
+            "DAMAGE": "Damaged",
+            "FOUND": "Found"
+        },
+        "history": {
+            "title": "History",
+            "empty": "No history available"
+        }
+    },
+    "opname": {
+        "title": "Stock Opname",
+        "description": "Physical inventory counting sessions",
+        "columns": {
+            "number": "Opname #",
+            "warehouse": "Warehouse",
+            "date": "Date",
+            "status": "Status",
+            "progress": "Progress",
+            "opnameNumber": "Opname #"
+        },
+        "form": {
+            "createTitle": "New Opname",
+            "createDescription": "Start a new physical counting session.",
+            "selectWarehouse": "Select warehouse",
+            "notes": "Notes",
+            "notesPlaceholder": "Add notes here..."
+        },
+        "show": {
+            "title": "Opname #{number}",
+            "start": "Start Opname",
+            "finalize": "Finalize",
+            "cancel": "Cancel",
+            "status": "Status",
+            "product": "Product",
+            "systemQty": "System Qty",
+            "actualQty": "Actual Qty",
+            "difference": "Difference",
+            "startSuccess": "Opname started successfully",
+            "finalizeSuccess": "Opname finalized successfully"
+        },
+        "status": {
+            "DRAFT": "Draft",
+            "IN_PROGRESS": "In Progress",
+            "COMPLETED": "Completed",
+            "CANCELLED": "Cancelled"
+        }
+    }
+}
