@@ -1,47 +1,98 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Dependencies
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
+# Build outputs
+.next/
+out/
+dist/
+build/
 *.tsbuildinfo
-next-env.d.ts
 
-/app/generated/prisma
-/lumbung-microservices/backend/node_modules
-/lumbung-microservices/backend/dist
-/lumbung-microservices/frontend/node_modules
-/lumbung-microservices/frontend/.next
+# Environment variables
+.env
+.env*.local
+.env.development
+.env.production
+.env.test
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+auth-debug.log
+smtp-debug.log
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Prisma
+prisma/migrations/
+
+# Docker
+.dockerignore
+
+# Cleanup documentation (temporary)
+CLEANUP_*.md
+FINAL_CLEANUP_REPORT.md
+
+# Test files
+test_*.xlsx
+test_*.csv
+*.test.xlsx
+
+# Old monolithic app files (if any remain)
+public/
+scripts/
+src/
+components.json
+next.config.ts
+tailwind.config.ts
+tsconfig.json
+eslint.config.mjs
+postcss.config.mjs
+prisma.config.ts
+next-env.d.ts
+proxy.ts.bak
+
+# Keep only microservices project
+# Everything should be in lumbung-microservices/

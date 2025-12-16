@@ -18,7 +18,7 @@ export async function createOrderHandler(req: FastifyRequest, reply: FastifyRepl
 
         const data = createOrderSchema.parse(req.body);
 
-        const user = req.user as any;
+        const user = req.user as { organizationId: string; id: string };
 
         const order = await OrderService.createOrder({
             ...data,

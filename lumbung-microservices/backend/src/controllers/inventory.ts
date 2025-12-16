@@ -17,7 +17,7 @@ export async function createAdjustmentHandler(req: FastifyRequest, reply: Fastif
 
         const data = createAdjustmentSchema.parse(req.body);
 
-        const user = req.user as any;
+        const user = req.user as { organizationId: string; id: string };
 
         const result = await InventoryService.createStockAdjustment({
             ...data,
@@ -39,7 +39,7 @@ export async function getInventoryHandler(req: FastifyRequest, reply: FastifyRep
     try {
         if (!req.user) return reply.code(401).send({ error: 'Unauthorized' });
 
-        const user = req.user as any;
+        const user = req.user as { organizationId: string };
         const items = await InventoryService.getInventory(user.organizationId);
         return items;
     } catch (error) {

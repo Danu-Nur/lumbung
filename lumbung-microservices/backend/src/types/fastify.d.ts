@@ -9,4 +9,8 @@ declare module 'fastify' {
             organizationId: string;
         };
     }
+
+    interface FastifyInstance {
+        authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+    }
 }

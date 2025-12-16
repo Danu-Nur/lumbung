@@ -90,4 +90,55 @@ export class ProductService {
             }
         });
     }
+
+    static async updateProduct(id: string, organizationId: string, data: Partial<CreateProductData>) {
+        // Exclude initialStock from update
+        const { initialStock, warehouseId, userId, ...updateData } = data;
+
+        // Check SKU uniqueness if changed
+        if (updateData.sku) {
+            const existing = await prisma.product.findFirst({
+                where: {
+                    organizationId,
+                    sku: updateData.sku,
+                    deletedAt: null,
+                    NOT: { id }
+                }
+            });
+            if (existing) throw new Error('SKU already exists');
+        }
+
+        return await prisma.product.update({
+            where: { id, organizationId },
+            data: {
+                name: updateData.name,
+                sku: updateData.sku,
+                barcode: updateData.barcode,
+                description: updateData.description,
+                categoryId: updateData.categoryId,
+                supplierId: updateData.supplierId,
+                unit: updateData.unit,
+                sellingPrice: updateData.sellingPrice,
+                costPrice: updateData.costPrice,
+                lowStockThreshold: updateData.lowStockThreshold,
+                updatedById: userId
+            }
+        });
+    }
+
+    static async deleteProduct(id: string, organizationId: string, userId: string) {
+        // Check if has inventory
+        const inventory = await prisma.inventoryItem.findFirst({
+            where: { productId: id, quantityOnHand: { gt: 0 } }
+        });
+        if (inventory) throw new Error('Cannot delete product with existing stock');
+
+        return await prisma.product.update({
+            where: { id, organizationId },
+            data: {
+                deletedAt: new Date(),
+                updatedById: userId
+            }
+        });
+    }
 }

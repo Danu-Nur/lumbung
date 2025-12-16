@@ -10,6 +10,7 @@ COPY schema.prisma ./
 RUN npm install
 
 COPY src ./src
+COPY seed-plans.ts ./
 
 # Generate Prisma Client
 RUN npx prisma generate
@@ -17,6 +18,6 @@ RUN npx prisma generate
 # Build
 RUN npm run build
 
-EXPOSE 3001
+EXPOSE 4000
 
 CMD ["npm", "start"]
