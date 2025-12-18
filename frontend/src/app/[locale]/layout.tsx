@@ -2,7 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Inter as FontSans } from "next/font/google";
+import { Inter as FontSans, Space_Grotesk } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/providers/auth-provider";
@@ -14,6 +14,11 @@ import { Toaster } from "@/components/ui/sonner";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const fontSpace = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space",
 });
 
 export const metadata: Metadata = {
@@ -32,12 +37,13 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning className={cn("scroll-smooth")}>
       <body
         suppressHydrationWarning
         className={cn(
           "min-h-screen bg-background text-foreground font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
+          fontSpace.variable
         )}
       >
         <NextIntlClientProvider messages={messages}>

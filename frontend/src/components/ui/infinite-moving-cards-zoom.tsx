@@ -108,14 +108,14 @@ export const InfiniteMovingCardsZoom = ({
     }, [start]);
 
     // Reactive styles for speed and direction
-    const duration = speed === "fast" ? "60s" : speed === "normal" ? "120s" : "240s";
+    const duration = speed === "fast" ? "80s" : speed === "normal" ? "160s" : "240s";
     const animDirection = direction === "left" ? "forwards" : "reverse";
 
     return (
         <div
             ref={containerRef}
             className={cn(
-                "scroller relative z-20 max-w-7xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
+                "scroller relative z-20 max-w-8xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
                 className
             )}
             style={{

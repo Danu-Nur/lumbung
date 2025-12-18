@@ -131,13 +131,17 @@
 
 /* ===== BASE LAYER ===== */
 @layer base {
+  html {
+    scroll-behavior: smooth !important;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-space), var(--font-sans), sans-serif;
   }
 }
 

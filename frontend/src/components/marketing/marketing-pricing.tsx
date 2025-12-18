@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CheckCircle2 } from "lucide-react";
+import { Check } from "lucide-react";
 import { ScrollAnimation } from "@/components/ui/scroll-animation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -41,20 +41,20 @@ export function MarketingPricing() {
         >
             <ScrollAnimation>
                 <div className="mx-auto flex max-w-2xl flex-col items-center space-y-4 text-center mb-10">
-                    <h2 className="font-heading text-3xl font-bold leading-[1.1] sm:text-3xl md:text-6xl">
+                    <h2 className="font-heading text-4xl font-black leading-[1.1] sm:text-4xl md:text-6xl uppercase tracking-tighter text-black dark:text-white">
                         {t("pricing.title")}
                     </h2>
-                    <p className="text-muted-foreground sm:text-lg">
+                    <p className="font-bold text-lg text-black dark:text-neutral-400">
                         {t("pricing.subtitle")}
                     </p>
 
                     {/* Billing Cycle Toggle */}
-                    <div className="flex items-center justify-center space-x-4 mt-8">
+                    <div className="flex items-center justify-center space-x-4 mt-8 bg-neutral-100 dark:bg-neutral-800 p-2 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_white]">
                         <Label
                             htmlFor="billing-mode"
                             className={cn(
-                                "cursor-pointer font-bold transition-colors",
-                                billingCycle === "monthly" ? "text-black" : "text-neutral-400"
+                                "cursor-pointer font-black uppercase transition-colors px-2",
+                                billingCycle === "monthly" ? "text-black dark:text-white underline decoration-2 decoration-black dark:decoration-white" : "text-neutral-400"
                             )}>
                             {t("pricing.monthly")}
                         </Label>
@@ -63,27 +63,29 @@ export function MarketingPricing() {
                             id="billing-mode"
                             checked={billingCycle === "yearly"}
                             onCheckedChange={(checked) => setBillingCycle(checked ? "yearly" : "monthly")}
-                            className="data-[state=checked]:bg-black data-[state=unchecked]:bg-neutral-300 border-2 border-black dark:border-white"
+                            className="bg-neutral-300 data-[state=checked]:bg-black border-2 border-black dark:border-white"
                         />
 
                         <Label
                             htmlFor="billing-mode"
                             className={cn(
-                                "cursor-pointer font-bold transition-colors",
-                                billingCycle === "yearly" ? "text-black" : "text-neutral-400"
+                                "cursor-pointer font-black uppercase transition-colors px-2",
+                                billingCycle === "yearly" ? "text-black dark:text-white underline decoration-2 decoration-black dark:decoration-white" : "text-neutral-400"
                             )}>
                             {t("pricing.yearly")}
                         </Label>
                     </div>
                     {billingCycle === "yearly" && (
-                        <span className="text-xs font-bold bg-yellow-300 px-2 py-1 border border-black px-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_white] -rotate-2">
-                            Full Year (Hemat 2 Bulan)
-                        </span>
+                        <div className="relative">
+                            <span className="text-xs font-black uppercase tracking-widest bg-yellow-300 text-black px-3 py-1 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] absolute left-1/2 -translate-x-1/2 top-2 transform rotate-2 whitespace-nowrap">
+                                Best Value (Save 2 Months)
+                            </span>
+                        </div>
                     )}
                 </div>
             </ScrollAnimation>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8 max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto pt-10">
                 {plans.map((plan, index) => {
                     const isPopular = plan.popular;
                     const price = billingCycle === "monthly" ? plan.priceMonthly : plan.priceYearly;
@@ -97,42 +99,44 @@ export function MarketingPricing() {
                         >
                             <div
                                 className={cn(
-                                    "flex flex-col h-full border-2 border-black dark:border-white p-6 transition-all duration-200",
+                                    "flex flex-col h-full border-2 border-black dark:border-white p-6 transition-all duration-200 relative",
                                     isPopular
-                                        ? "bg-yellow-300 dark:bg-yellow-400 dark:text-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#ffffff] -translate-y-2 z-10"
-                                        : "bg-white dark:bg-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[6px_6px_0px_0px_#ffffff] hover:-translate-y-1"
+                                        ? "bg-yellow-300 dark:bg-yellow-400 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#ffffff] -translate-y-2 z-10"
+                                        : "bg-white dark:bg-neutral-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[8px_8px_0px_0px_#ffffff] hover:-translate-y-1"
                                 )}
                             >
                                 {isPopular && (
-                                    <div className="absolute top-0 right-0 -mt-3 -mr-3 transform rotate-3">
-                                        <div className="bg-black text-white font-bold px-3 py-1 border-2 border-white text-sm shadow-sm uppercase tracking-widest">
-                                            {t("pricing.popularBadge")}
+                                    <div className="absolute top-0 right-0 -mt-4 -mr-4 z-20">
+                                        <div className="bg-black text-white font-black px-4 py-1 border-2 border-white text-xs uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] transform rotate-12">
+                                            POPULAR
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="mb-6">
-                                    <h3 className="text-2xl font-black uppercase tracking-tight text-black dark:text-inherit">{plan.name}</h3>
-                                    <p className="text-sm font-medium text-black/60 dark:text-inherit mt-2 leading-relaxed border-b-2 border-black/10 dark:border-current pb-4">
+                                <div className="mb-6 border-b-2 border-black/10 dark:border-white/20 pb-6">
+                                    <h3 className={cn("text-2xl font-black uppercase tracking-tighter", isPopular ? "text-black" : "text-black dark:text-white")}>{plan.name}</h3>
+                                    <p className={cn("text-sm font-bold mt-2 leading-relaxed bg-white/50 p-2 border-l-2 border-black dark:border-white/50", isPopular ? "text-black/80" : "text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800")}>
                                         {plan.description}
                                     </p>
                                 </div>
 
                                 <div className="flex-1">
-                                    <div className="text-3xl font-black mb-6 flex items-baseline text-black dark:text-inherit">
-                                        <span className="tracking-tight">{formatPrice(price)}</span>
-                                        <span className="text-base font-bold text-black/40 dark:text-inherit ml-1">
+                                    <div className={cn("text-4xl font-black mb-6 flex items-baseline tracking-tighter", isPopular ? "text-black" : "text-black dark:text-white")}>
+                                        <span>{formatPrice(price)}</span>
+                                        <span className={cn("text-base font-bold ml-1", isPopular ? "text-black/60" : "text-neutral-500")}>
                                             /{billingCycle === "monthly" ? "mo" : "yr"}
                                         </span>
                                     </div>
-                                    <ul className="space-y-3 text-sm font-medium">
+                                    <ul className="space-y-4 text-sm font-bold">
                                         {plan.features.map((feat, i) => (
                                             <li
                                                 key={i}
                                                 className="flex items-start"
                                             >
-                                                <CheckCircle2 className="mr-2 h-5 w-5 text-black dark:text-inherit shrink-0" />
-                                                <span className="leading-tight text-black dark:text-inherit">{feat}</span>
+                                                <div className={cn("p-0.5 mr-3 border-2", isPopular ? "bg-black border-black text-yellow-300" : "bg-black dark:bg-white border-black dark:border-white text-white dark:text-black")}>
+                                                    <Check className="h-3 w-3 stroke-[4px]" />
+                                                </div>
+                                                <span className={cn("leading-tight", isPopular ? "text-black" : "text-black dark:text-white")}>{feat}</span>
                                             </li>
                                         ))}
                                     </ul>
@@ -140,10 +144,14 @@ export function MarketingPricing() {
 
                                 <div className="mt-8">
                                     <Button
-                                        className="w-full"
-                                        variant={isPopular ? "outline" : "default"}
+                                        className={cn("w-full h-12 text-lg font-black uppercase tracking-wide border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] transition-all",
+                                            isPopular
+                                                ? "bg-black text-white hover:bg-neutral-800 dark:border-black"
+                                                : "bg-white text-black hover:bg-neutral-50 dark:bg-black dark:text-white dark:border-white dark:hover:bg-neutral-900 dark:shadow-[4px_4px_0px_0px_#ffffff] dark:hover:shadow-[2px_2px_0px_0px_#ffffff]"
+                                        )}
+                                        variant="default"
                                     >
-                                        {t("pricing.choosePlan")} {plan.name}
+                                        {t("pricing.choosePlan")}
                                     </Button>
                                 </div>
                             </div>

@@ -28,19 +28,18 @@ export function MarketingHeader() {
     const [open, setOpen] = React.useState(false);
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b-4 border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            {/* FIX: mx-auto dan justify-between agar rata tengah & ada spasi */}
-            <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+        <header className="sticky top-0 z-50 w-full border-b-4 border-black dark:border-white bg-white dark:bg-black">
+            <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
 
                 {/* 1. Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-8">
-                    <Link href="/" className="flex items-center gap-2 border-2 border-border bg-background p-2 shadow-[4px_4px_0px_0px_var(--brutal-shadow)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_var(--brutal-shadow)] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
-                        <Package2 className="h-6 w-6" />
-                        <span className="font-bold text-lg hidden sm:inline-block">
+                    <Link href="/" className="flex items-center gap-2 border-2 border-black dark:border-white bg-yellow-300 dark:bg-yellow-500 p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_#ffffff] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
+                        <Package2 className="h-6 w-6 text-black" />
+                        <span className="font-black text-lg hidden sm:inline-block uppercase tracking-tight text-black">
                             Lumbung
                         </span>
                     </Link>
-                    <nav className="flex items-center gap-2">
+                    <nav className="flex items-center gap-4">
                         {navItems.map((item) => {
                             const isActive = pathname === item.href;
                             return (
@@ -48,10 +47,10 @@ export function MarketingHeader() {
                                     key={item.href}
                                     href={item.href}
                                     className={cn(
-                                        "text-sm font-bold px-4 py-2 border-2 transition-all active:translate-y-0 active:shadow-none",
+                                        "text-sm font-bold px-4 py-2 border-2 transition-all active:translate-y-0 active:shadow-none uppercase tracking-wide",
                                         isActive
-                                            ? "border-border bg-accent shadow-[4px_4px_0px_0px_var(--brutal-shadow)] -translate-y-1"
-                                            : "border-transparent hover:border-border hover:bg-accent hover:shadow-[4px_4px_0px_0px_var(--brutal-shadow)] hover:-translate-y-1"
+                                            ? "border-black dark:border-white bg-neutral-200 dark:bg-neutral-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] -translate-y-1"
+                                            : "border-transparent hover:border-black dark:hover:border-white hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[4px_4px_0px_0px_#ffffff] hover:-translate-y-1"
                                     )}
                                 >
                                     {t(item.title)}
@@ -62,22 +61,31 @@ export function MarketingHeader() {
                 </div>
 
                 {/* 2. Mobile Navigation (Hamburger) */}
-                <div className="flex md:hidden">
+                <div className="flex md:hidden items-center gap-4">
+                    <Link href="/" className="flex items-center gap-2">
+                        <div className="bg-yellow-300 dark:bg-yellow-500 border-2 border-black dark:border-white p-1">
+                            <Package2 className="h-6 w-6 text-black" />
+                        </div>
+                        <span className="font-black text-lg uppercase tracking-tight">
+                            Lumbung
+                        </span>
+                    </Link>
+
                     <Sheet open={open} onOpenChange={setOpen}>
                         <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" className="-ml-2">
+                            <Button variant="ghost" size="icon" className="border-2 border-black dark:border-white rounded-none ml-auto">
                                 <Menu className="h-5 w-5" />
                                 <span className="sr-only">Toggle Menu</span>
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="left" className="pr-0">
+                        <SheetContent side="left" className="pr-0 border-r-4 border-black dark:border-white bg-white dark:bg-black">
                             <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                             <SheetDescription className="sr-only">Navigation</SheetDescription>
-                            <Link href="/" className="flex items-center space-x-2 mb-6" onClick={() => setOpen(false)}>
-                                <Package2 className="h-6 w-6" />
-                                <span className="font-bold">Lumbung</span>
+                            <Link href="/" className="flex items-center space-x-2 mb-8 bg-yellow-300 dark:bg-yellow-500 border-2 border-black dark:border-white p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] w-fit" onClick={() => setOpen(false)}>
+                                <Package2 className="h-6 w-6 text-black" />
+                                <span className="font-black text-black uppercase">Lumbung</span>
                             </Link>
-                            <div className="flex flex-col space-y-3 pl-2 mb-3">
+                            <div className="flex flex-col space-y-4 pl-2 mb-6">
                                 {navItems.map((item) => {
                                     const isActive = pathname === item.href;
                                     return (
@@ -86,8 +94,8 @@ export function MarketingHeader() {
                                             href={item.href}
                                             onClick={() => setOpen(false)}
                                             className={cn(
-                                                "transition-colors hover:text-foreground",
-                                                isActive ? "text-foreground font-bold" : "text-foreground/70"
+                                                "transition-colors hover:text-foreground text-xl font-black uppercase tracking-wide",
+                                                isActive ? "text-primary underline decoration-4 decoration-yellow-400" : "text-foreground/70"
                                             )}
                                         >
                                             {t(item.title)}
@@ -96,10 +104,22 @@ export function MarketingHeader() {
                                 })}
                             </div>
 
-                            <div className="flex flex-col gap-4 pl-2">
+                            <div className="flex flex-col gap-6 pl-2 mt-auto pb-8">
                                 <div className="flex items-center gap-4">
                                     <ThemeToggle />
                                     <LanguageSwitcher />
+                                </div>
+                                <div className="flex flex-col gap-3">
+                                    <Link href="/login" onClick={() => setOpen(false)}>
+                                        <Button className="w-full justify-start border-2 border-black dark:border-white rounded-none font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff]" variant="outline">
+                                            {t('common.buttons.login')}
+                                        </Button>
+                                    </Link>
+                                    <Link href="/register" onClick={() => setOpen(false)}>
+                                        <Button className="w-full justify-start border-2 border-black dark:border-white rounded-none bg-yellow-300 text-black hover:bg-yellow-400 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff]">
+                                            {t('Landing.hero.getStarted')}
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
                         </SheetContent>
@@ -107,21 +127,27 @@ export function MarketingHeader() {
                 </div>
 
                 {/* 3. Actions (Login/Register) */}
-                <div className="flex items-center gap-2">
-                    <nav className="flex items-center gap-2">
-                        {/* Language Switcher & Theme Toggle - Hide on Mobile */}
-                        <div className="hidden md:flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-4">
+                    <nav className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
                             <LanguageSwitcher />
                             <ThemeToggle />
                         </div>
 
                         <Link href="/login">
-                            <Button variant="success" size="sm">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="font-bold border-2 border-black dark:border-white rounded-none hover:bg-neutral-100 dark:hover:bg-neutral-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[3px_3px_0px_0px_#ffffff] transition-all"
+                            >
                                 {t('common.buttons.login')}
                             </Button>
                         </Link>
                         <Link href="/register">
-                            <Button size="sm">
+                            <Button
+                                size="sm"
+                                className="font-bold border-2 border-black dark:border-white rounded-none bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[3px_3px_0px_0px_#ffffff] transition-all"
+                            >
                                 {t('Landing.hero.getStarted')}
                             </Button>
                         </Link>

@@ -9,65 +9,67 @@ export function MarketingMetrics() {
 
     return (
         <ScrollAnimation animation="fade-up" delay={0.1}>
-            <div className="py-16 mx-auto max-w-5xl">
-                {/* Window / Panel Container */}
-                <div className="rounded-none border-2 border-black dark:border-white bg-white dark:bg-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#ffffff] overflow-hidden">
-                    {/* Title Bar */}
-                    <div className="border-b-2 border-black dark:border-white bg-neutral-100 dark:bg-neutral-800 p-2 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full border border-black bg-red-400" />
-                            <div className="w-3 h-3 rounded-full border border-black bg-yellow-400" />
-                            <div className="w-3 h-3 rounded-full border border-black dark:border-white bg-green-400" />
-                        </div>
-                        <div className="font-mono text-xs font-bold tracking-widest text-neutral-500">
-                            SYSTEM_METRICS.LOG
-                        </div>
-                        <div className="w-16"></div> {/* Spacer for center alignment */}
-                    </div>
-
-                    {/* Content Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 divide-y-2 sm:divide-y-0 sm:divide-x-2 divide-black dark:divide-white">
-                        {/* Metric 1 */}
-                        <div className="group relative p-8 bg-white dark:bg-black hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors">
-                            <div className="absolute top-2 right-2 opacity-20 group-hover:opacity-100 transition-opacity">
-                                <Activity className="w-6 h-6 text-blue-500" />
+            <section className="container mx-auto px-4">
+                <div className="py-16 mx-auto max-w-6xl">
+                    {/* Window / Panel Container */}
+                    <div className="rounded-none border-4 border-black dark:border-white bg-white dark:bg-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_#ffffff] overflow-hidden">
+                        {/* Title Bar */}
+                        <div className="border-b-4 border-black dark:border-white bg-neutral-100 dark:bg-neutral-800 p-3 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-4 h-4 rounded-none border-2 border-black dark:border-white bg-red-400 dark:bg-red-600" />
+                                <div className="w-4 h-4 rounded-none border-2 border-black dark:border-white bg-yellow-400 dark:bg-yellow-600" />
+                                <div className="w-4 h-4 rounded-none border-2 border-black dark:border-white bg-green-400 dark:bg-green-600" />
                             </div>
-                            <p className="text-5xl font-black tracking-tighter text-black dark:text-white font-mono mb-2">
-                                {t("metrics.itemsTracked")}
-                            </p>
-                            <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest border-l-4 border-blue-500 pl-2">
-                                {t("metrics.itemsTrackedLabel")}
-                            </p>
+                            <div className="font-mono text-sm font-black tracking-widest text-black dark:text-white uppercase bg-white dark:bg-black px-4 py-1 border-2 border-black dark:border-white">
+                                SYSTEM_METRICS.LOG
+                            </div>
+                            <div className="w-20"></div> {/* Spacer for center alignment */}
                         </div>
 
-                        {/* Metric 2 */}
-                        <div className="group relative p-8 bg-white dark:bg-black hover:bg-green-50 dark:hover:bg-green-900/10 transition-colors">
-                            <div className="absolute top-2 right-2 opacity-20 group-hover:opacity-100 transition-opacity">
-                                <Globe className="w-6 h-6 text-green-500" />
+                        {/* Content Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 divide-y-4 md:divide-y-0 md:divide-x-4 divide-black dark:divide-white">
+                            {/* Metric 1 */}
+                            <div className="group relative p-10 bg-cyan-100 dark:bg-cyan-900/40 hover:bg-cyan-200 dark:hover:bg-cyan-900/60 transition-colors">
+                                <div className="absolute top-4 right-4 bg-white dark:bg-black border-2 border-black dark:border-white p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff]">
+                                    <Activity className="w-6 h-6 text-black dark:text-white stroke-[3px]" />
+                                </div>
+                                <p className="text-6xl font-black tracking-tighter text-black dark:text-white font-mono mb-4 mt-2">
+                                    {t("metrics.itemsTracked")}
+                                </p>
+                                <p className="text-sm font-black text-black dark:text-white uppercase tracking-widest bg-white dark:bg-black inline-block px-2 py-1 border-2 border-black dark:border-white transform -rotate-1">
+                                    {t("metrics.itemsTrackedLabel")}
+                                </p>
                             </div>
-                            <p className="text-5xl font-black tracking-tighter text-black dark:text-white font-mono mb-2">
-                                {t("metrics.timeSaved")}
-                            </p>
-                            <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest border-l-4 border-green-500 pl-2">
-                                {t("metrics.timeSavedLabel")}
-                            </p>
-                        </div>
 
-                        {/* Metric 3 */}
-                        <div className="group relative p-8 bg-white dark:bg-black hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-colors">
-                            <div className="absolute top-2 right-2 opacity-20 group-hover:opacity-100 transition-opacity">
-                                <TrendingDown className="w-6 h-6 text-purple-500" />
+                            {/* Metric 2 */}
+                            <div className="group relative p-10 bg-lime-100 dark:bg-lime-900/40 hover:bg-lime-200 dark:hover:bg-lime-900/60 transition-colors">
+                                <div className="absolute top-4 right-4 bg-white dark:bg-black border-2 border-black dark:border-white p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff]">
+                                    <Globe className="w-6 h-6 text-black dark:text-white stroke-[3px]" />
+                                </div>
+                                <p className="text-6xl font-black tracking-tighter text-black dark:text-white font-mono mb-4 mt-2">
+                                    {t("metrics.timeSaved")}
+                                </p>
+                                <p className="text-sm font-black text-black dark:text-white uppercase tracking-widest bg-white dark:bg-black inline-block px-2 py-1 border-2 border-black dark:border-white transform rotate-1">
+                                    {t("metrics.timeSavedLabel")}
+                                </p>
                             </div>
-                            <p className="text-5xl font-black tracking-tighter text-black dark:text-white font-mono mb-2">
-                                {t("metrics.errorReduced")}
-                            </p>
-                            <p className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest border-l-4 border-purple-500 pl-2">
-                                {t("metrics.errorReducedLabel")}
-                            </p>
+
+                            {/* Metric 3 */}
+                            <div className="group relative p-10 bg-pink-100 dark:bg-pink-900/40 hover:bg-pink-200 dark:hover:bg-pink-900/60 transition-colors">
+                                <div className="absolute top-4 right-4 bg-white dark:bg-black border-2 border-black dark:border-white p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff]">
+                                    <TrendingDown className="w-6 h-6 text-black dark:text-white stroke-[3px]" />
+                                </div>
+                                <p className="text-6xl font-black tracking-tighter text-black dark:text-white font-mono mb-4 mt-2">
+                                    {t("metrics.errorReduced")}
+                                </p>
+                                <p className="text-sm font-black text-black dark:text-white uppercase tracking-widest bg-white dark:bg-black inline-block px-2 py-1 border-2 border-black dark:border-white transform -rotate-1">
+                                    {t("metrics.errorReducedLabel")}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </ScrollAnimation>
     );
 }
