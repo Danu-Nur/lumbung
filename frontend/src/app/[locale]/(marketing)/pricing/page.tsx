@@ -20,6 +20,7 @@ export default function PricingPage() {
     const t = useTranslations("Pricing");
     const [plans, setPlans] = useState<PricingPlan[]>([]);
     const [loading, setLoading] = useState(true);
+    const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
     useEffect(() => {
         const fetchPlans = async () => {
@@ -58,45 +59,79 @@ export default function PricingPage() {
                         <p className="max-w-[85%] mx-auto leading-normal text-xl font-bold bg-white dark:bg-black border-2 border-black dark:border-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_#ffffff] text-black dark:text-gray-200 mt-6">
                             {t("subtitle")}
                         </p>
+
+                        {/* Billing Toggle */}
+                        <div className="flex justify-center mt-10">
+                            <div className="bg-white dark:bg-black border-2 border-black dark:border-white p-1 flex items-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff]">
+                                <button
+                                    onClick={() => setBillingCycle("monthly")}
+                                    className={`px-6 py-2 font-black uppercase tracking-wider transition-all border-2 ${billingCycle === "monthly"
+                                        ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
+                                        : "bg-transparent text-black dark:text-white border-transparent hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                                        }`}
+                                >
+                                    {t("monthly")}
+                                </button>
+                                <button
+                                    onClick={() => setBillingCycle("yearly")}
+                                    className={`px-6 py-2 font-black uppercase tracking-wider transition-all border-2 relative ${billingCycle === "yearly"
+                                        ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
+                                        : "bg-transparent text-black dark:text-white border-transparent hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                                        }`}
+                                >
+                                    {t("yearly")}
+                                    <span className="absolute -top-3 -right-3 bg-red-500 text-white text-[10px] px-2 py-0.5 border-2 border-black dark:border-white shadow-sm transform rotate-12 z-10">
+                                        SAVE 20%
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
                     </ScrollAnimation>
                 </div>
             </header>
 
             <section className="container flex flex-col gap-6 py-8 md:max-w-[84rem] md:py-12 lg:py-24 mx-auto">
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-                    {plans.map((plan, index) => (
-                        <ScrollAnimation key={plan.id} delay={index * 0.1} animation="fade-up" className="h-full">
-                            <div className={`flex flex-col gap-4 rounded-none border-2 border-black dark:border-white p-6 h-full transition-all ${plan.slug === 'pro'
-                                ? 'bg-yellow-300 dark:bg-yellow-400 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#ffffff] -translate-y-2 z-10'
-                                : 'bg-white dark:bg-neutral-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[6px_6px_0px_0px_#ffffff] hover:-translate-y-1'
-                                }`}>
-                                <div className="space-y-2">
-                                    <h3 className={`text-2xl font-black uppercase ${plan.slug === 'pro' ? 'text-black' : 'text-black dark:text-white'}`}>{plan.name}</h3>
-                                    <div className="w-12 h-1 bg-black dark:bg-white"></div>
+                    {plans.map((plan, index) => {
+                        const price = billingCycle === "monthly" ? plan.priceMonthly : plan.priceYearly;
+                        const cartUrl = `/cart?plan=${plan.slug}&billing=${billingCycle}`;
+
+                        return (
+                            <ScrollAnimation key={plan.id} delay={index * 0.1} animation="fade-up" className="h-full">
+                                <div className={`flex flex-col gap-4 rounded-none border-2 border-black dark:border-white p-6 h-full transition-all ${plan.slug === 'pro'
+                                    ? 'bg-yellow-300 dark:bg-yellow-400 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_#ffffff] -translate-y-2 z-10'
+                                    : 'bg-white dark:bg-neutral-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[6px_6px_0px_0px_#ffffff] hover:-translate-y-1'
+                                    }`}>
+                                    <div className="space-y-2">
+                                        <h3 className={`text-2xl font-black uppercase ${plan.slug === 'pro' ? 'text-black' : 'text-black dark:text-white'}`}>{plan.name}</h3>
+                                        <div className="w-12 h-1 bg-black dark:bg-white"></div>
+                                    </div>
+                                    <p className={`font-medium ${plan.slug === 'pro' ? 'text-black/80' : 'text-neutral-600 dark:text-neutral-400'}`}>{plan.description}</p>
+                                    <div className={`text-3xl font-black ${plan.slug === 'pro' ? 'text-black' : 'text-black dark:text-white'}`}>
+                                        {price === 0 ? t("free") : formatPrice(price)}
+                                        <span className={`text-base font-bold ml-1 ${plan.slug === 'pro' ? 'text-black/60' : 'text-neutral-500 dark:text-neutral-500'}`}>/{billingCycle === "monthly" ? t("month") : t("year")}</span>
+                                    </div>
+                                    <ul className="flex-1 space-y-3 my-6">
+                                        {plan.features.map((feature: string) => (
+                                            <li key={feature} className="flex items-start text-sm font-bold">
+                                                <Check className={`mr-2 h-5 w-5 shrink-0 ${plan.slug === 'pro' ? 'text-black' : 'text-black dark:text-white'}`} />
+                                                <span className={plan.slug === 'pro' ? 'text-black' : 'text-neutral-800 dark:text-neutral-200'}>{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <Link href={cartUrl}>
+                                        <Button
+                                            className="w-full font-black text-lg h-12 border-2 border-black dark:border-white rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0px_0px_#ffffff] transition-all uppercase"
+                                            variant={plan.slug === 'pro' ? 'outline' : 'default'}
+                                            style={plan.slug === 'pro' ? { backgroundColor: 'black', color: 'white' } : {}}
+                                        >
+                                            {t("choose")} {plan.name}
+                                        </Button>
+                                    </Link>
                                 </div>
-                                <p className={`font-medium ${plan.slug === 'pro' ? 'text-black/80' : 'text-neutral-600 dark:text-neutral-400'}`}>{plan.description}</p>
-                                <div className={`text-3xl font-black ${plan.slug === 'pro' ? 'text-black' : 'text-black dark:text-white'}`}>
-                                    {plan.priceMonthly === 0 ? t("free") : formatPrice(plan.priceMonthly)}
-                                    <span className={`text-base font-bold ml-1 ${plan.slug === 'pro' ? 'text-black/60' : 'text-neutral-500 dark:text-neutral-500'}`}>/{t("month")}</span>
-                                </div>
-                                <ul className="flex-1 space-y-3 my-6">
-                                    {plan.features.map((feature: string) => (
-                                        <li key={feature} className="flex items-start text-sm font-bold">
-                                            <Check className={`mr-2 h-5 w-5 shrink-0 ${plan.slug === 'pro' ? 'text-black' : 'text-black dark:text-white'}`} />
-                                            <span className={plan.slug === 'pro' ? 'text-black' : 'text-neutral-800 dark:text-neutral-200'}>{feature}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                                <Link href={`/register?plan=${plan.slug}`}>
-                                    <Button
-                                        variant={plan.slug === 'pro' ? 'outline' : 'default'}
-                                    >
-                                        {t("choose")} {plan.name}
-                                    </Button>
-                                </Link>
-                            </div>
-                        </ScrollAnimation>
-                    ))}
+                            </ScrollAnimation>
+                        )
+                    })}
                 </div>
             </section>
 

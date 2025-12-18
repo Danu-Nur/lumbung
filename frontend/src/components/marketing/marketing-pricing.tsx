@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 import { Check } from "lucide-react";
 import { ScrollAnimation } from "@/components/ui/scroll-animation";
 import { Button } from "@/components/ui/button";
@@ -143,16 +144,18 @@ export function MarketingPricing() {
                                 </div>
 
                                 <div className="mt-8">
-                                    <Button
-                                        className={cn("w-full h-12 text-lg font-black uppercase tracking-wide border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] transition-all",
-                                            isPopular
-                                                ? "bg-black text-white hover:bg-neutral-800 dark:border-black"
-                                                : "bg-white text-black hover:bg-neutral-50 dark:bg-black dark:text-white dark:border-white dark:hover:bg-neutral-900 dark:shadow-[4px_4px_0px_0px_#ffffff] dark:hover:shadow-[2px_2px_0px_0px_#ffffff]"
-                                        )}
-                                        variant="default"
-                                    >
-                                        {t("pricing.choosePlan")}
-                                    </Button>
+                                    <Link href={`/cart?plan=${plan.slug}&billing=${billingCycle}`}>
+                                        <Button
+                                            className={cn("w-full h-12 text-lg font-black uppercase tracking-wide border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] transition-all",
+                                                isPopular
+                                                    ? "bg-black text-white hover:bg-neutral-800 dark:border-black"
+                                                    : "bg-white text-black hover:bg-neutral-50 dark:bg-black dark:text-white dark:border-white dark:hover:bg-neutral-900 dark:shadow-[4px_4px_0px_0px_#ffffff] dark:hover:shadow-[2px_2px_0px_0px_#ffffff]"
+                                            )}
+                                            variant="default"
+                                        >
+                                            {t("pricing.choosePlan")}
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
                         </ScrollAnimation>

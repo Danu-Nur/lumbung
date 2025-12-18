@@ -22,7 +22,7 @@ export default function LoginPage() {
         // Wrapper Utama: 
         // Tidak perlu 'min-h-screen' atau 'flex-center' lagi karena AuthLayout sudah menanganinya.
         // Kita kunci lebarnya di 450px agar terlihat padat dan rapi.
-        <div className="w-full max-w-[450px] bg-card border rounded-xl shadow-lg">
+        <div className="w-full max-w-[450px] bg-card border rounded-xl border-2 border-border shadow-[5px_5px_0px_0px_var(--brutal-shadow)]">
 
             {/* Padding Card */}
             <div className="p-6 sm:p-8 space-y-8">

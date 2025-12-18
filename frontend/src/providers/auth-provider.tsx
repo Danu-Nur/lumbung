@@ -13,7 +13,7 @@ interface User {
 
 interface AuthContextType {
     user: User | null;
-    login: (token: string, user: User) => void;
+    login: (token: string, user: User, redirectPath?: string) => void;
     logout: () => void;
     isLoading: boolean;
 }
@@ -31,11 +31,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
     }, []);
 
-    const login = (token: string, userData: User) => {
+    const login = (token: string, userData: User, redirectPath?: string) => {
         setUser(userData);
         localStorage.setItem('token', token);
         // api.defaults.headers.Authorization = `Bearer ${token}`; // If using Bearer
-        router.push('/dashboard');
+        router.push(redirectPath || '/dashboard');
     };
 
     const logout = () => {

@@ -19,7 +19,7 @@ export default function RegisterPage() {
     const t = useTranslations('auth.register');
 
     return (
-        <div className="w-full max-w-[550px] bg-card border rounded-xl shadow-lg">
+        <div className="w-full max-w-[550px] bg-card border rounded-xl  border-2 border-border shadow-[5px_5px_0px_0px_var(--brutal-shadow)]">
             <div className="p-6 sm:p-8 space-y-8">
 
                 {/* Header Section */}
@@ -30,7 +30,7 @@ export default function RegisterPage() {
 
                     <span className="text-2xl font-bold">Inventory Pro</span>
 
-                    <div className="space-y-1">
+                    <div className="space-y-1 ">
                         <h1 className="text-xl font-semibold tracking-tight">{t('subtitle')}</h1>
                         <p className="text-sm text-muted-foreground">
                             {t('description')}
