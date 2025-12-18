@@ -9,6 +9,7 @@ import { orderRoutes } from './routes/order.js';
 import { masterRoutes } from './routes/master.js';
 import { subscriptionRoutes } from './routes/subscription.js';
 import { dashboardRoutes } from './routes/dashboard.js';
+import { marketingRoutes } from './routes/marketing.js';
 
 const fastify = Fastify({
     logger: true
@@ -46,6 +47,7 @@ fastify.register(orderRoutes, { prefix: '/api/orders' });
 fastify.register(masterRoutes, { prefix: '/api' });
 fastify.register(subscriptionRoutes, { prefix: '/api' });
 fastify.register(dashboardRoutes, { prefix: '/api' });
+fastify.register(marketingRoutes, { prefix: '/api' });
 
 // Health Check
 fastify.get('/health', async (request, reply) => {

@@ -43,6 +43,8 @@
             "popularBadge": "Popular",
             "perMonth": "month",
             "choosePlan": "Choose",
+            "monthly": "Monthly",
+            "yearly": "Yearly",
             "starter": {
                 "name": "Starter",
                 "price": "Rp290k",

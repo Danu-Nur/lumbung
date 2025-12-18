@@ -20,7 +20,7 @@ export function HeroSection() {
     const y = useTransform(scrollYProgress, [0, 0.6], [120, 0]);
 
     return (
-        <section ref={containerRef} className="relative overflow-hidden pt-16 md:pt-20 lg:pt-32 pb-20">
+        <section ref={containerRef} className="relative overflow-hidden py-12 md:py-16 lg:py-20">
             {/* Background Gradients */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10 opacity-50" />
             <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-blue-500/10 rounded-full blur-[100px] -z-10" />
@@ -33,7 +33,7 @@ export function HeroSection() {
                         transition={{ duration: 0.5 }}
                     >
                         <Link href="/about">
-                            <Badge variant="outline" className="rounded-none px-4 py-1.5 text-sm border-2 border-black bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer backdrop-blur-sm">
+                            <Badge variant="outline" className="rounded-none px-4 py-1.5 text-sm border-2 border-black dark:border-white/20 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer backdrop-blur-sm dark:text-white">
                                 Lumbung v2.0 is now live
                             </Badge>
                         </Link>
@@ -79,11 +79,12 @@ export function HeroSection() {
                     </motion.div>
                 </div>
 
+                {/* mockup  */}
                 <motion.div
                     style={{ y, opacity, scale }}
-                    className="mt-16 relative mx-auto max-w-5xl perspective-1000"
+                    className="py-24 relative mx-auto max-w-5xl perspective-1000"
                 >
-                    <div className="relative rounded-none border-2 border-black bg-background/50 backdrop-blur-xl shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden transform rotate-x-12 transition-transform hover:rotate-x-0 duration-700 ease-out group">
+                    <div className="relative rounded-none border-2 border-black dark:border-white bg-background/50 backdrop-blur-xl shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_#ffffff] overflow-hidden transform rotate-x-12 transition-transform hover:rotate-x-0 duration-700 ease-out group">
                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                         {/* Mockup Header */}
@@ -94,8 +95,8 @@ export function HeroSection() {
                         </div>
 
                         {/* Mockup Content */}
-                        <div className="p-6 grid gap-6 md:grid-cols-3">
-                            <div className="rounded-lg border bg-card p-4 space-y-2">
+                        <div className="p-4 md:p-6 grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-3">
+                            <div className="rounded-lg border bg-card p-4 space-y-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] dark:border-white">
                                 <div className="flex items-center gap-2 text-muted-foreground">
                                     <Package className="h-4 w-4" /> Total Stock
                                 </div>
@@ -103,7 +104,7 @@ export function HeroSection() {
                                 <div className="text-xs text-green-500">+12% from last month</div>
                             </div>
 
-                            <div className="rounded-lg border bg-card p-4 space-y-2">
+                            <div className="rounded-lg border bg-card p-4 space-y-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] dark:border-white">
                                 <div className="flex items-center gap-2 text-muted-foreground">
                                     <BarChart3 className="h-4 w-4" /> Revenue
                                 </div>
@@ -111,7 +112,7 @@ export function HeroSection() {
                                 <div className="text-xs text-green-500">+8% from last month</div>
                             </div>
 
-                            <div className="rounded-lg border bg-card p-4 space-y-2">
+                            <div className="rounded-lg border bg-card p-4 space-y-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] dark:border-white">
                                 <div className="flex items-center gap-2 text-muted-foreground">
                                     <Users className="h-4 w-4" /> Active Users
                                 </div>
@@ -119,17 +120,50 @@ export function HeroSection() {
                                 <div className="text-xs text-muted-foreground">Across 3 warehouses</div>
                             </div>
 
-                            {/* Chart Mockup */}
-                            <div className="col-span-3 h-64 rounded-lg border bg-muted/20 flex items-end justify-between p-4 gap-2">
-                                {[40, 65, 45, 80, 55, 70, 90, 60, 75, 50, 85, 95].map((h, i) => (
-                                    <motion.div
-                                        key={i}
-                                        initial={{ height: 0 }}
-                                        whileInView={{ height: `${h}%` }}
-                                        transition={{ duration: 1, delay: i * 0.05 }}
-                                        className="w-full bg-primary/20 rounded-t-sm hover:bg-primary/40 transition-colors"
-                                    />
-                                ))}
+                            {/* Chart Mockup - Neo Brutalist */}
+                            <div className="col-span-1 md:col-span-3 h-56 md:h-72 rounded-none border-2 border-black dark:border-white bg-white dark:bg-black p-6 relative flex items-end justify-between gap-2 overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff]">
+                                {/* Horizontal Grid Lines */}
+                                <div className="absolute inset-0 flex flex-col justify-between p-6 -z-0 pointer-events-none">
+                                    {[1, 2, 3, 4, 5].map((i) => (
+                                        <div key={i} className="w-full h-px bg-slate-200" />
+                                    ))}
+                                </div>
+
+                                {/* Bars Group */}
+                                {[
+                                    { jan: [40, 65] },
+                                    { feb: [85, 55] },
+                                    { mar: [45, 75] },
+                                    { apr: [60, 45] },
+                                    { may: [70, 60] },
+                                    { jun: [90, 75] }
+                                ].map((group, i) => {
+                                    const values = Object.values(group)[0];
+                                    const label = Object.keys(group)[0];
+                                    return (
+                                        <div key={i} className="relative z-10 flex flex-col items-center gap-2 h-full justify-end flex-1">
+                                            <div className="flex items-end gap-1 md:gap-3 h-full pb-6">
+                                                {/* Bar 1 (Blue) */}
+                                                <motion.div
+                                                    initial={{ height: 0 }}
+                                                    whileInView={{ height: `${values[0]}%` }}
+                                                    transition={{ duration: 0.8, delay: i * 0.1, ease: "backOut" }}
+                                                    className="w-3 md:w-8 bg-blue-400 border-2 border-black dark:border-white rounded-t-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_#ffffff] hover:shadow-none hover:translate-y-[2px] transition-all"
+                                                />
+                                                {/* Bar 2 (Red) */}
+                                                <motion.div
+                                                    initial={{ height: 0 }}
+                                                    whileInView={{ height: `${values[1]}%` }}
+                                                    transition={{ duration: 0.8, delay: (i * 0.1) + 0.1, ease: "backOut" }}
+                                                    className="w-3 md:w-8 bg-red-400 border-2 border-black dark:border-white rounded-t-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_#ffffff] hover:shadow-none hover:translate-y-[2px] transition-all"
+                                                />
+                                            </div>
+                                            <div className="absolute bottom-0 text-xs font-bold uppercase tracking-wider text-black dark:text-white">
+                                                {label}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
                             </div>
                         </div>
                     </div>
@@ -139,7 +173,7 @@ export function HeroSection() {
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute -right-12 top-20 hidden lg:block"
                     >
-                        <div className="bg-background/80 backdrop-blur-md border-2 border-black rounded-none p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-[200px]">
+                        <div className="bg-background/80 backdrop-blur-md border-2 border-black dark:border-white rounded-none p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] max-w-[200px]">
                             <div className="flex items-center gap-3 mb-2">
                                 <div className="w-8 h-8 rounded-none border border-black bg-green-100 flex items-center justify-center text-green-600">
                                     <Package className="h-4 w-4" />
@@ -160,7 +194,7 @@ export function HeroSection() {
                         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                         className="absolute -left-12 bottom-40 hidden lg:block"
                     >
-                        <div className="bg-background/80 backdrop-blur-md border-2 border-black rounded-none p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-[200px]">
+                        <div className="bg-background/80 backdrop-blur-md border-2 border-black dark:border-white rounded-none p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_#ffffff] max-w-[200px]">
                             <div className="flex items-center gap-3 mb-2">
                                 <div className="w-8 h-8 rounded-none border border-black bg-blue-100 flex items-center justify-center text-blue-600">
                                     <Users className="h-4 w-4" />

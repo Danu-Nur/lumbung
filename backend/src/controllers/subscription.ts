@@ -1,18 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma.js';
 
-export async function getPlansHandler(req: FastifyRequest, reply: FastifyReply) {
-    try {
-        const plans = await prisma.plan.findMany({
-            where: { isActive: true },
-            orderBy: { priceMonthly: 'asc' }
-        });
-        return reply.send(plans);
-    } catch (error) {
-        req.log.error(error);
-        return reply.status(500).send({ error: 'Failed to fetch plans' });
-    }
-}
 
 export async function getSubscriptionHandler(req: FastifyRequest<{ Params: { organizationId: string } }>, reply: FastifyReply) {
     try {

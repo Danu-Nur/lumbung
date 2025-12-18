@@ -43,6 +43,8 @@
             "popularBadge": "Populer",
             "perMonth": "bulan",
             "choosePlan": "Pilih",
+            "monthly": "Bulanan",
+            "yearly": "Tahunan",
             "starter": {
                 "name": "Starter",
                 "price": "Rp290rb",

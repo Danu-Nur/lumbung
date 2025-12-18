@@ -16,7 +16,7 @@ services:
     depends_on:
       - db
       - redis
-    command: /bin/sh -c "npm run prisma:deploy && npm start"
+    command: /bin/sh -c "npx prisma db push --accept-data-loss && npm start"
 
   frontend:
     build:

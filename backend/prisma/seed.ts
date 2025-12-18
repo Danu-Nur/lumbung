@@ -376,58 +376,180 @@ async function main() {
         }
     }
 
-    // 8. Create Plans & Subscriptions
+    // 8. Create Plans
     console.log('Creating plans...');
-    const freePlan = await prisma.plan.upsert({
+
+    // Free
+    await prisma.plan.upsert({
         where: { slug: 'free' },
-        update: {},
+        update: {
+            name: 'Free',
+            description: 'For individuals exploring the system.',
+            priceMonthly: 0,
+            priceYearly: 0,
+            limits: { maxUsers: 1, maxWarehouses: 1, maxItems: 50 },
+            features: [
+                "Up to 50 Items",
+                "1 Warehouse",
+                "Community Support",
+                "Basic Dashboard"
+            ],
+            isActive: true
+        },
         create: {
             name: 'Free',
             slug: 'free',
-            description: 'Untuk usaha kecil',
+            description: 'For individuals exploring the system.',
             priceMonthly: 0,
             priceYearly: 0,
-            limits: { maxUsers: 2, maxWarehouses: 1, maxItems: 100 },
-            features: ['basic_inventory', 'basic_reports'],
+            limits: { maxUsers: 1, maxWarehouses: 1, maxItems: 50 },
+            features: [
+                "Up to 50 Items",
+                "1 Warehouse",
+                "Community Support",
+                "Basic Dashboard"
+            ],
+            isActive: true
         },
     });
 
+    // Starter
+    await prisma.plan.upsert({
+        where: { slug: 'starter' },
+        update: {
+            name: 'Starter',
+            description: 'Perfect for small businesses just getting started.',
+            priceMonthly: 29000,
+            priceYearly: 290000,
+            limits: { maxUsers: 3, maxWarehouses: 1, maxItems: 1000 },
+            features: [
+                "Up to 1,000 Items",
+                "1 Warehouse",
+                "Basic Reporting",
+                "Email Support"
+            ],
+            isActive: true
+        },
+        create: {
+            name: 'Starter',
+            slug: 'starter',
+            description: 'Perfect for small businesses just getting started.',
+            priceMonthly: 29000,
+            priceYearly: 290000,
+            limits: { maxUsers: 3, maxWarehouses: 1, maxItems: 1000 },
+            features: [
+                "Up to 1,000 Items",
+                "1 Warehouse",
+                "Basic Reporting",
+                "Email Support"
+            ],
+            isActive: true
+        },
+    });
+
+    // Pro
     const proPlan = await prisma.plan.upsert({
         where: { slug: 'pro' },
-        update: {},
+        update: {
+            name: 'Pro',
+            description: 'For growing businesses needing advanced features.',
+            priceMonthly: 79000,
+            priceYearly: 790000,
+            limits: { maxUsers: 10, maxWarehouses: 5, maxItems: 100000 },
+            features: [
+                "Unlimited Items",
+                "Up to 5 Warehouses",
+                "Advanced Analytics",
+                "Priority Support",
+                "API Access"
+            ],
+            isActive: true
+        },
         create: {
             name: 'Pro',
             slug: 'pro',
-            description: 'Untuk usaha berkembang',
-            priceMonthly: 150000,
-            priceYearly: 1500000,
-            limits: { maxUsers: 10, maxWarehouses: 5, maxItems: 10000 },
-            features: ['advanced_inventory', 'advanced_reports', 'email_notifications'],
+            description: 'For growing businesses needing advanced features.',
+            priceMonthly: 79000,
+            priceYearly: 790000,
+            limits: { maxUsers: 10, maxWarehouses: 5, maxItems: 100000 },
+            features: [
+                "Unlimited Items",
+                "Up to 5 Warehouses",
+                "Advanced Analytics",
+                "Priority Support",
+                "API Access"
+            ],
+            isActive: true
+        },
+    });
+
+    // Enterprise
+    await prisma.plan.upsert({
+        where: { slug: 'enterprise' },
+        update: {
+            name: 'Enterprise',
+            description: 'Custom solutions for large-scale operations.',
+            priceMonthly: 199000,
+            priceYearly: 1990000,
+            limits: { maxUsers: 100, maxWarehouses: 20, maxItems: 999999 },
+            features: [
+                "Unlimited Everything",
+                "Custom Integrations",
+                "Dedicated Account Manager",
+                "SLA Support",
+                "On-premise Deployment Option"
+            ],
+            isActive: true
+        },
+        create: {
+            name: 'Enterprise',
+            slug: 'enterprise',
+            description: 'Custom solutions for large-scale operations.',
+            priceMonthly: 199000,
+            priceYearly: 1990000,
+            limits: { maxUsers: 100, maxWarehouses: 20, maxItems: 999999 },
+            features: [
+                "Unlimited Everything",
+                "Custom Integrations",
+                "Dedicated Account Manager",
+                "SLA Support",
+                "On-premise Deployment Option"
+            ],
+            isActive: true
         },
     });
 
     console.log('Creating subscriptions...');
-    // Assign Free plan to Org 1
-    await prisma.subscription.upsert({
-        where: { organizationId: org1.id },
-        update: {},
-        create: {
-            organizationId: org1.id,
-            planId: freePlan.id,
-            status: 'ACTIVE',
-        },
-    });
 
-    // Assign Pro plan to Org 2
-    await prisma.subscription.upsert({
-        where: { organizationId: org2.id },
-        update: {},
-        create: {
-            organizationId: org2.id,
-            planId: proPlan.id,
-            status: 'ACTIVE',
-        },
-    });
+    // Fetch plans to get IDs
+    const freePlan = await prisma.plan.findUnique({ where: { slug: 'free' } });
+    const proPlanRecord = await prisma.plan.findUnique({ where: { slug: 'pro' } });
+
+    if (freePlan) {
+        // Assign Free plan to Org 1
+        await prisma.subscription.upsert({
+            where: { organizationId: org1.id },
+            update: {},
+            create: {
+                organizationId: org1.id,
+                planId: freePlan.id,
+                status: 'ACTIVE',
+            },
+        });
+    }
+
+    if (proPlanRecord) {
+        // Assign Pro plan to Org 2
+        await prisma.subscription.upsert({
+            where: { organizationId: org2.id },
+            update: {},
+            create: {
+                organizationId: org2.id,
+                planId: proPlanRecord.id,
+                status: 'ACTIVE',
+            },
+        });
+    }
 
     console.log('✅ Database seeded successfully!');
     console.log('Credentials:');

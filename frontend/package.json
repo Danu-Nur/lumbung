@@ -6,8 +6,11 @@
         "dev": "next dev -p 3000",
         "build": "next build",
         "start": "next start",
-        "lint": "eslint",
-        "prisma:generate": "prisma generate --schema=../backend/prisma/schema.prisma"
+        "lint": "next lint",
+        "// --- Database Types (Mengambil Schema dari Backend) ---": "",
+        "prisma:generate": "prisma generate --schema=../backend/prisma/schema.prisma",
+        "// --- Utility ---": "",
+        "postinstall": "npm run prisma:generate"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.2.2",
