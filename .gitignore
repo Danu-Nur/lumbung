@@ -88,7 +88,7 @@ test_*.csv
 /components.json
 /next.config.ts
 /tailwind.config.ts
-/tsconfig.json
+
 /eslint.config.mjs
 /postcss.config.mjs
 /prisma.config.ts

@@ -1,23 +1,11 @@
-import { prisma } from "@/lib/prisma";
+import api from "@/lib/api";
+import { db } from "@/lib/db";
 
 export const productService = {
     /**
      * Create a new product
      */
-    async createProduct({
-        organizationId,
-        name,
-        sku,
-        barcode,
-        description,
-        categoryId,
-        supplierId,
-        unit,
-        sellingPrice,
-        costPrice,
-        lowStockThreshold,
-        createdById,
-    }: {
+    async createProduct(params: {
         organizationId: string;
         name: string;
         sku: string;
@@ -31,46 +19,60 @@ export const productService = {
         lowStockThreshold?: number;
         createdById: string;
     }) {
-        // Check if SKU already exists
-        const existing = await prisma.product.findFirst({
-            where: {
-                organizationId,
-                sku,
-                deletedAt: null,
-            },
-        });
+        try {
+            const response = await api.post('/products', params);
+            // Cache on success
+            await db.products.put({
+                id: response.data.id,
+                name: response.data.name,
+                sku: response.data.sku,
+                sellingPrice: Number(response.data.sellingPrice),
+                costPrice: Number(response.data.costPrice),
+                categoryId: response.data.categoryId,
+                organizationId: response.data.organizationId,
+                updatedAt: response.data.updatedAt
+            });
+            return response.data;
+        } catch (error: any) {
+            if (!error.response || error.code === 'ERR_NETWORK') {
+                const tempId = `temp-${crypto.randomUUID()}`;
+                const newProduct = {
+                    ...params,
+                    id: tempId,
+                    updatedAt: new Date().toISOString(),
+                    // Ensure optional fields are handled or undefined
+                    barcode: params.barcode || undefined,
+                    description: params.description || undefined,
+                };
 
-        if (existing) {
-            throw new Error('SKU already exists');
+                await db.products.add({
+                    id: tempId,
+                    name: params.name,
+                    sku: params.sku,
+                    sellingPrice: params.sellingPrice,
+                    costPrice: params.costPrice,
+                    categoryId: params.categoryId || undefined,
+                    organizationId: params.organizationId,
+                    updatedAt: new Date().toISOString()
+                });
+
+                await db.syncQueue.add({
+                    action: 'CREATE',
+                    resource: 'PRODUCT',
+                    data: params,
+                    createdAt: Date.now()
+                });
+
+                return newProduct;
+            }
+            throw error;
         }
-
-        return await prisma.product.create({
-            data: {
-                organizationId,
-                name,
-                sku,
-                barcode,
-                description,
-                categoryId,
-                supplierId,
-                unit,
-                sellingPrice,
-                costPrice,
-                lowStockThreshold: lowStockThreshold || 10,
-                createdById,
-            },
-        });
     },
 
     /**
      * Update a product
      */
-    async updateProduct({
-        id,
-        organizationId,
-        data,
-        updatedById,
-    }: {
+    async updateProduct(params: {
         id: string;
         organizationId: string;
         data: {
@@ -87,121 +89,120 @@ export const productService = {
         };
         updatedById: string;
     }) {
-        const product = await prisma.product.findFirst({
-            where: {
-                id,
-                organizationId,
-                deletedAt: null,
-            },
-        });
+        try {
+            const response = await api.patch(`/products/${params.id}`, params);
 
-        if (!product) {
-            throw new Error('Product not found');
+            // Update cache
+            const p = response.data;
+            await db.products.put({
+                id: p.id,
+                name: p.name,
+                sku: p.sku,
+                sellingPrice: Number(p.sellingPrice),
+                costPrice: Number(p.costPrice),
+                categoryId: p.categoryId,
+                organizationId: p.organizationId,
+                updatedAt: p.updatedAt
+            });
+
+            return response.data;
+        } catch (error: any) {
+            if (!error.response || error.code === 'ERR_NETWORK') {
+                const existing = await db.products.get(params.id);
+                if (existing) {
+                    await db.products.update(params.id, {
+                        ...params.data,
+                        updatedAt: new Date().toISOString()
+                    });
+
+                    await db.syncQueue.add({
+                        action: 'UPDATE',
+                        resource: 'PRODUCT',
+                        data: params,
+                        createdAt: Date.now()
+                    });
+
+                    return { ...existing, ...params.data };
+                }
+            }
+            throw error;
         }
-
-        return await prisma.product.update({
-            where: { id },
-            data: {
-                ...data,
-                updatedById,
-            },
-        });
     },
 
     /**
      * Soft delete a product
      */
-    async deleteProduct({
-        id,
-        organizationId,
-        updatedById,
-    }: {
+    async deleteProduct(params: {
         id: string;
         organizationId: string;
         updatedById: string;
     }) {
-        const product = await prisma.product.findFirst({
-            where: {
-                id,
-                organizationId,
-                deletedAt: null,
-            },
-        });
-
-        if (!product) {
-            throw new Error('Product not found');
+        try {
+            await api.delete(`/products/${params.id}`, { data: params });
+            await db.products.delete(params.id);
+            return true;
+        } catch (error: any) {
+            if (!error.response || error.code === 'ERR_NETWORK') {
+                await db.products.delete(params.id); // Valid optimistically
+                await db.syncQueue.add({
+                    action: 'DELETE',
+                    resource: 'PRODUCT',
+                    data: params,
+                    createdAt: Date.now()
+                });
+                return true;
+            }
+            throw error;
         }
-
-        // Soft delete with SKU rename to allow reuse
-        return await prisma.product.update({
-            where: { id },
-            data: {
-                sku: `${product.sku}_deleted_${Date.now()}`,
-                deletedAt: new Date(),
-                updatedById,
-            },
-        });
     },
 
     /**
      * Sets the default supplier for a product.
      */
-    async setProductDefaultSupplier({
-        productId,
-        supplierId,
-        organizationId,
-    }: {
+    async setProductDefaultSupplier(params: {
         productId: string;
         supplierId: string;
         organizationId: string;
     }) {
-        // Validate product and supplier belong to the same organization
-        const product = await prisma.product.findUnique({
-            where: { id: productId },
-            select: { organizationId: true },
-        });
-
-        if (!product || product.organizationId !== organizationId) {
-            throw new Error("Product not found or access denied");
+        try {
+            const response = await api.post(`/products/${params.productId}/supplier`, params);
+            return response.data;
+        } catch (error: any) {
+            // Basic offline queue
+            if (!error.response || error.code === 'ERR_NETWORK') {
+                await db.syncQueue.add({
+                    action: 'UPDATE', // It's effectively an update
+                    resource: 'PRODUCT',
+                    data: { ...params, id: params.productId, data: { supplierId: params.supplierId } },
+                    createdAt: Date.now()
+                });
+                return { success: true, offline: true };
+            }
+            throw error;
         }
-
-        const supplier = await prisma.supplier.findUnique({
-            where: { id: supplierId },
-            select: { organizationId: true },
-        });
-
-        if (!supplier || supplier.organizationId !== organizationId) {
-            throw new Error("Supplier not found or access denied");
-        }
-
-        return await prisma.product.update({
-            where: { id: productId },
-            data: { supplierId },
-        });
     },
 
     /**
      * Clears the default supplier for a product.
      */
-    async clearProductDefaultSupplier({
-        productId,
-        organizationId,
-    }: {
+    async clearProductDefaultSupplier(params: {
         productId: string;
         organizationId: string;
     }) {
-        const product = await prisma.product.findUnique({
-            where: { id: productId },
-            select: { organizationId: true },
-        });
-
-        if (!product || product.organizationId !== organizationId) {
-            throw new Error("Product not found or access denied");
+        try {
+            const response = await api.delete(`/products/${params.productId}/supplier`, { data: params });
+            return response.data;
+        } catch (error: any) {
+            if (!error.response || error.code === 'ERR_NETWORK') {
+                await db.syncQueue.add({
+                    action: 'UPDATE',
+                    resource: 'PRODUCT',
+                    data: { ...params, id: params.productId, data: { supplierId: null } },
+                    createdAt: Date.now()
+                });
+                return { success: true, offline: true };
+            }
+            throw error;
         }
-
-        return await prisma.product.update({
-            where: { id: productId },
-            data: { supplierId: null },
-        });
     },
 };

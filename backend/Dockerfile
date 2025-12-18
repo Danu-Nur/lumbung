@@ -5,15 +5,15 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY tsconfig.json ./
-COPY schema.prisma ./
+COPY prisma ./prisma/
 
 RUN npm install
 
-COPY src ./src
-COPY seed-plans.ts ./
-
+# Generate Prisma Client
 # Generate Prisma Client
 RUN npx prisma generate
+
+COPY src ./src
 
 # Build
 RUN npm run build

@@ -96,3 +96,51 @@ MIT License - See LICENSE file for details
 ---
 
 **Need help?** Check the [documentation](./docs/README.md) or review the [troubleshooting guide](./docs/setup/SETUP.md#troubleshooting).
+
+
+```
+lumbung
+├─ backend
+│  ├─ Dockerfile
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ schema.prisma
+│  ├─ seed-plans.ts
+│  ├─ seed.ts
+│  ├─ tsconfig.json
+│  └─ vitest.config.ts
+├─ docker
+├─ docker-compose.yml
+├─ docs
+│  ├─ architecture
+│  │  ├─ ARCHITECTURE.md
+│  │  ├─ DATABASE.md
+│  │  ├─ FRONTEND_LOCATION.md
+│  │  ├─ RESTRUCTURING.md
+│  │  └─ RESTRUCTURING_ISSUE.md
+│  ├─ features
+│  │  ├─ DASHBOARD_REFACTOR.md
+│  │  ├─ OFFLINE_COMPLETE.md
+│  │  ├─ OFFLINE_SUPPORT.md
+│  │  └─ OFFLINE_TESTING.md
+│  ├─ ORGANIZATION.md
+│  ├─ README.md
+│  ├─ reports
+│  └─ setup
+│     ├─ SETUP.md
+│     └─ STATUS.md
+├─ frontend
+│  ├─ Dockerfile
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ schema.prisma
+│  └─ tsconfig.json
+├─ package-lock.json
+├─ package.json
+├─ prisma
+│  ├─ schema.prisma
+│  └─ seed.ts
+├─ README.md
+└─ tsconfig.json
+
+```

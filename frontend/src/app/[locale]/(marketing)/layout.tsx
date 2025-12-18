@@ -95,7 +95,7 @@ export default function MarketingLayout({
                             {/* Theme Toggle */}
                             <ThemeToggle />
                             <Link href="/login">
-                                <Button variant="ghost" size="sm">
+                                <Button variant="outline" size="sm">
                                     {t('common.buttons.login')}
                                 </Button>
                             </Link>

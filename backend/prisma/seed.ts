@@ -49,8 +49,10 @@ async function main() {
 
     // 2. Create Organizations
     console.log('Creating organizations...');
-    const org1 = await prisma.organization.create({
-        data: {
+    const org1 = await prisma.organization.upsert({
+        where: { slug: 'maju-motor' },
+        update: {},
+        create: {
             name: 'Bengkel Maju Motor',
             slug: 'maju-motor',
             address: 'Jl. Raya Bogor KM 30, Depok',
@@ -59,8 +61,10 @@ async function main() {
         },
     });
 
-    const org2 = await prisma.organization.create({
-        data: {
+    const org2 = await prisma.organization.upsert({
+        where: { slug: 'otomotif-jaya' },
+        update: {},
+        create: {
             name: 'CV Otomotif Jaya',
             slug: 'otomotif-jaya',
             address: 'Jl. Fatmawati No. 10, Jakarta Selatan',
@@ -73,8 +77,10 @@ async function main() {
     console.log('Creating users...');
     const hashedPassword = await bcrypt.hash('admin123', 10);
 
-    const user1 = await prisma.user.create({
-        data: {
+    const user1 = await prisma.user.upsert({
+        where: { email: 'admin@majumotor.com' },
+        update: {},
+        create: {
             name: 'Budi Santoso',
             email: 'admin@majumotor.com',
             password: hashedPassword,
@@ -83,8 +89,10 @@ async function main() {
         },
     });
 
-    const user2 = await prisma.user.create({
-        data: {
+    const user2 = await prisma.user.upsert({
+        where: { email: 'admin@otojaya.com' },
+        update: {},
+        create: {
             name: 'Siti Aminah',
             email: 'admin@otojaya.com',
             password: hashedPassword,
@@ -95,8 +103,10 @@ async function main() {
 
     // 4. Create Warehouses
     console.log('Creating warehouses...');
-    const wh1 = await prisma.warehouse.create({
-        data: {
+    const wh1 = await prisma.warehouse.upsert({
+        where: { organizationId_code: { organizationId: org1.id, code: 'WH-MAIN' } },
+        update: {},
+        create: {
             name: 'Gudang Utama',
             code: 'WH-MAIN',
             organizationId: org1.id,
@@ -104,8 +114,10 @@ async function main() {
         },
     });
 
-    const wh2 = await prisma.warehouse.create({
-        data: {
+    const wh2 = await prisma.warehouse.upsert({
+        where: { organizationId_code: { organizationId: org1.id, code: 'WH-BRANCH' } },
+        update: {},
+        create: {
             name: 'Gudang Cabang',
             code: 'WH-BRANCH',
             organizationId: org1.id,
@@ -113,8 +125,10 @@ async function main() {
         },
     });
 
-    const wh3 = await prisma.warehouse.create({
-        data: {
+    const wh3 = await prisma.warehouse.upsert({
+        where: { organizationId_code: { organizationId: org2.id, code: 'WH-SHOW' } },
+        update: {},
+        create: {
             name: 'Showroom',
             code: 'WH-SHOW',
             organizationId: org2.id,
@@ -124,23 +138,33 @@ async function main() {
 
     // 5. Create Suppliers
     console.log('Creating suppliers...');
-    const supplier1 = await prisma.supplier.create({
-        data: {
-            name: 'PT Astra Otoparts',
-            email: 'sales@astra.co.id',
-            phone: '021-5551234',
-            organizationId: org1.id,
-        },
+    let supplier1 = await prisma.supplier.findFirst({
+        where: { name: 'PT Astra Otoparts', organizationId: org1.id },
     });
+    if (!supplier1) {
+        supplier1 = await prisma.supplier.create({
+            data: {
+                name: 'PT Astra Otoparts',
+                email: 'sales@astra.co.id',
+                phone: '021-5551234',
+                organizationId: org1.id,
+            },
+        });
+    }
 
-    const supplier2 = await prisma.supplier.create({
-        data: {
-            name: 'CV Sumber Makmur',
-            email: 'sales@sumbermakmur.com',
-            phone: '021-5555678',
-            organizationId: org1.id,
-        },
+    let supplier2 = await prisma.supplier.findFirst({
+        where: { name: 'CV Sumber Makmur', organizationId: org1.id },
     });
+    if (!supplier2) {
+        supplier2 = await prisma.supplier.create({
+            data: {
+                name: 'CV Sumber Makmur',
+                email: 'sales@sumbermakmur.com',
+                phone: '021-5555678',
+                organizationId: org1.id,
+            },
+        });
+    }
 
     // 6. Create Categories
     console.log('Creating categories...');
@@ -159,13 +183,18 @@ async function main() {
     const categoriesMap = new Map();
 
     for (const catName of categoriesData) {
-        const cat = await prisma.category.create({
-            data: {
-                name: catName,
-                organizationId: org1.id,
-                description: `Kategori untuk ${catName}`,
-            },
+        let cat = await prisma.category.findFirst({
+            where: { name: catName, organizationId: org1.id },
         });
+        if (!cat) {
+            cat = await prisma.category.create({
+                data: {
+                    name: catName,
+                    organizationId: org1.id,
+                    description: `Kategori untuk ${catName}`,
+                },
+            });
+        }
         categoriesMap.set(catName, cat.id);
     }
 
@@ -276,8 +305,12 @@ async function main() {
     ];
 
     for (const p of products) {
-        const product = await prisma.product.create({
-            data: {
+        const product = await prisma.product.upsert({
+            where: {
+                organizationId_sku: { organizationId: org1.id, sku: p.sku },
+            },
+            update: {},
+            create: {
                 name: p.name,
                 sku: p.sku,
                 categoryId: categoriesMap.get(p.category),
@@ -291,55 +324,64 @@ async function main() {
             },
         });
 
-        // Initial Price History
-        await prisma.productPriceHistory.createMany({
-            data: [
-                {
+        // Check if inventory setup exists (to avoid duplicate history/stock)
+        const existingInv = await prisma.inventoryItem.findUnique({
+            where: { productId_warehouseId: { productId: product.id, warehouseId: wh1.id } },
+        });
+
+        if (!existingInv) {
+            // Initial Price History
+            await prisma.productPriceHistory.createMany({
+                data: [
+                    {
+                        productId: product.id,
+                        priceType: PriceType.COST,
+                        price: p.cost,
+                        createdById: user1.id,
+                        notes: 'Initial cost price',
+                    },
+                    {
+                        productId: product.id,
+                        priceType: PriceType.SELLING,
+                        price: p.price,
+                        createdById: user1.id,
+                        notes: 'Initial selling price',
+                    },
+                ],
+            });
+
+            // Initial Stock (Movement IN)
+            const initialQty = Math.floor(Math.random() * 50) + 10; // 10-60 items
+
+            await prisma.inventoryMovement.create({
+                data: {
                     productId: product.id,
-                    priceType: PriceType.COST,
-                    price: p.cost,
+                    warehouseId: wh1.id,
+                    movementType: MovementType.IN,
+                    quantity: initialQty,
                     createdById: user1.id,
-                    notes: 'Initial cost price',
+                    notes: 'Initial stock seeding',
                 },
-                {
+            });
+
+            // Update Inventory Item Cache
+            await prisma.inventoryItem.create({
+                data: {
                     productId: product.id,
-                    priceType: PriceType.SELLING,
-                    price: p.price,
-                    createdById: user1.id,
-                    notes: 'Initial selling price',
+                    warehouseId: wh1.id,
+                    quantityOnHand: initialQty,
+                    availableQty: initialQty,
                 },
-            ],
-        });
-
-        // Initial Stock (Movement IN)
-        const initialQty = Math.floor(Math.random() * 50) + 10; // 10-60 items
-
-        await prisma.inventoryMovement.create({
-            data: {
-                productId: product.id,
-                warehouseId: wh1.id,
-                movementType: MovementType.IN,
-                quantity: initialQty,
-                createdById: user1.id,
-                notes: 'Initial stock seeding',
-            },
-        });
-
-        // Update Inventory Item Cache
-        await prisma.inventoryItem.create({
-            data: {
-                productId: product.id,
-                warehouseId: wh1.id,
-                quantityOnHand: initialQty,
-                availableQty: initialQty,
-            },
-        });
+            });
+        }
     }
 
     // 8. Create Plans & Subscriptions
     console.log('Creating plans...');
-    const freePlan = await prisma.plan.create({
-        data: {
+    const freePlan = await prisma.plan.upsert({
+        where: { slug: 'free' },
+        update: {},
+        create: {
             name: 'Free',
             slug: 'free',
             description: 'Untuk usaha kecil',
@@ -350,8 +392,10 @@ async function main() {
         },
     });
 
-    const proPlan = await prisma.plan.create({
-        data: {
+    const proPlan = await prisma.plan.upsert({
+        where: { slug: 'pro' },
+        update: {},
+        create: {
             name: 'Pro',
             slug: 'pro',
             description: 'Untuk usaha berkembang',
@@ -364,8 +408,10 @@ async function main() {
 
     console.log('Creating subscriptions...');
     // Assign Free plan to Org 1
-    await prisma.subscription.create({
-        data: {
+    await prisma.subscription.upsert({
+        where: { organizationId: org1.id },
+        update: {},
+        create: {
             organizationId: org1.id,
             planId: freePlan.id,
             status: 'ACTIVE',
@@ -373,8 +419,10 @@ async function main() {
     });
 
     // Assign Pro plan to Org 2
-    await prisma.subscription.create({
-        data: {
+    await prisma.subscription.upsert({
+        where: { organizationId: org2.id },
+        update: {},
+        create: {
             organizationId: org2.id,
             planId: proPlan.id,
             status: 'ACTIVE',

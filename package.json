@@ -1,0 +1,31 @@
+{
+  "name": "lumbung",
+  "version": "1.0.0",
+  "description": "This is the refactored microservices architecture for the Lumbung Inventory System.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build:backend": "npm run build --prefix backend",
+    "build:frontend": "npm run build --prefix frontend",
+    "db:migrate": "npm run prisma:migrate --prefix backend",
+    "db:seed": "npm run db:seed --prefix backend",
+    "prisma:generate": "npm run prisma:generate --prefix backend",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Danu-Nur/lumbung.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Danu-Nur/lumbung/issues"
+  },
+  "homepage": "https://github.com/Danu-Nur/lumbung#readme",
+  "devDependencies": {}
+}

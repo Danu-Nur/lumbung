@@ -16,16 +16,16 @@ services:
     depends_on:
       - db
       - redis
+    command: /bin/sh -c "npm run prisma:deploy && npm start"
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
     ports:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:4000/api
-      - DATABASE_URL=postgresql://user:password@db:5432/lumbung
       - NEXTAUTH_SECRET=your_jwt_secret
       - AUTH_SECRET=your_jwt_secret
     depends_on:

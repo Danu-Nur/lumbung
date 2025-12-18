@@ -19,9 +19,12 @@ export default async function DashboardPage() {
 
     if (token) {
         try {
-            // Decode JWT Payload without external library
-            const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-            orgId = payload.organizationId || '';
+            // Check if it looks like a JWT
+            const parts = token.split('.');
+            if (parts.length === 3) {
+                const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+                orgId = payload.organizationId || '';
+            }
         } catch (e) {
             console.error("Failed to parse token:", e);
         }
