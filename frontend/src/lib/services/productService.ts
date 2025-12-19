@@ -17,10 +17,14 @@ export const productService = {
         sellingPrice: number;
         costPrice: number;
         lowStockThreshold?: number;
+        initialStock?: number;
+        warehouseId?: string;
         createdById: string;
+        token?: string;
     }) {
         try {
-            const response = await api.post('/products', params);
+            const config = params.token ? { headers: { Authorization: `Bearer ${params.token}` } } : {};
+            const response = await api.post('/products', params, config);
             // Cache on success
             await db.products.put({
                 id: response.data.id,
@@ -88,9 +92,11 @@ export const productService = {
             lowStockThreshold?: number;
         };
         updatedById: string;
+        token?: string;
     }) {
         try {
-            const response = await api.patch(`/products/${params.id}`, params);
+            const config = params.token ? { headers: { Authorization: `Bearer ${params.token}` } } : {};
+            const response = await api.put(`/products/${params.id}`, params, config);
 
             // Update cache
             const p = response.data;
@@ -136,9 +142,14 @@ export const productService = {
         id: string;
         organizationId: string;
         updatedById: string;
+        token?: string;
     }) {
         try {
-            await api.delete(`/products/${params.id}`, { data: params });
+            const config = {
+                data: params,
+                ...(params.token ? { headers: { Authorization: `Bearer ${params.token}` } } : {})
+            };
+            await api.delete(`/products/${params.id}`, config);
             await db.products.delete(params.id);
             return true;
         } catch (error: any) {

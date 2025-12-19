@@ -13,7 +13,7 @@ import { OpnameTable } from '@/components/domain/inventory/tables/opname-table';
 import { CreateOpnameDialog } from '@/components/domain/inventory/modals/create-opname-dialog';
 import { SerializedStockOpname, SerializedStockOpnameItem } from '@/types/serialized';
 import { ImportModal } from '@/components/shared/import-modal';
-// import { importOpnameBatch } from '@/features/opnames/import-actions';
+import { importOpnameBatch } from '@/features/inventory/opname-import-actions';
 
 interface InventoryOpnameSectionProps {
     page: number;
@@ -87,7 +87,7 @@ export async function InventoryOpnameSection({ page, pageSize, search, modal, id
                     {/* <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} /> */}
                     <ImportModal
                         type="opname"
-                        onImport={async () => ({ success: true })}
+                        onImport={importOpnameBatch}
                         sampleData={[{
                             'Opname Number': 'OP-001',
                             'Warehouse': 'Main Warehouse',

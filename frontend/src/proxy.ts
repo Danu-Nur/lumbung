@@ -1,70 +1,51 @@
-// middleware.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import NextAuth from 'next-auth';
 import createMiddleware from 'next-intl/middleware';
-import { routing } from '@/i18n/routing';
+import { authConfig } from './lib/auth.config';
+import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
-// ✅ Halaman publik (tanpa login)
-const PUBLIC_PATHS = [
+const { auth } = NextAuth(authConfig);
+
+const publicPages = [
     '/',
     '/login',
     '/register',
-    '/pricing',
     '/about',
-    '/features',
+    '/pricing',
+    '/contact',
+    '/docs',
+    '/api/auth/signin', // Important for auth flow
 ];
 
-// 🔒 Halaman yang wajib login
-const PROTECTED_PATHS = [
-    '/dashboard',
-    '/inventory',
-    '/warehouses',
-    '/sales-orders',
-    '/purchase-orders',
-    '/transfers',
-    '/adjustments',
-    '/customers',
-    '/suppliers',
-    '/settings',
-    '/superadmin',
-];
+const authPages = ['/login', '/register'];
 
-function stripLocale(pathname: string): string {
-    const match = pathname.match(/^\/(en|id)(\/.*)?$/);
-    return match ? (match[2] || '/') : pathname;
-}
+export const proxy = auth((req) => {
+    const { nextUrl } = req;
+    const isLoggedIn = !!req.auth;
 
-function isProtectedRoute(pathname: string): boolean {
-    const path = stripLocale(pathname);
-    return PROTECTED_PATHS.some(
-        (base) => path === base || path.startsWith(`${base}/`)
-    );
-}
+    // Check if the current path is public
+    const pathWithoutLocale = nextUrl.pathname.replace(/^\/(en|id)/, '') || '/';
 
-export default function proxy(request: NextRequest) {
-    const { pathname, search } = request.nextUrl;
+    const isPublic = publicPages.includes(pathWithoutLocale) ||
+        publicPages.some(p => p !== '/' && pathWithoutLocale.startsWith(p));
 
-    // 1️⃣ Run intl middleware first to handle locale redirection and rewriting
-    // We capture the response to potentially modify it or return it directly
-    const response = intlMiddleware(request);
+    const isAuthPage = authPages.includes(pathWithoutLocale);
 
-    // 2️⃣ Check Protected Routes
-    if (isProtectedRoute(pathname)) {
-        // Check for 'token' cookie set by the backend
-        const token = request.cookies.get('token');
-
-        if (!token) {
-            const loginUrl = new URL('/login', request.url);
-            loginUrl.searchParams.set('callbackUrl', pathname + search);
-            return NextResponse.redirect(loginUrl);
-        }
+    if (isAuthPage && isLoggedIn) {
+        return Response.redirect(new URL('/dashboard', nextUrl));
     }
 
-    return response;
-}
+    if (!isPublic && !isLoggedIn) {
+        const locale = nextUrl.pathname.match(/^\/(en|id)/)?.[1] || routing.defaultLocale;
+        const loginUrl = new URL(`/${locale}/login`, nextUrl);
+        return Response.redirect(loginUrl);
+    }
+
+    return intlMiddleware(req);
+});
 
 export const config = {
-    matcher: ['/((?!api|_next|.*\\..*).*)'],
+    // Skip all internal paths
+    matcher: ['/((?!api|_next|.*\\..*).*)']
 };

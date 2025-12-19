@@ -10,7 +10,7 @@ import { getTranslations } from 'next-intl/server';
 import { TransferModalManager } from '@/components/domain/transfers/transfer-modal-manager';
 import { TransferTable } from '@/components/domain/inventory/tables/transfer-table';
 import { ImportModal } from '@/components/shared/import-modal';
-// import { importTransferBatch } from '@/features/transfers/import-actions';
+import { importTransferBatch } from '@/features/transfers/import-actions';
 
 interface InventoryTransferSectionProps {
     page: number;
@@ -144,7 +144,7 @@ export async function InventoryTransferSection({ page, pageSize, search, modal, 
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                     <ImportModal
                         type="transfers"
-                        onImport={async () => ({ success: true })}
+                        onImport={importTransferBatch}
                         sampleData={[{
                             'Transfer Number': 'TRF-001',
                             'From Warehouse': 'Main Warehouse',

@@ -7,7 +7,7 @@ import { DataTableColumnHeader } from '@/components/shared/data-table/data-table
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/lib/utils';
-import { InventoryActions } from '@/components/domain/inventory/inventory-actions'; // Existing actions
+import { InventoryActions } from '@/components/domain/inventory/components/inventory-actions';
 import { useTranslations } from 'next-intl';
 
 // Export utils

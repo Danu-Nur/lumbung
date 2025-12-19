@@ -10,6 +10,7 @@ import { SyncProvider } from "@/providers/sync-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { auth } from "@/lib/auth";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -35,6 +36,8 @@ export default async function RootLayout({
 }) {
   const { locale } = await params;
   const messages = await getMessages();
+  const session = await auth();
+  console.log("[Layout] Session found:", !!session, session?.user?.email);
 
   return (
     <html lang={locale} suppressHydrationWarning className={cn("scroll-smooth")}>
@@ -54,7 +57,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <QueryProvider>
-              <AuthProvider>
+              <AuthProvider session={session}>
                 <SyncProvider>
                   {children}
                   <Toaster />

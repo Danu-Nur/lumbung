@@ -16,7 +16,11 @@ import {
     Users,
     Building2,
     Layers,
-    LogOut
+    LogOut,
+    ChevronDown,
+    ChevronRight,
+    ClipboardList,
+    Warehouse,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,7 +30,7 @@ import {
     SheetTitle,
     SheetDescription,
 } from '@/components/ui/sheet';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> { }
 
@@ -44,8 +48,8 @@ function stripLocale(pathname: string | null): string {
 function isLinkActive(pathname: string | null, href: string): boolean {
     const current = stripLocale(pathname);
 
-    if (href === '/') {
-        return current === '/';
+    if (href === '/' || href === '#') {
+        return current === href;
     }
 
     return current === href || current.startsWith(`${href}/`);
@@ -56,17 +60,40 @@ export function Sidebar({ className }: SidebarProps) {
     const pathname = usePathname();
     const t = useTranslations('common.nav');
     const tSidebar = useTranslations('common.sidebar');
+    const tInv = useTranslations('inventory');
+
+    // State for expanded menus
+    const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+    // Auto-expand if child is active
+    useEffect(() => {
+        const currentPath = stripLocale(pathname);
+        if (currentPath.startsWith('/inventory')) {
+            setExpanded(prev => ({ ...prev, 'inventory': true }));
+        }
+    }, [pathname]);
+
+    const toggleExpand = (key: string) => {
+        setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
+    };
 
     const navigation = [
         { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
-        { name: t('inventory'), href: '/inventory', icon: Package },
-        // { name: t('categories'), href: '/categories', icon: Layers },
+        {
+            name: t('inventory'),
+            href: '#',
+            icon: Package,
+            key: 'inventory',
+            children: [
+                { name: tInv('tabs.stock'), href: '/inventory', icon: Package }, // List Inventory
+                { name: tInv('tabs.warehouses'), href: '/inventory/warehouses', icon: Warehouse },
+                { name: tInv('tabs.suppliers'), href: '/inventory/suppliers', icon: Building2 },
+                { name: tInv('tabs.categories'), href: '/inventory/categories', icon: Layers },
+                { name: 'Stock Ops', href: '/inventory/stock', icon: ClipboardList }, // "Stock" grouping
+            ]
+        },
         { name: t('sales'), href: '/sales-orders', icon: ShoppingCart },
         { name: t('purchases'), href: '/purchase-orders', icon: ShoppingBag },
-
-
-        // { name: t('customers'), href: '/customers', icon: Users },
-        // { name: t('suppliers'), href: '/suppliers', icon: Building2 },
         { name: t('settings'), href: '/settings', icon: Settings },
     ];
 
@@ -104,6 +131,76 @@ export function Sidebar({ className }: SidebarProps) {
             {/* Navigation */}
             <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                 {navigation.map((item) => {
+                    // @ts-ignore
+                    if (item.children) {
+                        // @ts-ignore
+                        const isExpanded = expanded[item.key || item.name];
+                        // @ts-ignore
+                        const isChildActive = item.children.some(child => isLinkActive(pathname, child.href));
+
+                        return (
+                            <div key={item.name} className="space-y-1">
+                                <button
+                                    // @ts-ignore
+                                    onClick={() => toggleExpand(item.key || item.name)}
+                                    className={cn(
+                                        'w-full flex items-center justify-between px-4 py-3 rounded-none transition-all border-2',
+                                        isChildActive
+                                            ? 'border-black bg-muted' // Parent active style
+                                            : 'border-transparent hover:bg-muted hover:border-black text-foreground'
+                                    )}
+                                >
+                                    <div className="flex items-center space-x-3">
+                                        <item.icon className="w-5 h-5" />
+                                        <span>{item.name}</span>
+                                    </div>
+                                    {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                                </button>
+
+                                {isExpanded && (
+                                    <div className="pl-6 space-y-1 border-l-2 border-black ml-4 mb-2">
+                                        {/* @ts-ignore */}
+                                        {item.children.map(child => {
+                                            let active = isLinkActive(pathname, child.href);
+
+                                            // Special handling for root inventory path to strictness
+                                            // If current path matches another sibling (e.g. /inventory/warehouses), 
+                                            // don't mark /inventory as active unless it's exact match
+                                            if (child.href === '/inventory' && active) {
+                                                const current = stripLocale(pathname);
+                                                // Check if any *other* sibling is active
+                                                // @ts-ignore
+                                                const isOtherSiblingActive = item.children.some(sibling =>
+                                                    sibling.href !== '/inventory' && isLinkActive(pathname, sibling.href)
+                                                );
+
+                                                if (isOtherSiblingActive && current !== '/inventory') {
+                                                    active = false;
+                                                }
+                                            }
+
+                                            return (
+                                                <Link
+                                                    key={child.href}
+                                                    href={child.href}
+                                                    className={cn(
+                                                        'flex items-center space-x-3 px-4 py-2 text-sm rounded-none transition-all border-2',
+                                                        active
+                                                            ? 'bg-primary text-primary-foreground border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                                                            : 'text-foreground border-transparent hover:bg-muted hover:border-black',
+                                                    )}
+                                                >
+                                                    {child.icon && <child.icon className="w-4 h-4" />}
+                                                    <span>{child.name}</span>
+                                                </Link>
+                                            )
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    }
+
                     const active = isLinkActive(pathname, item.href);
 
                     return (
@@ -152,17 +249,40 @@ export function MobileSidebar() {
     const [open, setOpen] = useState(false);
     const t = useTranslations('common.nav');
     const tSidebar = useTranslations('common.sidebar');
+    const tInv = useTranslations('inventory');
+
+    // State for expanded menus
+    const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+    // Auto-expand if child is active
+    useEffect(() => {
+        const currentPath = stripLocale(pathname);
+        if (currentPath.startsWith('/inventory')) {
+            setExpanded(prev => ({ ...prev, 'inventory': true }));
+        }
+    }, [pathname]);
+
+    const toggleExpand = (key: string) => {
+        setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
+    };
 
     const navigation = [
         { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
-        { name: t('inventory'), href: '/inventory', icon: Package },
-        // { name: t('categories'), href: '/categories', icon: Layers },
+        {
+            name: t('inventory'),
+            href: '#',
+            icon: Package,
+            key: 'inventory',
+            children: [
+                { name: tInv('tabs.stock'), href: '/inventory', icon: Package }, // List
+                { name: tInv('tabs.warehouses'), href: '/inventory/warehouses', icon: Warehouse },
+                { name: tInv('tabs.suppliers'), href: '/inventory/suppliers', icon: Building2 },
+                { name: tInv('tabs.categories'), href: '/inventory/categories', icon: Layers },
+                { name: 'Stock Ops', href: '/inventory/stock', icon: ClipboardList }, // Stock
+            ]
+        },
         { name: t('sales'), href: '/sales-orders', icon: ShoppingCart },
         { name: t('purchases'), href: '/purchase-orders', icon: ShoppingBag },
-
-
-        { name: t('customers'), href: '/customers', icon: Users },
-        { name: t('suppliers'), href: '/suppliers', icon: Building2 },
         { name: t('settings'), href: '/settings', icon: Settings },
     ];
 
@@ -211,6 +331,74 @@ export function MobileSidebar() {
                 {/* Navigation */}
                 <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                     {navigation.map((item) => {
+                        // @ts-ignore
+                        if (item.children) {
+                            // @ts-ignore
+                            const isExpanded = expanded[item.key || item.name];
+                            // @ts-ignore
+                            const isChildActive = item.children.some(child => isLinkActive(pathname, child.href));
+
+                            return (
+                                <div key={item.name} className="space-y-1">
+                                    <button
+                                        // @ts-ignore
+                                        onClick={() => toggleExpand(item.key || item.name)}
+                                        className={cn(
+                                            'w-full flex items-center justify-between px-4 py-3 rounded-none transition-all border-2',
+                                            isChildActive
+                                                ? 'border-black bg-muted' // Parent active style
+                                                : 'border-transparent hover:bg-muted hover:border-black text-foreground'
+                                        )}
+                                    >
+                                        <div className="flex items-center space-x-3">
+                                            <item.icon className="w-5 h-5" />
+                                            <span>{item.name}</span>
+                                        </div>
+                                        {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                                    </button>
+
+                                    {isExpanded && (
+                                        <div className="pl-6 space-y-1 border-l-2 border-black ml-4 mb-2">
+                                            {/* @ts-ignore */}
+                                            {item.children.map(child => {
+                                                let active = isLinkActive(pathname, child.href);
+
+                                                // Special handling for root inventory path
+                                                if (child.href === '/inventory' && active) {
+                                                    const current = stripLocale(pathname);
+                                                    // @ts-ignore
+                                                    const isOtherSiblingActive = item.children.some(sibling =>
+                                                        sibling.href !== '/inventory' && isLinkActive(pathname, sibling.href)
+                                                    );
+
+                                                    if (isOtherSiblingActive && current !== '/inventory') {
+                                                        active = false;
+                                                    }
+                                                }
+
+                                                return (
+                                                    <Link
+                                                        key={child.href}
+                                                        href={child.href}
+                                                        onClick={() => setOpen(false)}
+                                                        className={cn(
+                                                            'flex items-center space-x-3 px-4 py-2 text-sm rounded-none transition-all border-2',
+                                                            active
+                                                                ? 'bg-primary text-primary-foreground border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                                                                : 'text-foreground border-transparent hover:bg-muted hover:border-black',
+                                                        )}
+                                                    >
+                                                        {child.icon && <child.icon className="w-4 h-4" />}
+                                                        <span>{child.name}</span>
+                                                    </Link>
+                                                )
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        }
+
                         const active = isLinkActive(pathname, item.href);
 
                         return (

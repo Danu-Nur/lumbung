@@ -1,11 +1,11 @@
 import { cookies } from 'next/headers';
-import { InventoryListSection } from '@/components/domain/inventory/sections/inventory-list-section';
+import { SupplierListSection } from '@/components/domain/suppliers/sections/supplier-list-section';
 import { getTranslations } from 'next-intl/server';
 
-export default async function InventoryPage({
+export default async function SuppliersPage({
     searchParams,
 }: {
-    searchParams: Promise<{ page?: string; pageSize?: string; q?: string; modal?: string; id?: string }>;
+    searchParams: Promise<{ page?: string; pageSize?: string; q?: string }>;
 }) {
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
@@ -28,19 +28,16 @@ export default async function InventoryPage({
     const page = Number(resolvedSearchParams.page) || 1;
     const pageSize = Number(resolvedSearchParams.pageSize) || 10;
     const search = resolvedSearchParams.q || '';
-    const modal = resolvedSearchParams.modal;
-    const id = resolvedSearchParams.id;
 
     return (
         <div className="w-full space-y-6">
-            <h1 className="text-2xl font-bold">Inventory</h1>
+            <h1 className="text-2xl font-bold">Suppliers</h1>
             <div className="min-h-[500px]">
-                <InventoryListSection
+                <SupplierListSection
                     page={page}
                     pageSize={pageSize}
                     search={search}
-                    modal={modal}
-                    id={id}
+                    organizationId={orgId}
                 />
             </div>
         </div>

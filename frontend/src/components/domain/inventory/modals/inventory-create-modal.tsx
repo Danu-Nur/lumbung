@@ -181,7 +181,7 @@ export function InventoryCreateModal({
                                             <FormLabel>{t("form.category")}</FormLabel>
                                             <div className="flex gap-2">
                                                 <select
-                                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    className="flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 neo-brutal-style"
                                                     {...field}
                                                 >
                                                     <option value="">{t("form.selectCategory")}</option>
@@ -215,7 +215,7 @@ export function InventoryCreateModal({
                                         <FormLabel>{t("form.supplier") || "Preferred Supplier"}</FormLabel>
                                         <div className="flex gap-2">
                                             <select
-                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 neo-brutal-style"
                                                 {...field}
                                             >
                                                 <option value="">{t("form.selectSupplier") || "Select Supplier"}</option>
@@ -253,7 +253,7 @@ export function InventoryCreateModal({
                                         <FormItem>
                                             <FormLabel>{t("form.unit")}</FormLabel>
                                             <select
-                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 neo-brutal-style"
                                                 {...field}
                                             >
                                                 <option value="pcs">{t("units.pcs")}</option>
@@ -319,7 +319,7 @@ export function InventoryCreateModal({
                                                 <FormLabel>{t("form.warehouse") || "Warehouse"}</FormLabel>
                                                 <div className="flex gap-2">
                                                     <select
-                                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                        className="flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 neo-brutal-style"
                                                         {...field}
                                                     >
                                                         <option value="">{t("form.selectWarehouse") || "Select Warehouse"}</option>
@@ -360,10 +360,10 @@ export function InventoryCreateModal({
                             </div>
 
                             <DialogFooter>
-                                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                                <Button type="button" variant="slate" onClick={() => onOpenChange(false)}>
                                     {tCommon("actions.cancel")}
                                 </Button>
-                                <Button type="submit" disabled={form.formState.isSubmitting}>
+                                <Button type="submit" variant="emerald" disabled={form.formState.isSubmitting}>
                                     {form.formState.isSubmitting ? tCommon("actions.saving") : tCommon("buttons.save")}
                                 </Button>
                             </DialogFooter>

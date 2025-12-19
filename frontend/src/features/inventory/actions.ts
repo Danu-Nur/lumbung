@@ -5,6 +5,8 @@ import { productService } from '@/lib/services/productService';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
+import api from '@/lib/api';
+import { cookies } from 'next/headers';
 
 export async function createProduct(formData: FormData) {
     const session = await auth();
@@ -31,63 +33,25 @@ export async function createProduct(formData: FormData) {
         throw new Error('Missing required fields');
     }
 
-    // Transaction for product creation and initial stock
-    await prisma.$transaction(async (tx) => {
-        // Check SKU overlap
-        const existing = await tx.product.findFirst({
-            where: { organizationId: session.user.organizationId!, sku, deletedAt: null }
-        });
-        if (existing) throw new Error('SKU already exists');
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
 
-        const product = await tx.product.create({
-            data: {
-                organizationId: session.user.organizationId!,
-                name,
-                sku,
-                barcode: barcode || null,
-                description: description || null,
-                categoryId: categoryId || null,
-                supplierId: supplierId || null,
-                unit,
-                sellingPrice,
-                costPrice,
-                lowStockThreshold: lowStockThreshold || 10,
-                createdById: session.user.id,
-            }
-        });
-
-        // Add Initial Stock if provided
-        if (initialStock > 0 && warehouseId) {
-            await tx.inventoryItem.create({
-                data: {
-                    productId: product.id,
-                    warehouseId,
-                    quantityOnHand: initialStock,
-                    availableQty: initialStock,
-                    allocatedQty: 0
-                }
-            });
-
-            await tx.inventoryMovement.create({
-                data: {
-
-                    // Wait, actions.ts createStockAdjustment uses inventoryMovement.create WITHOUT organizationId in my view? 
-                    // Let's check view of createStockAdjustment in step 2136.
-                    // It has: data: { productId, warehouseId, movementType, ... createdById }
-                    // It implicitly has relation? No.
-                    // The InventoryMovement model usually links to Warehouse or Product which has OrgId.
-                    // I will follow the pattern in createStockAdjustment.
-                    productId: product.id,
-                    warehouseId,
-                    movementType: 'IN', // 'IN' for initial stock? or 'ADJUST' ? usually 'IN' for purchase/initial.
-                    quantity: initialStock,
-                    referenceType: 'InitialStock',
-                    referenceId: product.id, // Reference self? Or null?
-                    notes: 'Initial Stock',
-                    createdById: session.user.id,
-                }
-            });
-        }
+    await productService.createProduct({
+        organizationId: session.user.organizationId!,
+        name,
+        sku,
+        barcode: barcode || null,
+        description: description || null,
+        categoryId: categoryId || null,
+        supplierId: supplierId || null,
+        unit,
+        sellingPrice,
+        costPrice,
+        lowStockThreshold: lowStockThreshold || 10,
+        initialStock,
+        warehouseId: warehouseId || undefined,
+        createdById: session.user.id,
+        token,
     });
 
     revalidatePath('/inventory');
@@ -111,6 +75,9 @@ export async function updateProduct(productId: string, formData: FormData) {
     const costPrice = parseFloat(formData.get('costPrice') as string);
     const lowStockThreshold = parseInt(formData.get('lowStockThreshold') as string);
 
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+
     await productService.updateProduct({
         id: productId,
         organizationId: session.user.organizationId,
@@ -127,6 +94,7 @@ export async function updateProduct(productId: string, formData: FormData) {
             lowStockThreshold: lowStockThreshold || 10,
         },
         updatedById: session.user.id,
+        token,
     });
 
     revalidatePath('/inventory');
@@ -139,10 +107,14 @@ export async function deleteProduct(productId: string) {
         throw new Error('Unauthorized');
     }
 
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+
     await productService.deleteProduct({
         id: productId,
         organizationId: session.user.organizationId,
         updatedById: session.user.id,
+        token,
     });
 
     revalidatePath('/inventory');
@@ -188,79 +160,23 @@ export async function createStockAdjustment(data: {
     }
 
     const { productId, warehouseId, type, quantity, reason, notes } = data;
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
 
-    // Use a transaction to ensure data consistency
-    await prisma.$transaction(async (tx) => {
-        // 1. Create Stock Adjustment record
-        const adjustment = await tx.stockAdjustment.create({
-            data: {
-                productId,
-                warehouseId,
-                adjustmentType: type,
-                quantity,
-                reason: reason as any, // Cast to enum if needed, or ensure type matches
-                notes,
-                organizationId: session.user.organizationId!,
-                createdById: session.user.id,
-            }
-        });
-
-        // 2. Create Inventory Movement
-        await tx.inventoryMovement.create({
-            data: {
-                productId,
-                warehouseId,
-                movementType: 'ADJUST',
-                quantity: type === 'increase' ? quantity : -quantity,
-                referenceType: 'StockAdjustment',
-                referenceId: adjustment.id,
-                notes,
-                createdById: session.user.id,
-            }
-        });
-
-        // 3. Update Inventory Item
-        const inventoryItem = await tx.inventoryItem.findUnique({
-            where: {
-                productId_warehouseId: {
-                    productId,
-                    warehouseId
-                }
-            }
-        });
-
-        if (inventoryItem) {
-            await tx.inventoryItem.update({
-                where: { id: inventoryItem.id },
-                data: {
-                    quantityOnHand: {
-                        increment: type === 'increase' ? quantity : -quantity
-                    },
-                    availableQty: {
-                        increment: type === 'increase' ? quantity : -quantity
-                    }
-                }
-            });
-        } else {
-            // Create new inventory item if it doesn't exist
-            if (type === 'decrease') {
-                throw new Error('Cannot decrease stock for non-existent inventory item');
-            }
-            await tx.inventoryItem.create({
-                data: {
-                    productId,
-                    warehouseId,
-                    quantityOnHand: quantity,
-                    availableQty: quantity,
-                    allocatedQty: 0
-                }
-            });
-        }
+    // Call Backend API
+    await api.post('/inventory/adjustment', {
+        productId,
+        warehouseId,
+        type,
+        quantity,
+        reason,
+        notes
+    }, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
     });
 
     revalidatePath('/inventory');
 }
-
 
 export async function createStockAdjustmentFromForm(formData: FormData) {
     const productId = formData.get('productId') as string;

@@ -10,7 +10,7 @@ import { formatCurrency } from '@/lib/utils';
 import { Package, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { InventoryModalManager } from '@/components/domain/inventory/inventory-modal-manager';
+import { InventoryModalManager } from '@/components/domain/inventory/modals/inventory-modal-manager';
 import { InventoryTable } from '@/components/domain/inventory/tables/inventory-table';
 import { ImportModal } from '@/components/shared/import-modal';
 // import { importStockBatch } from '@/features/inventory/import-actions'; // Moved or Refactored?
@@ -49,18 +49,27 @@ export function InventoryListSection({ page, pageSize, search, modal, id }: Inve
         }
     });
 
-    // Mock other data needed for Modals (should be fetched too)
+    // Data needed for Modals
     const { data: categories = [] } = useQuery({
         queryKey: ['categories'],
-        queryFn: async () => [] // Placeholder
+        queryFn: async () => {
+            const res = await api.get('/categories');
+            return res.data;
+        }
     });
     const { data: warehouses = [] } = useQuery({
         queryKey: ['warehouses'],
-        queryFn: async () => []
+        queryFn: async () => {
+            const res = await api.get('/warehouses');
+            return res.data;
+        }
     });
     const { data: suppliers = [] } = useQuery({
         queryKey: ['suppliers'],
-        queryFn: async () => []
+        queryFn: async () => {
+            const res = await api.get('/suppliers');
+            return res.data;
+        }
     });
 
     const total = products.length; // Client-side pagination for MVP
@@ -92,7 +101,7 @@ export function InventoryListSection({ page, pageSize, search, modal, id }: Inve
                     {/* <SearchInput className="w-full sm:w-[300px]" placeholder={`${tCommon('buttons.search')}...`} /> */}
                     {/* Placeholder for Import */}
                     <Link href="?view=stock&modal=create">
-                        <Button className="shrink-0 w-10 h-10 p-0 sm:w-auto sm:h-10 sm:px-4 sm:py-2">
+                        <Button className="shrink-0 w-10 h-10 p-0 sm:w-auto sm:h-10 sm:px-4 sm:py-2" variant="indigo">
                             <Plus className="h-4 w-4 sm:mr-2" />
                             <span className="hidden sm:inline">{tCommon('buttons.add')}</span>
                         </Button>
@@ -109,7 +118,7 @@ export function InventoryListSection({ page, pageSize, search, modal, id }: Inve
                                 {tCommon('table.noData')}
                             </p>
                             <Link href="?view=stock&modal=create">
-                                <Button>
+                                <Button variant="indigo">
                                     <Plus className="w-4 h-4 mr-2" />
                                     {tCommon('buttons.add')}
                                 </Button>

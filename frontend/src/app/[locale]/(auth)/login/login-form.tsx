@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 import api from '@/lib/api';
 import { useAuth } from '@/providers/auth-provider';
 import { googleSignIn } from "@/app/actions/auth-actions";
+import { signIn } from 'next-auth/react';
 
 // Data akun demo kita simpan di array agar kodenya bersih (tidak berulang-ulang)
 const DEMO_ACCOUNTS = [
@@ -38,43 +39,25 @@ export function LoginForm() {
         setLoading(true);
 
         try {
-            const response = await api.post('/auth/login', { email, password });
-            const { token, user } = response.data;
+            const result = await signIn('credentials', {
+                email,
+                password,
+                redirect: false,
+            });
 
-            login(token, user, callbackUrl || undefined);
+            if (result?.error) {
+                setError(t('errors.invalidCredentials'));
+                setLoading(false);
+                return;
+            }
+
+            // Login successful
+            router.refresh(); // Sync server session
+            router.push(callbackUrl || '/inventory');
 
         } catch (err: any) {
             console.error(err);
-
-            // --- OFFLINE/DEV FALLBACK ---
-            // If Backend/DB is down (Network Error or 500), force login as Offline Demo User
-            const isNetworkError = !err.response || err.code === 'ERR_NETWORK';
-            const isServerError = err.response?.status >= 500;
-
-            if (isNetworkError || isServerError) {
-                console.warn("⚠️ BACKEND DOWN: Activating Offline Bypass");
-
-                // Set fake token for Middleware
-                document.cookie = "token=offline-dev-token; path=/; max-age=86400; SameSite=Lax";
-
-                // Set fake auth state
-                login('offline-dev-token', {
-                    id: 'offline-user',
-                    email: email || 'offline@demo.com',
-                    role: 'admin',
-                    organizationId: 'org-offline',
-                    organizationName: 'Lumbung Offline'
-                } as any, callbackUrl || undefined);
-                return;
-            }
-            // ----------------------------
-
-            if (err.response?.data?.error) {
-                setError(err.response.data.error);
-            } else {
-                setError(t('errors.invalidCredentials'));
-            }
-        } finally {
+            setError('An unexpected error occurred');
             setLoading(false);
         }
     };
@@ -224,7 +207,8 @@ export function LoginForm() {
             </div>
 
             {/* Bagian Demo Credentials (Dirapikan) */}
-            {/* <div className="relative">
+            {/* Bagian Demo Credentials (Dirapikan) */}
+            <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t" />
                 </div>
@@ -259,7 +243,7 @@ export function LoginForm() {
                         </div>
                     </button>
                 ))}
-            </div> */}
+            </div>
         </div>
     );
 }
