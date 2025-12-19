@@ -45,13 +45,17 @@ export async function createProductHandler(req: FastifyRequest, reply: FastifyRe
     }
 }
 
-export async function getProductsHandler(req: FastifyRequest, reply: FastifyReply) {
+export async function getProductsHandler(req: FastifyRequest<{ Querystring: { page?: string; pageSize?: string; q?: string } }>, reply: FastifyReply) {
     try {
         if (!req.user) return reply.code(401).send({ error: 'Unauthorized' });
 
         const user = req.user as { organizationId: string };
-        const products = await ProductService.getProducts(user.organizationId);
-        return products;
+        const page = parseInt(req.query.page || '1');
+        const pageSize = parseInt(req.query.pageSize || '10');
+        const search = req.query.q || '';
+
+        const result = await ProductService.getProducts(user.organizationId, page, pageSize, search);
+        return result;
     } catch (error) {
         req.log.error(error);
         return reply.code(500).send({ error: 'Internal Server Error' });

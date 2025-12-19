@@ -38,7 +38,7 @@ export function Topbar() {
     };
 
     return (
-        <header className="h-14 bg-background border-b-2 border-black flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-30">
+        <header className="h-20 bg-background border-b-2 border-black flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-30">
             <div className="flex items-center gap-4">
                 {/* Mobile Menu */}
                 <MobileSidebar />

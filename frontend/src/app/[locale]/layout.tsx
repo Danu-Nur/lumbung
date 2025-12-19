@@ -11,6 +11,16 @@ import { QueryProvider } from "@/providers/query-provider";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { auth } from "@/lib/auth";
+import { OfflineIndicator } from "@/components/shared/offline-indicator";
+import type { Viewport } from "next";
+
+export const viewport: Viewport = {
+  themeColor: "#fbbf24",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -25,6 +35,12 @@ const fontSpace = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Inventory Pro - Warehouse Management System",
   description: "Production-ready warehouse inventory management system",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Lumbung",
+  },
 };
 
 export default async function RootLayout({
@@ -61,6 +77,7 @@ export default async function RootLayout({
                 <SyncProvider>
                   {children}
                   <Toaster />
+                  <OfflineIndicator />
                 </SyncProvider>
               </AuthProvider>
             </QueryProvider>

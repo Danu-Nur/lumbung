@@ -1,19 +1,17 @@
+'use client';
 
-
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, ClipboardList } from 'lucide-react';
-import Link from 'next/link';
 import { Pagination } from '@/components/shared/pagination';
-import { SearchInput } from '@/components/shared/search-input';
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
 import { OpnameTable } from '@/components/domain/inventory/tables/opname-table';
 import { CreateOpnameDialog } from '@/components/domain/inventory/modals/create-opname-dialog';
-import { SerializedStockOpname, SerializedStockOpnameItem } from '@/types/serialized';
 import { ImportModal } from '@/components/shared/import-modal';
 import { importOpnameBatch } from '@/features/inventory/opname-import-actions';
+import { LoadingState } from '@/components/shared/loading-state';
 
 interface InventoryOpnameSectionProps {
     page: number;
@@ -24,57 +22,35 @@ interface InventoryOpnameSectionProps {
     organizationId: string;
 }
 
-export async function InventoryOpnameSection({ page, pageSize, search, modal, id, organizationId }: InventoryOpnameSectionProps) {
-    const t = await getTranslations('inventory.opname');
-    const tCommon = await getTranslations('common');
+export function InventoryOpnameSection({ page, pageSize, search, modal, id, organizationId }: InventoryOpnameSectionProps) {
+    const t = useTranslations('inventory.opname');
+    const tCommon = useTranslations('common');
 
+    // Opnames query
+    const { data: opnamesData, isLoading } = useQuery({
+        queryKey: ['opnames', page, pageSize, search],
+        queryFn: async () => {
+            const res = await api.get('/inventory/opnames', {
+                params: { page, pageSize, q: search }
+            });
+            return res.data; // { opnames, total }
+        }
+    });
 
-    if (!organizationId) {
-        redirect('/login');
-    }
+    // Warehouses query for creation
+    const { data: warehouses = [] } = useQuery({
+        queryKey: ['warehouses-options-opname'],
+        queryFn: async () => {
+            const res = await api.get('/warehouses');
+            return res.data.warehouses || [];
+        }
+    });
 
-    const skip = (page - 1) * pageSize;
-    const where: any = {
-        organizationId: organizationId,
-    };
+    if (isLoading) return <LoadingState message={tCommon('table.loading') || 'Loading...'} />;
 
-    if (search) {
-        where.opnameNumber = { contains: search };
-    }
-
-    const [opnames, total, warehouses] = await Promise.all([
-        prisma.stockOpname.findMany({
-            where,
-            include: {
-                warehouse: true,
-                items: {
-                    select: {
-                        id: true,
-                        actualQty: true
-                    }
-                },
-                createdBy: true,
-            },
-            orderBy: { createdAt: 'desc' },
-            skip,
-            take: pageSize,
-        }),
-        prisma.stockOpname.count({
-            where,
-        }),
-        prisma.warehouse.findMany({
-            where: { organizationId: organizationId, isActive: true },
-            select: { id: true, name: true }
-        })
-    ]);
-
+    const opnames = opnamesData?.opnames || [];
+    const total = opnamesData?.total || 0;
     const totalPages = Math.ceil(total / pageSize);
-
-    // Serialize Decimal fields
-    const serializedOpnames: any[] = opnames.map((op: any) => ({
-        ...op,
-        items: op.items // No product mapping needed as we didn't fetch it
-    }));
 
     return (
         <div className="space-y-4">
@@ -84,7 +60,6 @@ export async function InventoryOpnameSection({ page, pageSize, search, modal, id
                     <p className="text-sm text-muted-foreground">{t('description')}</p>
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                    {/* <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} /> */}
                     <ImportModal
                         type="opname"
                         onImport={importOpnameBatch}
@@ -103,7 +78,7 @@ export async function InventoryOpnameSection({ page, pageSize, search, modal, id
 
             <Card>
                 <CardContent className="p-0">
-                    {serializedOpnames.length === 0 ? (
+                    {opnames.length === 0 ? (
                         <div className="text-center py-12">
                             <ClipboardList className="w-12 h-12 text-slate-400 mx-auto mb-4" />
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
@@ -114,7 +89,7 @@ export async function InventoryOpnameSection({ page, pageSize, search, modal, id
                     ) : (
                         <>
                             <div className="relative w-full overflow-auto p-4">
-                                <OpnameTable data={serializedOpnames} />
+                                <OpnameTable data={opnames} />
                             </div>
                             <div className="p-4 border-t">
                                 <Pagination

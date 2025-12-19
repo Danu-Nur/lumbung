@@ -1,21 +1,18 @@
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { formatDateTime } from '@/lib/utils';
 import { Pagination } from '@/components/shared/pagination';
-import { SearchInput } from '@/components/shared/search-input';
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
 import { AdjustmentModalManager } from '@/components/domain/adjustments/adjustment-modal-manager';
-import { AdjustmentActions } from '@/components/domain/adjustments/adjustment-actions';
 import { AdjustmentTable } from '@/components/domain/inventory/tables/adjustment-table';
 import { ImportModal } from '@/components/shared/import-modal';
 import { importAdjustmentBatch } from '@/features/adjustments/import-actions';
+import { LoadingState } from '@/components/shared/loading-state';
 
 interface InventoryAdjustmentSectionProps {
     page: number;
@@ -26,61 +23,51 @@ interface InventoryAdjustmentSectionProps {
     organizationId: string;
 }
 
-export async function InventoryAdjustmentSection({ page, pageSize, search, modal, id, organizationId }: InventoryAdjustmentSectionProps) {
-    // const session = await auth(); // Removed legacy auth
-    const t = await getTranslations('inventory.adjustments');
-    const tInventory = await getTranslations('inventory');
-    const tCommon = await getTranslations('common');
+export function InventoryAdjustmentSection({ page, pageSize, search, modal, id, organizationId }: InventoryAdjustmentSectionProps) {
+    const t = useTranslations('inventory.adjustments');
+    const tInventory = useTranslations('inventory');
+    const tCommon = useTranslations('common');
 
-    if (!organizationId) {
-        redirect('/login');
-    }
-
-    const skip = (page - 1) * pageSize;
-    const where: any = {
-        organizationId: organizationId,
-    };
-
-    if (search) {
-        where.OR = [
-            { product: { name: { contains: search } } },
-            { reason: { contains: search } },
-        ];
-    }
+    // Adjustments query
+    const { data: adjustmentsData, isLoading } = useQuery({
+        queryKey: ['adjustments', page, pageSize, search],
+        queryFn: async () => {
+            const res = await api.get('/inventory/adjustments', {
+                params: { page, pageSize, q: search }
+            });
+            return res.data; // { adjustments, total }
+        }
+    });
 
     const shouldFetchOptions = modal === 'create' || modal === 'edit';
 
-    const [adjustments, total, products, warehouses] = await Promise.all([
-        prisma.stockAdjustment.findMany({
-            where,
-            include: {
-                product: true,
-                warehouse: true,
-                createdBy: true,
-            },
-            orderBy: { createdAt: 'desc' },
-            skip,
-            take: pageSize,
-        }),
-        prisma.stockAdjustment.count({
-            where,
-        }),
-        shouldFetchOptions ? prisma.product.findMany({
-            where: { organizationId: organizationId, deletedAt: null },
-            select: { id: true, name: true, sku: true, unit: true },
-            orderBy: { name: 'asc' },
-        }) : Promise.resolve([]),
-        shouldFetchOptions ? prisma.warehouse.findMany({
-            where: { organizationId: organizationId, deletedAt: null, isActive: true },
-            select: { id: true, name: true },
-            orderBy: { name: 'asc' },
-        }) : Promise.resolve([]),
-    ]);
+    // Options for modals
+    const { data: products = [] } = useQuery({
+        queryKey: ['products-options-adj'],
+        enabled: shouldFetchOptions,
+        queryFn: async () => {
+            const res = await api.get('/products');
+            return res.data.products || [];
+        }
+    });
 
+    const { data: warehouses = [] } = useQuery({
+        queryKey: ['warehouses-options-adj'],
+        enabled: shouldFetchOptions,
+        queryFn: async () => {
+            const res = await api.get('/warehouses');
+            return res.data.warehouses || [];
+        }
+    });
+
+    if (isLoading) return <LoadingState message={tCommon('table.loading') || 'Loading...'} />;
+
+    const adjustments = adjustmentsData?.adjustments || [];
+    const total = adjustmentsData?.total || 0;
     const totalPages = Math.ceil(total / pageSize);
 
     // Serialize Decimal fields for client component
-    const serializedAdjustments = adjustments.map((adjustment) => ({
+    const serializedAdjustments = adjustments.map((adjustment: any) => ({
         ...adjustment,
         product: {
             ...adjustment.product,
@@ -103,7 +90,6 @@ export async function InventoryAdjustmentSection({ page, pageSize, search, modal
                     <p className="text-sm text-muted-foreground">{t('description')}</p>
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                    {/* <SearchInput className="w-full sm:w-[300px]" placeholder={tCommon('buttons.search')} /> */}
                     <ImportModal
                         type="adjustments"
                         onImport={importAdjustmentBatch}

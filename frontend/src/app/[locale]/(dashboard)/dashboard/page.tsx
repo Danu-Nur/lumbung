@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import { auth } from '@/lib/auth';
 import { getTranslations } from 'next-intl/server';
 import { dashboardService } from '@/lib/services/dashboardService';
 import { FinancialStatsRow } from '@/components/domain/dashboard/financial-stats-row';
@@ -6,44 +6,19 @@ import { OperationalStatsRow } from '@/components/domain/dashboard/operational-s
 import { DashboardChartsSection } from '@/components/domain/dashboard/dashboard-charts-section';
 import { DashboardActivitySection } from '@/components/domain/dashboard/dashboard-activity-section';
 
-import { cookies } from 'next/headers';
-
 export default async function DashboardPage() {
     const t = await getTranslations('dashboard');
+    const session = await auth();
 
-    // Get token from cookies (Microservices Auth)
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
-
-    let orgId = '';
-
-    if (token) {
-        try {
-            // Check if it looks like a JWT
-            const parts = token.split('.');
-            if (parts.length === 3) {
-                const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
-                orgId = payload.organizationId || '';
-            }
-        } catch (e) {
-            console.error("Failed to parse token:", e);
-        }
-    }
+    const orgId = (session?.user as any)?.organizationId || '';
+    const token = (session?.user as any)?.accessToken || '';
 
     if (!orgId) {
-        // Fallback for offline/demo if token is dummy
-        if (token === 'offline-dev-token') {
-            orgId = 'org-offline';
-        } else {
-            // If really no auth, Middleware normally catches this, but just in case:
-            // return redirect('/login'); 
-            // allowed to proceed to render empty dashboard or 0 values
-        }
+        // If really no auth, Middleware normally catches this
+        // But we handle it gracefully here
     }
 
-    // Fetched using orgId from cookie above
-
-    // Fetch all data in parallel
+    // Fetch all data in parallel using the session token
     const [
         stats,
         lowStockItems,
@@ -53,13 +28,13 @@ export default async function DashboardPage() {
         financialAnalytics,
         recentProducts
     ] = await Promise.all([
-        dashboardService.getDashboardStats(orgId),
-        dashboardService.getLowStockItems(orgId),
-        dashboardService.getRecentInventoryChanges(orgId),
-        dashboardService.getWarehouseOverview(orgId),
-        dashboardService.getOperationalStats(orgId),
-        dashboardService.getFinancialAnalytics(orgId),
-        dashboardService.getRecentProducts(orgId),
+        dashboardService.getDashboardStats(orgId, token),
+        dashboardService.getLowStockItems(orgId, token),
+        dashboardService.getRecentInventoryChanges(orgId, token),
+        dashboardService.getWarehouseOverview(orgId, token),
+        dashboardService.getOperationalStats(orgId, token),
+        dashboardService.getFinancialAnalytics(orgId, token),
+        dashboardService.getRecentProducts(orgId, token),
     ]);
 
     // Financial Stats Row Data

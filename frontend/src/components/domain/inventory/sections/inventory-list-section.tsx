@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { InventoryModalManager } from '@/components/domain/inventory/modals/inventory-modal-manager';
 import { InventoryTable } from '@/components/domain/inventory/tables/inventory-table';
-import { ImportModal } from '@/components/shared/import-modal';
+import { LoadingState } from '@/components/shared/loading-state';
 // import { importStockBatch } from '@/features/inventory/import-actions'; // Moved or Refactored?
 
 interface InventoryListSectionProps {
@@ -27,60 +27,72 @@ export function InventoryListSection({ page, pageSize, search, modal, id }: Inve
     const t = useTranslations('inventory');
     const tCommon = useTranslations('common');
 
-    const { data: products = [], isLoading } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: ['products', page, pageSize, search],
         queryFn: async () => {
             try {
-                // In real app, pass params to API for filtration
-                const res = await api.get('/products');
-                // Cache to Dexie (Offline First)
-                await db.products.bulkPut(res.data.map((p: any) => ({
+                const res = await api.get('/products', {
+                    params: { page, pageSize, q: search }
+                });
+                const { products: fetchedProducts, total: fetchedTotal } = res.data;
+
+                // Cache to Dexie (Offline First) - Mapping basics for offline search
+                await db.products.bulkPut(fetchedProducts.map((p: any) => ({
                     id: p.id,
                     name: p.name,
                     sku: p.sku,
                     sellingPrice: Number(p.sellingPrice),
+                    costPrice: Number(p.costPrice),
+                    organizationId: p.organizationId,
                     updatedAt: new Date().toISOString()
                 })));
-                return res.data;
+
+                return { products: fetchedProducts, total: fetchedTotal };
             } catch (error) {
                 console.warn('Offline mode or API error, fetching from local DB');
-                return await db.products.toArray();
+                const localProducts = await db.products.toArray();
+                return { products: localProducts, total: localProducts.length };
             }
         }
     });
+
+    const products = data?.products || [];
+    const total = data?.total || 0;
+    const totalPages = Math.ceil(total / pageSize);
 
     // Data needed for Modals
     const { data: categories = [] } = useQuery({
         queryKey: ['categories'],
         queryFn: async () => {
             const res = await api.get('/categories');
-            return res.data;
+            return res.data.categories || [];
         }
     });
+
     const { data: warehouses = [] } = useQuery({
         queryKey: ['warehouses'],
         queryFn: async () => {
             const res = await api.get('/warehouses');
-            return res.data;
+            return res.data.warehouses || [];
         }
     });
+
     const { data: suppliers = [] } = useQuery({
         queryKey: ['suppliers'],
         queryFn: async () => {
             const res = await api.get('/suppliers');
-            return res.data;
+            return res.data.suppliers || [];
         }
     });
 
-    const total = products.length; // Client-side pagination for MVP
-    const totalPages = Math.ceil(total / pageSize);
-
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <LoadingState message={tCommon('table.loading') || 'Loading...'} />;
 
     const serializedProducts = products.map((product: any) => ({
         ...product,
         sellingPrice: Number(product.sellingPrice),
         costPrice: Number(product.costPrice),
+        lowStockThreshold: Number(product.lowStockThreshold || 0),
+        totalStock: product.inventoryItems?.reduce((acc: number, item: any) => acc + item.quantityOnHand, 0) || 0,
     }));
 
     return (

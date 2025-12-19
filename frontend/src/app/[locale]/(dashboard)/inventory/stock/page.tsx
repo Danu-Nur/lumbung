@@ -1,5 +1,4 @@
-import { cookies } from 'next/headers';
-import { getTranslations } from 'next-intl/server';
+import { auth } from '@/lib/auth';
 import { InventoryTransferSection } from '@/components/domain/inventory/sections/inventory-transfer-section';
 import { InventoryAdjustmentSection } from '@/components/domain/inventory/sections/inventory-adjustment-section';
 import { InventoryOpnameSection } from '@/components/domain/inventory/sections/inventory-opname-section';
@@ -11,23 +10,7 @@ export default async function StockPage({
 }: {
     searchParams: Promise<{ page?: string; pageSize?: string; q?: string; view?: string; modal?: string; id?: string }>;
 }) {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
-    let orgId = '';
-
-    if (token) {
-        try {
-            const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-            orgId = payload.organizationId || '';
-        } catch (e) {
-            console.error("Token parse error", e);
-        }
-    }
-
-    if (!orgId && token === 'offline-dev-token') {
-        orgId = 'org-offline';
-    }
-
+    const session = await auth();
     const resolvedSearchParams = await searchParams;
     const page = Number(resolvedSearchParams.page) || 1;
     const pageSize = Number(resolvedSearchParams.pageSize) || 10;
@@ -35,6 +18,7 @@ export default async function StockPage({
     const view = resolvedSearchParams.view || 'transfers';
     const modal = resolvedSearchParams.modal;
     const id = resolvedSearchParams.id;
+    const orgId = (session?.user as any)?.organizationId || '';
 
     return (
         <div className="w-full space-y-6">

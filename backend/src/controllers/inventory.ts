@@ -40,9 +40,132 @@ export async function getInventoryHandler(req: FastifyRequest, reply: FastifyRep
         if (!req.user) return reply.code(401).send({ error: 'Unauthorized' });
 
         const user = req.user as { organizationId: string };
-        const items = await InventoryService.getInventory(user.organizationId);
-        return items;
+        const { page = '1', pageSize = '10', q = '' } = req.query as any;
+
+        const result = await InventoryService.getInventory(user.organizationId, {
+            page: parseInt(page),
+            pageSize: parseInt(pageSize),
+            q
+        });
+        return result;
     } catch (error) {
+        req.log.error(error);
+        return reply.code(500).send({ error: 'Internal Server Error' });
+    }
+}
+
+export async function getAdjustmentsHandler(req: FastifyRequest, reply: FastifyReply) {
+    try {
+        if (!req.user) return reply.code(401).send({ error: 'Unauthorized' });
+
+        const user = req.user as { organizationId: string };
+        const { page = '1', pageSize = '10', q = '' } = req.query as any;
+
+        const result = await InventoryService.getAdjustments(user.organizationId, {
+            page: parseInt(page),
+            pageSize: parseInt(pageSize),
+            q
+        });
+        return result;
+    } catch (error) {
+        req.log.error(error);
+        return reply.code(500).send({ error: 'Internal Server Error' });
+    }
+}
+
+export async function getTransfersHandler(req: FastifyRequest, reply: FastifyReply) {
+    try {
+        if (!req.user) return reply.code(401).send({ error: 'Unauthorized' });
+
+        const user = req.user as { organizationId: string };
+        const { page = '1', pageSize = '10', q = '' } = req.query as any;
+
+        const result = await InventoryService.getTransfers(user.organizationId, {
+            page: parseInt(page),
+            pageSize: parseInt(pageSize),
+            q
+        });
+        return result;
+    } catch (error) {
+        req.log.error(error);
+        return reply.code(500).send({ error: 'Internal Server Error' });
+    }
+}
+
+export async function getStockOpnamesHandler(req: FastifyRequest, reply: FastifyReply) {
+    try {
+        if (!req.user) return reply.code(401).send({ error: 'Unauthorized' });
+
+        const user = req.user as { organizationId: string };
+        const { page = '1', pageSize = '10', q = '' } = req.query as any;
+
+        const result = await InventoryService.getOpnames(user.organizationId, {
+            page: parseInt(page),
+            pageSize: parseInt(pageSize),
+            q
+        });
+        return result;
+    } catch (error) {
+        req.log.error(error);
+        return reply.code(500).send({ error: 'Internal Server Error' });
+    }
+}
+const createTransferSchema = z.object({
+    fromWarehouseId: z.string(),
+    toWarehouseId: z.string(),
+    notes: z.string().optional(),
+    items: z.array(z.object({
+        productId: z.string(),
+        quantity: z.number().int().positive()
+    })).min(1),
+});
+
+export async function createTransferHandler(req: FastifyRequest, reply: FastifyReply) {
+    try {
+        if (!req.user) return reply.code(401).send({ error: 'Unauthorized' });
+
+        const data = createTransferSchema.parse(req.body);
+        const user = req.user as { organizationId: string; id: string };
+
+        const result = await InventoryService.createTransfer({
+            ...data,
+            organizationId: user.organizationId,
+            userId: user.id
+        });
+
+        return result;
+    } catch (error) {
+        if (error instanceof z.ZodError) return reply.code(400).send({ error: error.errors });
+        req.log.error(error);
+        return reply.code(500).send({ error: 'Internal Server Error' });
+    }
+}
+
+const createOpnameSchema = z.object({
+    warehouseId: z.string(),
+    notes: z.string().optional(),
+    items: z.array(z.object({
+        productId: z.string(),
+        actualQty: z.number().int().nonnegative()
+    })).min(1),
+});
+
+export async function createStockOpnameHandler(req: FastifyRequest, reply: FastifyReply) {
+    try {
+        if (!req.user) return reply.code(401).send({ error: 'Unauthorized' });
+
+        const data = createOpnameSchema.parse(req.body);
+        const user = req.user as { organizationId: string; id: string };
+
+        const result = await InventoryService.createStockOpname({
+            ...data,
+            organizationId: user.organizationId,
+            userId: user.id
+        });
+
+        return result;
+    } catch (error) {
+        if (error instanceof z.ZodError) return reply.code(400).send({ error: error.errors });
         req.log.error(error);
         return reply.code(500).send({ error: 'Internal Server Error' });
     }

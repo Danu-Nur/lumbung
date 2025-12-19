@@ -1,28 +1,14 @@
-import { cookies } from 'next/headers';
+import { auth } from '@/lib/auth';
 import { InventoryListSection } from '@/components/domain/inventory/sections/inventory-list-section';
-import { getTranslations } from 'next-intl/server';
 
 export default async function InventoryPage({
     searchParams,
 }: {
     searchParams: Promise<{ page?: string; pageSize?: string; q?: string; modal?: string; id?: string }>;
 }) {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
-    let orgId = '';
-
-    if (token) {
-        try {
-            const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-            orgId = payload.organizationId || '';
-        } catch (e) {
-            console.error("Token parse error", e);
-        }
-    }
-
-    if (!orgId && token === 'offline-dev-token') {
-        orgId = 'org-offline';
-    }
+    const session = await auth();
+    const orgId = (session?.user as any)?.organizationId || '';
+    const token = (session?.user as any)?.accessToken || '';
 
     const resolvedSearchParams = await searchParams;
     const page = Number(resolvedSearchParams.page) || 1;

@@ -192,5 +192,10 @@
     },
     "statsCard": {
         "fromLastMonth": "from last month"
+    },
+    "topbar": {
+        "profile": "Profile",
+        "settings": "Settings",
+        "logout": "Logout"
     }
 }

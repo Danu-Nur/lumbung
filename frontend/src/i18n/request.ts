@@ -41,51 +41,26 @@ export default getRequestConfig(async ({ requestLocale }) => {
     const partnersRaw = partnersModule.default;
     const authRaw = authModule.default;
 
-    // Pisah key yang mau dijadiin top-level tapi tetap preserve struktur lama
-    const { help, Footer, ...common } = commonRaw;
-
-    // charts tetap di bawah namespace dashboard (bukan top-level)
-    const { charts, ...dashboard } = dashboardRaw;
-
-    // Beberapa bagian inventory dijadikan namespace sendiri
-    const {
-        categories,
-        warehouses,
-        transfers,
-        adjustments,
-        opname,
-        ...inventory
-    } = inventoryRaw;
-
+    // Preserve original structure but also allow flattened access where needed
     const messages = {
-        // common & turunannya
-        common,
-        help,
-        Footer,
-
-        // auth namespace → t('auth.login.title')
+        // Full namespaces
+        common: commonRaw,
         auth: authRaw,
-
-        // dashboard tetap satu namespace, charts di dalamnya
-        dashboard: {
-            ...dashboard,
-            charts
-        },
-
-        // inventory namespace + sub-namespace sesuai kebutuhan
-        inventory,
-        categories,
-        warehouses,
-        transfers,
-        adjustments,
-        opname,
-
-        // sales & purchases per-domain
+        dashboard: dashboardRaw,
+        inventory: inventoryRaw,
         sales: salesRaw,
         purchases: purchasesRaw,
 
-        // partners.json & marketing.json di-*spread* ke top-level
-        // misal: suppliers, customers, landing, pricing, about, dll.
+        // Top-level aliases for convenience (if used by some components)
+        help: commonRaw.help,
+        Footer: commonRaw.Footer,
+        categories: inventoryRaw.categories,
+        warehouses: inventoryRaw.warehouses,
+        transfers: inventoryRaw.transfers,
+        adjustments: inventoryRaw.adjustments,
+        opname: inventoryRaw.opname,
+
+        // Spread partners and marketing as they are mostly flat domain lists
         ...partnersRaw,
         ...marketingRaw
     };

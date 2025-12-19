@@ -1,17 +1,18 @@
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { categoryService } from '@/lib/services/categoryService';
 import { Pagination } from '@/components/shared/pagination';
-import { SearchInput } from '@/components/shared/search-input';
 import { Package, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
 import { CategoryModalManager } from '@/components/domain/categories/category-modal-manager';
 import { CategoriesTable } from '@/components/domain/categories/tables/categories-table';
 import { ImportModal } from '@/components/shared/import-modal';
 import { importCategoriesBatch } from '@/features/categories/import-actions';
+import { LoadingState } from '@/components/shared/loading-state';
 
 interface CategoriesListSectionProps {
     page: number;
@@ -20,21 +21,25 @@ interface CategoriesListSectionProps {
     organizationId: string;
 }
 
-export async function CategoriesListSection({ page, pageSize, search, organizationId }: CategoriesListSectionProps) {
-    // const session = await auth(); // Removed legacy auth
-    const t = await getTranslations('inventory.categories');
-    const tCommon = await getTranslations('common');
+export function CategoriesListSection({ page, pageSize, search, organizationId }: CategoriesListSectionProps) {
+    const t = useTranslations('inventory.categories');
+    const tCommon = useTranslations('common');
 
-    if (!organizationId) {
-        redirect('/login');
-    }
-
-    const { data: categories, total, totalPages } = await categoryService.listCategories({
-        organizationId: organizationId,
-        search,
-        page,
-        pageSize,
+    const { data, isLoading } = useQuery({
+        queryKey: ['categories', page, pageSize, search],
+        queryFn: async () => {
+            const res = await api.get('/categories', {
+                params: { page, pageSize, q: search }
+            });
+            return res.data; // Expecting { categories, total }
+        }
     });
+
+    if (isLoading) return <LoadingState message={tCommon('table.loading') || 'Loading...'} />;
+
+    const categories = data?.categories || [];
+    const total = data?.total || 0;
+    const totalPages = Math.ceil(total / pageSize);
 
     return (
         <div className="space-y-4">

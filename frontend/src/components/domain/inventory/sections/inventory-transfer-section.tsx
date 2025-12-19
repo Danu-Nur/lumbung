@@ -1,16 +1,18 @@
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, ArrowLeftRight } from 'lucide-react';
 import Link from 'next/link';
 import { Pagination } from '@/components/shared/pagination';
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
 import { TransferModalManager } from '@/components/domain/transfers/transfer-modal-manager';
 import { TransferTable } from '@/components/domain/inventory/tables/transfer-table';
 import { ImportModal } from '@/components/shared/import-modal';
 import { importTransferBatch } from '@/features/transfers/import-actions';
+import { LoadingState } from '@/components/shared/loading-state';
 
 interface InventoryTransferSectionProps {
     page: number;
@@ -21,117 +23,75 @@ interface InventoryTransferSectionProps {
     organizationId: string;
 }
 
-export async function InventoryTransferSection({ page, pageSize, search, modal, id, organizationId }: InventoryTransferSectionProps) {
-    // const session = await auth(); // Removed legacy auth
-    const t = await getTranslations('inventory.transfers');
-    const tInventory = await getTranslations('inventory');
-    const tCommon = await getTranslations('common');
+export function InventoryTransferSection({ page, pageSize, search, modal, id, organizationId }: InventoryTransferSectionProps) {
+    const t = useTranslations('inventory.transfers');
+    const tInventory = useTranslations('inventory');
+    const tCommon = useTranslations('common');
 
-    if (!organizationId) {
-        redirect('/login');
-    }
+    // Transfers query
+    const { data: transfersData, isLoading } = useQuery({
+        queryKey: ['transfers', page, pageSize, search],
+        queryFn: async () => {
+            const res = await api.get('/inventory/transfers', {
+                params: { page, pageSize, q: search }
+            });
+            return res.data; // { transfers, total }
+        }
+    });
 
-    const skip = (page - 1) * pageSize;
-    const where: any = {
-        organizationId: organizationId,
-    };
-
-    if (search) {
-        where.OR = [
-            { transferNumber: { contains: search } },
-            { fromWarehouse: { name: { contains: search } } },
-            { toWarehouse: { name: { contains: search } } },
-        ];
-    }
-
-    const shouldFetchDetails = (modal === 'show' || modal === 'edit') && !!id;
     const shouldFetchOptions = modal === 'create' || modal === 'edit';
 
-    const [transfers, total, warehouses, products, selectedTransfer] = await Promise.all([
-        prisma.stockTransfer.findMany({
-            where,
-            select: {
-                id: true,
-                transferNumber: true,
-                transferDate: true,
-                status: true,
-                notes: true,
-                fromWarehouse: {
-                    select: { id: true, name: true }
-                },
-                toWarehouse: {
-                    select: { id: true, name: true }
-                },
-                items: {
-                    select: { id: true }
-                }
-            },
-            orderBy: { createdAt: 'desc' },
-            skip,
-            take: pageSize,
-        }),
-        prisma.stockTransfer.count({
-            where,
-        }),
-        shouldFetchOptions ? prisma.warehouse.findMany({
-            where: { organizationId: organizationId, deletedAt: null, isActive: true },
-            select: { id: true, name: true },
-            orderBy: { name: 'asc' },
-        }) : Promise.resolve([]),
-        shouldFetchOptions ? prisma.product.findMany({
-            where: { organizationId: organizationId, deletedAt: null },
-            select: { id: true, name: true, sku: true },
-            orderBy: { name: 'asc' },
-        }) : Promise.resolve([]),
-        shouldFetchDetails ? prisma.stockTransfer.findUnique({
-            where: { id },
-            include: {
-                fromWarehouse: true,
-                toWarehouse: true,
-                items: {
-                    include: {
-                        product: true,
-                    },
-                },
-            },
-        }) : Promise.resolve(null)
-    ]);
+    // Options for modals
+    const { data: warehouses = [] } = useQuery({
+        queryKey: ['warehouses-options'],
+        enabled: shouldFetchOptions,
+        queryFn: async () => {
+            const res = await api.get('/warehouses');
+            return res.data.warehouses || [];
+        }
+    });
 
+    const { data: products = [] } = useQuery({
+        queryKey: ['products-options'],
+        enabled: shouldFetchOptions,
+        queryFn: async () => {
+            const res = await api.get('/products');
+            return res.data.products || [];
+        }
+    });
+
+    if (isLoading) return <LoadingState message={tCommon('table.loading') || 'Loading...'} />;
+
+    const transfers = transfersData?.transfers || [];
+    const total = transfersData?.total || 0;
     const totalPages = Math.ceil(total / pageSize);
 
-    // Serialize transfers for list (minimal data)
-    // We cast to any here because the select query returns a partial shape that matches what we need for the table
-    // creating a partial SerializedStockTransfer
-    const serializedTransfers = transfers.map((transfer: any) => ({
-        ...transfer,
-        items: transfer.items, // Array of { id }
-        // Populate missing fields with null/defaults if needed by type, 
-        // strictly speaking SerializedStockTransfer expects full objects, but Table only uses what we selected.
-        fromWarehouse: transfer.fromWarehouse,
-        toWarehouse: transfer.toWarehouse,
-    }));
+    // Get selected transfer for show/edit modals
+    const selectedTransfer = (modal === 'show' || modal === 'edit') && id
+        ? transfers.find((t: any) => t.id === id)
+        : undefined;
 
-    // Serialize selected transfer for modal (full data)
-    let serializedSelectedTransfer = undefined;
-    if (selectedTransfer) {
-        serializedSelectedTransfer = {
-            ...selectedTransfer,
-            items: selectedTransfer.items.map((item) => ({
-                ...item,
-                product: {
-                    ...item.product,
-                    sellingPrice: Number(item.product.sellingPrice),
-                    costPrice: Number(item.product.costPrice),
-                },
-            })),
-        };
-    }
+    // Serialize selected transfer for modal (full data - Decimal fields)
+    const serializedSelectedTransfer = selectedTransfer ? {
+        ...selectedTransfer,
+        items: selectedTransfer.items.map((item: any) => ({
+            ...item,
+            product: {
+                ...item.product,
+                sellingPrice: Number(item.product.sellingPrice),
+                costPrice: Number(item.product.costPrice),
+            },
+        })),
+    } : undefined;
+
+    // In a real scenario, we might need a separate GET by ID if the list doesn't have all data,
+    // but our backend getTransfers service includes items and product details.
 
     return (
         <div className="space-y-4">
             <TransferModalManager
-                transfers={serializedTransfers as any}
-                selectedTransfer={serializedSelectedTransfer}
+                transfers={transfers as any}
+                selectedTransfer={serializedSelectedTransfer as any}
                 warehouses={warehouses}
                 products={products}
             />
@@ -166,7 +126,7 @@ export async function InventoryTransferSection({ page, pageSize, search, modal, 
 
             <Card>
                 <CardContent className="p-0">
-                    {serializedTransfers.length === 0 ? (
+                    {transfers.length === 0 ? (
                         <div className="text-center py-12">
                             <ArrowLeftRight className="w-12 h-12 text-slate-400 mx-auto mb-4" />
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
@@ -182,7 +142,7 @@ export async function InventoryTransferSection({ page, pageSize, search, modal, 
                     ) : (
                         <>
                             <div className="relative w-full overflow-auto p-4">
-                                <TransferTable data={serializedTransfers as any} />
+                                <TransferTable data={transfers as any} />
                             </div>
                             <div className="p-4 border-t">
                                 <Pagination

@@ -1,6 +1,7 @@
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import { supplierService } from '@/lib/services/supplierService';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Building2 } from 'lucide-react';
@@ -8,7 +9,8 @@ import Link from 'next/link';
 import { SupplierModalManager } from '@/components/domain/suppliers/supplier-modal-manager';
 import { SupplierTable } from '@/components/domain/suppliers/tables/supplier-table';
 import { Pagination } from '@/components/shared/pagination';
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
+import { LoadingState } from '@/components/shared/loading-state';
 
 interface SupplierListSectionProps {
     page: number;
@@ -17,21 +19,25 @@ interface SupplierListSectionProps {
     organizationId: string;
 }
 
-export async function SupplierListSection({ page, pageSize, search, organizationId }: SupplierListSectionProps) {
-    // const session = await auth(); // Removed legacy auth
-    const t = await getTranslations('inventory.suppliers');
-    const tCommon = await getTranslations('common');
+export function SupplierListSection({ page, pageSize, search, organizationId }: SupplierListSectionProps) {
+    const t = useTranslations('inventory.suppliers');
+    const tCommon = useTranslations('common');
 
-    if (!organizationId) {
-        redirect('/login');
-    }
-
-    const { suppliers, total, totalPages } = await supplierService.listSuppliers({
-        organizationId: organizationId,
-        page,
-        pageSize,
-        search,
+    const { data, isLoading } = useQuery({
+        queryKey: ['suppliers', page, pageSize, search],
+        queryFn: async () => {
+            const res = await api.get('/suppliers', {
+                params: { page, pageSize, q: search }
+            });
+            return res.data; // Expecting { suppliers, total }
+        }
     });
+
+    if (isLoading) return <LoadingState message={tCommon('table.loading') || 'Loading...'} />;
+
+    const suppliers = data?.suppliers || [];
+    const total = data?.total || 0;
+    const totalPages = Math.ceil(total / pageSize);
 
     return (
         <div className="space-y-6">

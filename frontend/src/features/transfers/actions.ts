@@ -1,16 +1,16 @@
 'use server';
 
-import { auth } from '@/lib/auth';
+import api from '@/lib/api';
 import { revalidatePath } from 'next/cache';
-import { transferService } from '@/lib/services/transferService';
-import { transferSchema } from '@/lib/validations/transfer';
+import { auth } from '@/lib/auth';
+
+async function getSession() {
+    return await auth();
+}
 
 export async function createTransfer(formData: FormData) {
-    const session = await auth();
-
-    if (!session?.user || !session.user.organizationId) {
-        throw new Error('Unauthorized');
-    }
+    const session = await getSession();
+    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
 
     const rawData = {
         fromWarehouseId: formData.get('fromWarehouseId') as string,
@@ -19,43 +19,39 @@ export async function createTransfer(formData: FormData) {
         items: JSON.parse(formData.get('items') as string || '[]'),
     };
 
-    const validatedFields = transferSchema.safeParse(rawData);
+    try {
+        const response = await api.post('/inventory/transfers', rawData, {
+            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+        });
 
-    if (!validatedFields.success) {
-        throw new Error(validatedFields.error.issues[0].message);
+        revalidatePath('/transfers');
+        revalidatePath('/inventory');
+        return response.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.error || 'Failed to create transfer');
     }
-
-    const { fromWarehouseId, toWarehouseId, notes, items } = validatedFields.data;
-
-    const transfer = await transferService.createTransferDraft({
-        organizationId: session.user.organizationId,
-        createdById: session.user.id,
-        fromWarehouseId,
-        toWarehouseId,
-        notes,
-        items,
-    });
-
-    revalidatePath('/transfers');
-    return transfer;
 }
 
 export async function sendTransfer(transferId: string) {
-    const session = await auth();
-    if (!session?.user || !session.user.organizationId) throw new Error('Unauthorized');
+    const session = await getSession();
+    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
 
-    await transferService.sendTransfer(transferId, session.user.id, session.user.organizationId);
-
-    revalidatePath('/transfers');
-    revalidatePath(`/transfers/${transferId}`);
+    try {
+        // await api.post(`/inventory/transfers/${transferId}/send`, {}, { ... });
+        revalidatePath('/transfers');
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function completeTransfer(transferId: string) {
-    const session = await auth();
-    if (!session?.user || !session.user.organizationId) throw new Error('Unauthorized');
+    const session = await getSession();
+    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
 
-    await transferService.completeTransfer(transferId, session.user.id, session.user.organizationId);
-
-    revalidatePath('/transfers');
-    revalidatePath(`/transfers/${transferId}`);
+    try {
+        // await api.post(`/inventory/transfers/${transferId}/complete`, {}, { ... });
+        revalidatePath('/transfers');
+    } catch (error) {
+        throw error;
+    }
 }

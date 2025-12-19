@@ -79,16 +79,38 @@ export class ProductService {
         });
     }
 
-    static async getProducts(organizationId: string) {
-        return await prisma.product.findMany({
-            where: { organizationId, deletedAt: null },
-            orderBy: { createdAt: 'desc' },
-            include: {
-                category: true,
-                supplier: true,
-                inventoryItems: true
-            }
-        });
+    static async getProducts(organizationId: string, page = 1, pageSize = 10, search = '') {
+        const skip = (page - 1) * pageSize;
+        const where: any = {
+            organizationId,
+            deletedAt: null,
+        };
+
+        if (search) {
+            where.OR = [
+                { name: { contains: search, mode: 'insensitive' } },
+                { sku: { contains: search, mode: 'insensitive' } },
+            ];
+        }
+
+        const [products, total] = await Promise.all([
+            prisma.product.findMany({
+                where,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    category: true,
+                    supplier: true,
+                    inventoryItems: {
+                        include: { warehouse: true }
+                    }
+                },
+                skip,
+                take: pageSize,
+            }),
+            prisma.product.count({ where })
+        ]);
+
+        return { products, total };
     }
 
     static async updateProduct(id: string, organizationId: string, data: Partial<CreateProductData>) {

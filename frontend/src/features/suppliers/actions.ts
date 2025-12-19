@@ -1,8 +1,12 @@
 'use server';
 
-import { auth } from '@/lib/auth';
-import { supplierService } from '@/lib/services/supplierService';
+import api from '@/lib/api';
 import { revalidatePath } from 'next/cache';
+import { auth } from '@/lib/auth';
+
+async function getSession() {
+    return await auth();
+}
 
 export async function createSupplier(data: {
     name: string;
@@ -11,19 +15,20 @@ export async function createSupplier(data: {
     address?: string;
     city?: string;
 }) {
-    const session = await auth();
+    const session = await getSession();
+    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
 
-    if (!session?.user || !session.user.organizationId) {
-        throw new Error('Unauthorized');
+    try {
+        const response = await api.post('/suppliers', data, {
+            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+        });
+
+        revalidatePath('/inventory');
+        revalidatePath('/suppliers');
+        return response.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.error || 'Failed to create supplier');
     }
-
-    const supplier = await supplierService.createSupplier({
-        organizationId: session.user.organizationId,
-        ...data,
-    });
-
-    revalidatePath('/inventory');
-    return supplier;
 }
 
 export async function updateSupplier(id: string, data: {
@@ -33,33 +38,34 @@ export async function updateSupplier(id: string, data: {
     address?: string;
     city?: string;
 }) {
-    const session = await auth();
+    const session = await getSession();
+    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
 
-    if (!session?.user || !session.user.organizationId) {
-        throw new Error('Unauthorized');
+    try {
+        const response = await api.put(`/suppliers/${id}`, data, {
+            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+        });
+
+        revalidatePath('/inventory');
+        revalidatePath('/suppliers');
+        return response.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.error || 'Failed to update supplier');
     }
-
-    const supplier = await supplierService.updateSupplier({
-        id,
-        organizationId: session.user.organizationId,
-        data,
-    });
-
-    revalidatePath('/inventory');
-    return supplier;
 }
 
 export async function deleteSupplier(id: string) {
-    const session = await auth();
+    const session = await getSession();
+    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
 
-    if (!session?.user || !session.user.organizationId) {
-        throw new Error('Unauthorized');
+    try {
+        await api.delete(`/suppliers/${id}`, {
+            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+        });
+
+        revalidatePath('/inventory');
+        revalidatePath('/suppliers');
+    } catch (error: any) {
+        throw new Error(error.response?.data?.error || 'Failed to delete supplier');
     }
-
-    await supplierService.deleteSupplier({
-        id,
-        organizationId: session.user.organizationId,
-    });
-
-    revalidatePath('/inventory');
 }

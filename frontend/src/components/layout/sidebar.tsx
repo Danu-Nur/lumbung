@@ -31,6 +31,7 @@ import {
     SheetDescription,
 } from '@/components/ui/sheet';
 import { useState, useEffect } from 'react';
+import { BrandLogo } from './brand-logo';
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> { }
 
@@ -105,15 +106,17 @@ export function Sidebar({ className }: SidebarProps) {
             )}
         >
             {/* Logo */}
-            <div className="h-14 flex items-center px-6 border-b-2 border-black">
-                <Link href="/dashboard" className="flex items-center space-x-2">
+            <div className="h-20 flex items-center px-6 border-b-2 border-black">
+                {/* <Link href="/dashboard" className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                         <Package className="w-5 h-5 text-primary-foreground" />
                     </div>
                     <span className="text-xl font-bold text-foreground">
                         {tSidebar('logo')}
                     </span>
-                </Link>
+                </Link> */}
+                    <BrandLogo href="/dashboard" />
+
             </div>
 
             {/* Organization Info */}
@@ -302,7 +305,7 @@ export function MobileSidebar() {
 
                 {/* Logo */}
                 <div className="h-14 flex items-center px-6 border-b-2 border-black">
-                    <Link
+                    {/* <Link
                         href="/dashboard"
                         className="flex items-center space-x-2"
                         onClick={() => setOpen(false)}
@@ -313,7 +316,9 @@ export function MobileSidebar() {
                         <span className="text-xl font-bold text-foreground">
                             {tSidebar('logo')}
                         </span>
-                    </Link>
+                    </Link> */}
+                    <BrandLogo href='/dashboard' onClick={() => setOpen(false)} />
+
                 </div>
 
                 {/* Organization Info */}

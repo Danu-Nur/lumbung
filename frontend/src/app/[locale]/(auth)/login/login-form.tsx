@@ -53,7 +53,7 @@ export function LoginForm() {
 
             // Login successful
             router.refresh(); // Sync server session
-            router.push(callbackUrl || '/inventory');
+            router.push(callbackUrl || '/dashboard');
 
         } catch (err: any) {
             console.error(err);

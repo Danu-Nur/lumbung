@@ -192,5 +192,10 @@
     },
     "statsCard": {
         "fromLastMonth": "dari bulan lalu"
+    },
+    "topbar": {
+        "profile": "Profil",
+        "settings": "Pengaturan",
+        "logout": "Keluar"
     }
 }

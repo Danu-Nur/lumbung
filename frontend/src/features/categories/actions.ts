@@ -1,8 +1,8 @@
 'use server';
 
-import { cookies } from 'next/headers';
-import { categoryService } from '@/lib/services/categoryService';
+import api from '@/lib/api';
 import { revalidatePath } from 'next/cache';
+import { auth } from '@/lib/auth';
 import { z } from 'zod';
 
 const categorySchema = z.object({
@@ -11,36 +11,12 @@ const categorySchema = z.object({
 });
 
 async function getSession() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
-
-    if (!token) return null;
-
-    // Offline/Dev fallback
-    if (token === 'offline-dev-token') {
-        return { user: { organizationId: 'org-offline', role: 'admin' } };
-    }
-
-    try {
-        // Decode JWT payload (part 2 of the token)
-        const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-        return {
-            user: {
-                id: payload.id,
-                email: payload.email,
-                role: payload.role,
-                organizationId: payload.organizationId
-            }
-        };
-    } catch (e) {
-        console.error("Failed to parse token in server action:", e);
-        return null;
-    }
+    return await auth();
 }
 
 export async function createCategory(formData: FormData) {
     const session = await getSession();
-    if (!session?.user || !session.user.organizationId) throw new Error('Unauthorized');
+    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
 
     const data = {
         name: formData.get('name') as string,
@@ -49,19 +25,21 @@ export async function createCategory(formData: FormData) {
 
     const validated = categorySchema.parse(data);
 
-    const category = await categoryService.createCategory({
-        organizationId: session.user.organizationId,
-        name: validated.name,
-        description: validated.description,
-    });
+    try {
+        const response = await api.post('/categories', validated, {
+            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+        });
 
-    revalidatePath('/categories');
-    return category;
+        revalidatePath('/categories');
+        return response.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.error || 'Failed to create category');
+    }
 }
 
 export async function updateCategory(id: string, formData: FormData) {
     const session = await getSession();
-    if (!session?.user || !session.user.organizationId) throw new Error('Unauthorized');
+    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
 
     const data = {
         name: formData.get('name') as string,
@@ -70,26 +48,30 @@ export async function updateCategory(id: string, formData: FormData) {
 
     const validated = categorySchema.parse(data);
 
-    const category = await categoryService.updateCategory({
-        id,
-        organizationId: session.user.organizationId,
-        name: validated.name,
-        description: validated.description,
-    });
+    try {
+        const response = await api.put(`/categories/${id}`, validated, {
+            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+        });
 
-    revalidatePath('/categories');
-    return category;
+        revalidatePath('/categories');
+        return response.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.error || 'Failed to update category');
+    }
 }
 
 export async function deleteCategory(id: string) {
     const session = await getSession();
-    if (!session?.user || !session.user.organizationId) throw new Error('Unauthorized');
+    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
 
-    await categoryService.deleteCategory({
-        id,
-        organizationId: session.user.organizationId,
-        softDelete: true,
-    });
+    try {
+        await api.delete(`/categories/${id}`, {
+            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+        });
 
-    revalidatePath('/inventory');
+        revalidatePath('/categories');
+        revalidatePath('/inventory');
+    } catch (error: any) {
+        throw new Error(error.response?.data?.error || 'Failed to delete category');
+    }
 }

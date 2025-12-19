@@ -13,10 +13,14 @@ export interface DashboardStats {
 }
 
 export const dashboardService = {
-    async getDashboardStats(organizationId: string): Promise<DashboardStats> {
+    async getDashboardStats(organizationId: string, token?: string): Promise<DashboardStats> {
         try {
             // 1. Try Online
-            const response = await api.get(`/dashboard/stats`, { params: { organizationId } });
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const response = await api.get(`/dashboard/stats`, {
+                params: { organizationId },
+                headers
+            });
             return response.data;
         } catch (error) {
             console.warn('Dashboard Service: Offline mode (stats)');
@@ -43,9 +47,13 @@ export const dashboardService = {
         }
     },
 
-    async getLowStockItems(organizationId: string, limit = 5) {
+    async getLowStockItems(organizationId: string, token?: string, limit = 5) {
         try {
-            const response = await api.get(`/dashboard/low-stock`, { params: { organizationId, limit } });
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const response = await api.get(`/dashboard/low-stock`, {
+                params: { organizationId, limit },
+                headers
+            });
             return response.data;
         } catch (error) {
             // Offline fallback: we can actually query this from db.products + inventory if synced
@@ -54,9 +62,13 @@ export const dashboardService = {
         }
     },
 
-    async getRecentInventoryChanges(organizationId: string, limit = 10) {
+    async getRecentInventoryChanges(organizationId: string, token?: string, limit = 10) {
         try {
-            const response = await api.get(`/dashboard/inventory-movements`, { params: { organizationId, limit } });
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const response = await api.get(`/dashboard/recent-changes`, {
+                params: { organizationId, limit },
+                headers
+            });
             return response.data;
         } catch (error) {
             return [];
@@ -99,9 +111,13 @@ export const dashboardService = {
         }
     },
 
-    async getWarehouseOverview(organizationId: string) {
+    async getWarehouseOverview(organizationId: string, token?: string) {
         try {
-            const response = await api.get(`/dashboard/warehouse-overview`, { params: { organizationId } });
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const response = await api.get(`/dashboard/warehouse-overview`, {
+                params: { organizationId },
+                headers
+            });
             return response.data;
         } catch (error) {
             let warehouses: any[] = [];
@@ -186,9 +202,13 @@ export const dashboardService = {
         }
     },
 
-    async getOperationalStats(organizationId: string) {
+    async getOperationalStats(organizationId: string, token?: string) {
         try {
-            const response = await api.get(`/dashboard/operational-stats`, { params: { organizationId } });
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const response = await api.get(`/dashboard/operational-stats`, {
+                params: { organizationId },
+                headers
+            });
             return response.data;
         } catch (error) {
             let counts = { customers: 0, suppliers: 0, products: 0 };
@@ -208,9 +228,13 @@ export const dashboardService = {
         }
     },
 
-    async getFinancialAnalytics(organizationId: string) {
+    async getFinancialAnalytics(organizationId: string, token?: string) {
         try {
-            const response = await api.get(`/dashboard/financial-analytics`, { params: { organizationId } });
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const response = await api.get(`/dashboard/financial-analytics`, {
+                params: { organizationId },
+                headers
+            });
             return response.data;
         } catch (error) {
             return {
@@ -220,9 +244,13 @@ export const dashboardService = {
         }
     },
 
-    async getRecentProducts(organizationId: string, limit = 5) {
+    async getRecentProducts(organizationId: string, token?: string, limit = 5) {
         try {
-            const response = await api.get(`/dashboard/recent-products`, { params: { organizationId, limit } });
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const response = await api.get(`/dashboard/recent-products`, {
+                params: { organizationId, limit },
+                headers
+            });
             return response.data;
         } catch (error) {
             // Simplified offline fetch

@@ -3,6 +3,7 @@ import { LoginForm } from './login-form';
 import { Metadata } from 'next';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+import { BrandLogo } from '@/components/layout/brand-logo';
 
 
 
@@ -30,12 +31,7 @@ export default function LoginPage() {
                 {/* Bagian Header (Logo & Judul) */}
                 <div className="flex flex-col items-center text-center space-y-2">
                     {/* Logo Box */}
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary mb-2">
-                        <Package className="h-6 w-6 text-primary-foreground" />
-                    </div>
-
-                    {/* Nama Brand */}
-                    <span className="text-2xl font-bold">Inventory Pro</span>
+                    <BrandLogo disabled={true} />
 
                     {/* Sub-judul */}
                     <div className="space-y-1">

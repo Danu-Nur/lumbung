@@ -1,19 +1,17 @@
+'use client';
 
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Plus, Warehouse as WarehouseIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Pagination } from '@/components/shared/pagination';
-import { SearchInput } from '@/components/shared/search-input';
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
 import { WarehouseModalManager } from '@/components/domain/warehouses/warehouse-modal-manager';
-import { WarehouseActions } from '@/components/domain/warehouses/warehouse-actions';
 import { WarehouseImportButton } from '@/components/domain/warehouses/warehouse-import-button';
 import { WarehouseTable } from '../tables/warehouse-table';
+import { LoadingState } from '@/components/shared/loading-state';
 
 interface WarehouseListSectionProps {
     page: number;
@@ -22,47 +20,24 @@ interface WarehouseListSectionProps {
     organizationId: string;
 }
 
-export async function WarehouseListSection({ page, pageSize, search, organizationId }: WarehouseListSectionProps) {
-    // const session = await auth(); // Removed legacy auth
-    const t = await getTranslations('inventory.warehouses');
-    const tCommon = await getTranslations('common');
+export function WarehouseListSection({ page, pageSize, search, organizationId }: WarehouseListSectionProps) {
+    const t = useTranslations('inventory.warehouses');
+    const tCommon = useTranslations('common');
 
-    if (!organizationId) {
-        redirect('/login');
-    }
+    const { data, isLoading } = useQuery({
+        queryKey: ['warehouses', page, pageSize, search],
+        queryFn: async () => {
+            const res = await api.get('/warehouses', {
+                params: { page, pageSize, q: search }
+            });
+            return res.data; // Expecting { warehouses, total }
+        }
+    });
 
-    const skip = (page - 1) * pageSize;
-    const where: any = {
-        organizationId: organizationId,
-        deletedAt: null,
-    };
+    if (isLoading) return <LoadingState message={tCommon('table.loading') || 'Loading...'} />;
 
-    if (search) {
-        where.OR = [
-            { name: { contains: search } },
-            { code: { contains: search } },
-            { city: { contains: search } },
-            { address: { contains: search } },
-        ];
-    }
-
-    const [warehouses, total] = await Promise.all([
-        prisma.warehouse.findMany({
-            where,
-            include: {
-                _count: {
-                    select: { inventoryItems: true },
-                },
-            },
-            orderBy: { createdAt: 'desc' },
-            skip,
-            take: pageSize,
-        }),
-        prisma.warehouse.count({
-            where,
-        }),
-    ]);
-
+    const warehouses = data?.warehouses || [];
+    const total = data?.total || 0;
     const totalPages = Math.ceil(total / pageSize);
 
     return (
