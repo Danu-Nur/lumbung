@@ -75,52 +75,65 @@ export function CategoryCreateModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                    <DialogTitle>{t("form.createTitle")}</DialogTitle>
-                    <DialogDescription>{t("form.createDescription")}</DialogDescription>
-                </DialogHeader>
+            <DialogContent className="sm:max-w-[500px] p-0 border-2 border-black dark:border-white shadow-neo dark:shadow-neo-white rounded-none bg-white dark:bg-neo-dark overflow-hidden">
+                <div className="bg-neo-green border-b-2 border-black dark:border-white p-3 flex justify-between items-center text-black">
+                    <div className="flex flex-col">
+                        <h2 className="text-lg font-bold">{t("form.createTitle")}</h2>
+                        <span className="text-[10px] uppercase font-black tracking-widest opacity-80">{t("form.createDescription")}</span>
+                    </div>
+                    <button onClick={() => onOpenChange(false)} className="w-6 h-6 bg-white dark:bg-black border border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black flex items-center justify-center transition-colors text-xs rounded-none">✕</button>
+                </div>
 
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t("form.name")}</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder={t("form.namePlaceholder")} {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                <div className="p-5">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.name")}</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder={t("form.namePlaceholder")} {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t("form.description")}</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder={t("form.descriptionPlaceholder")} {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.description")}</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder={t("form.descriptionPlaceholder")} {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                                {tCommon("buttons.cancel")}
-                            </Button>
-                            <Button type="submit" disabled={form.formState.isSubmitting}>
-                                {form.formState.isSubmitting ? tCommon("actions.saving") : tCommon("buttons.save")}
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                </Form>
+                            <div className="pt-3 flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => onOpenChange(false)}
+                                    className="flex-1 bg-white dark:bg-gray-800 text-black dark:text-white font-bold py-2.5 border-2 border-black dark:border-white shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all text-sm rounded-none uppercase tracking-widest"
+                                >
+                                    {tCommon("buttons.cancel")}
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={form.formState.isSubmitting}
+                                    className="flex-1 bg-black dark:bg-white text-white dark:text-black font-bold py-2.5 border-2 border-black dark:border-white shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none hover:bg-neo-green hover:text-black transition-all text-sm rounded-none uppercase tracking-widest"
+                                >
+                                    {form.formState.isSubmitting ? tCommon("actions.saving") : tCommon("buttons.save")}
+                                </button>
+                            </div>
+                        </form>
+                    </Form>
+                </div>
             </DialogContent>
         </Dialog>
     );

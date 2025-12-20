@@ -3,6 +3,7 @@
 import api from '@/lib/api';
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 async function getSession() {
     return await auth();
@@ -67,12 +68,26 @@ export async function getStockHistory(productId: string) {
     if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     try {
-        const response = await api.get(`/inventory/movements`, {
-            params: { productId, limit: 5 },
-            headers: { Authorization: `Bearer ${(session?.user as any).accessToken}` }
+        const movements = await prisma.inventoryMovement.findMany({
+            where: {
+                productId,
+                product: {
+                    organizationId: (session!.user as any).organizationId
+                }
+            },
+            include: {
+                warehouse: true,
+                product: true
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
+            take: 10
         });
-        return response.data.movements || [];
+
+        return movements || [];
     } catch (error) {
+        console.error("Error fetching stock history:", error);
         return [];
     }
 }

@@ -6,7 +6,8 @@ import {
     getTransfersHandler,
     getStockOpnamesHandler,
     createTransferHandler,
-    createStockOpnameHandler
+    createStockOpnameHandler,
+    getMovementsHandler
 } from '../controllers/inventory.js';
 
 export async function inventoryRoutes(fastify: FastifyInstance) {
@@ -17,6 +18,7 @@ export async function inventoryRoutes(fastify: FastifyInstance) {
     fastify.get('/adjustments', getAdjustmentsHandler);
     fastify.get('/transfers', getTransfersHandler);
     fastify.get('/opnames', getStockOpnamesHandler);
+    fastify.get('/movements', getMovementsHandler);
     fastify.post('/adjustment', createAdjustmentHandler);
     fastify.post('/transfers', createTransferHandler);
     fastify.post('/opnames', createStockOpnameHandler);

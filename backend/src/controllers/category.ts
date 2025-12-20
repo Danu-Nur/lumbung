@@ -2,6 +2,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
+import { MasterService } from '../services/master.js';
 
 const createCategorySchema = z.object({
     name: z.string().min(1),
@@ -41,6 +42,8 @@ export const createCategoryHandler = async (req: FastifyRequest, reply: FastifyR
                 organizationId,
             }
         });
+
+        await MasterService.invalidateMasterCache(organizationId, 'categories');
 
         return reply.code(201).send(category);
     } catch (error) {
@@ -84,6 +87,8 @@ export const updateCategoryHandler = async (req: FastifyRequest<{ Params: { id: 
             }
         });
 
+        await MasterService.invalidateMasterCache(organizationId, 'categories');
+
         return reply.send(updated);
     } catch (error) {
         req.log.error(error);
@@ -115,6 +120,8 @@ export const deleteCategoryHandler = async (req: FastifyRequest<{ Params: { id: 
             where: { id },
             data: { deletedAt: new Date() }
         });
+
+        await MasterService.invalidateMasterCache(organizationId, 'categories');
 
         return reply.send({ success: true });
     } catch (error) {

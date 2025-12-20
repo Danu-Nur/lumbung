@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
+import { MasterService } from '../services/master.js';
 
 const warehouseSchema = z.object({
     name: z.string().min(1),
@@ -35,6 +36,8 @@ export const createWarehouseHandler = async (req: FastifyRequest, reply: Fastify
                 organizationId
             }
         });
+
+        await MasterService.invalidateMasterCache(organizationId, 'warehouses');
 
         return reply.code(201).send(warehouse);
     } catch (error) {
@@ -75,6 +78,8 @@ export const updateWarehouseHandler = async (req: FastifyRequest<{ Params: { id:
             data
         });
 
+        await MasterService.invalidateMasterCache(organizationId, 'warehouses');
+
         return reply.send(updated);
     } catch (error) {
         if (error instanceof z.ZodError) return reply.code(400).send({ error: error.errors });
@@ -105,6 +110,8 @@ export const deleteWarehouseHandler = async (req: FastifyRequest<{ Params: { id:
             where: { id },
             data: { deletedAt: new Date() }
         });
+
+        await MasterService.invalidateMasterCache(organizationId, 'warehouses');
 
         return reply.send({ success: true });
     } catch (error) {

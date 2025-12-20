@@ -1,10 +1,9 @@
 import { auth } from '@/lib/auth';
 import { getTranslations } from 'next-intl/server';
+import { getQueryClient } from '@/lib/query';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { dashboardService } from '@/lib/services/dashboardService';
-import { FinancialStatsRow } from '@/components/domain/dashboard/financial-stats-row';
-import { OperationalStatsRow } from '@/components/domain/dashboard/operational-stats-row';
-import { DashboardChartsSection } from '@/components/domain/dashboard/dashboard-charts-section';
-import { DashboardActivitySection } from '@/components/domain/dashboard/dashboard-activity-section';
+import { DashboardSection } from '@/components/domain/dashboard/sections/dashboard-section';
 
 export default async function DashboardPage() {
     const t = await getTranslations('dashboard');
@@ -13,68 +12,33 @@ export default async function DashboardPage() {
     const orgId = (session?.user as any)?.organizationId || '';
     const token = (session?.user as any)?.accessToken || '';
 
-    if (!orgId) {
-        // If really no auth, Middleware normally catches this
-        // But we handle it gracefully here
-    }
+    const queryClient = getQueryClient();
 
-    // Fetch all data in parallel using the session token
-    const [
-        stats,
-        lowStockItems,
-        recentChanges,
-        warehouseData,
-        operationalStats,
-        financialAnalytics,
-        recentProducts
-    ] = await Promise.all([
-        dashboardService.getDashboardStats(orgId, token),
-        dashboardService.getLowStockItems(orgId, token),
-        dashboardService.getRecentInventoryChanges(orgId, token),
-        dashboardService.getWarehouseOverview(orgId, token),
-        dashboardService.getOperationalStats(orgId, token),
-        dashboardService.getFinancialAnalytics(orgId, token),
-        dashboardService.getRecentProducts(orgId, token),
+    // Prefetch critical dashboard data
+    await Promise.all([
+        queryClient.prefetchQuery({
+            queryKey: ['dashboard-stats', orgId],
+            queryFn: () => dashboardService.getDashboardStats(orgId, token),
+        }),
+        queryClient.prefetchQuery({
+            queryKey: ['dashboard-operational-stats', orgId],
+            queryFn: () => dashboardService.getOperationalStats(orgId, token),
+        }),
+        queryClient.prefetchQuery({
+            queryKey: ['dashboard-financial-analytics', orgId],
+            queryFn: () => dashboardService.getFinancialAnalytics(orgId, token),
+        }),
+        queryClient.prefetchQuery({
+            queryKey: ['dashboard-warehouse-overview', orgId],
+            queryFn: () => dashboardService.getWarehouseOverview(orgId, token),
+        }),
     ]);
 
-    // Financial Stats Row Data
-    const financialStats = {
-        totalPurchases: stats.totalPurchases,
-        totalStockValue: stats.totalStockValue,
-        totalSales: stats.totalSales,
-        profit: stats.profit,
-    };
-
     return (
-        <div className="space-y-8 h-full w-full flex flex-col p-4 sm:p-6 lg:p-8">
-
-            {/* Row 1: Financial Stats */}
-            <section>
-                <FinancialStatsRow data={financialStats} />
-            </section>
-
-            {/* Row 2: Operational Stats */}
-            <section>
-                <OperationalStatsRow data={operationalStats} />
-            </section>
-
-            {/* Row 3: Charts */}
-            <section>
-                <DashboardChartsSection
-                    monthlyData={financialAnalytics.monthly}
-                    yearlyData={financialAnalytics.yearly}
-                />
-            </section>
-
-            {/* Row 4: Activity & Overview */}
-            <section>
-                <DashboardActivitySection
-                    recentProducts={recentProducts}
-                    lowStockItems={lowStockItems}
-                    recentChanges={recentChanges}
-                    warehouseData={warehouseData}
-                />
-            </section>
-        </div>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <div className="p-4 sm:p-6 lg:p-8">
+                <DashboardSection organizationId={orgId} accessToken={token} />
+            </div>
+        </HydrationBoundary>
     );
-} 
+}

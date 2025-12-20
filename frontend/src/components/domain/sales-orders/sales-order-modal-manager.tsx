@@ -11,9 +11,10 @@ interface SalesOrderModalManagerProps {
     customers: Array<{ id: string; name: string }>;
     warehouses: Array<{ id: string; name: string }>;
     products: Array<{ id: string; name: string; sku: string; sellingPrice: number }>;
+    onSuccess?: () => void;
 }
 
-export function SalesOrderModalManager({ orders, customers, warehouses, products }: SalesOrderModalManagerProps) {
+export function SalesOrderModalManager({ orders, customers, warehouses, products, onSuccess }: SalesOrderModalManagerProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -35,6 +36,7 @@ export function SalesOrderModalManager({ orders, customers, warehouses, products
 
     const handleSuccess = () => {
         handleClose();
+        if (onSuccess) onSuccess();
         router.refresh();
     };
 

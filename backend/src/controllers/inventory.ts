@@ -8,7 +8,7 @@ const createAdjustmentSchema = z.object({
     type: z.enum(['increase', 'decrease']),
     quantity: z.number().int().positive(),
     reason: z.string(),
-    notes: z.string().optional(),
+    notes: z.string().nullable().optional(),
 });
 
 export async function createAdjustmentHandler(req: FastifyRequest, reply: FastifyReply) {
@@ -113,7 +113,7 @@ export async function getStockOpnamesHandler(req: FastifyRequest, reply: Fastify
 const createTransferSchema = z.object({
     fromWarehouseId: z.string(),
     toWarehouseId: z.string(),
-    notes: z.string().optional(),
+    notes: z.string().nullable().optional(),
     items: z.array(z.object({
         productId: z.string(),
         quantity: z.number().int().positive()
@@ -143,7 +143,7 @@ export async function createTransferHandler(req: FastifyRequest, reply: FastifyR
 
 const createOpnameSchema = z.object({
     warehouseId: z.string(),
-    notes: z.string().optional(),
+    notes: z.string().nullable().optional(),
     items: z.array(z.object({
         productId: z.string(),
         actualQty: z.number().int().nonnegative()
@@ -166,6 +166,27 @@ export async function createStockOpnameHandler(req: FastifyRequest, reply: Fasti
         return result;
     } catch (error) {
         if (error instanceof z.ZodError) return reply.code(400).send({ error: error.errors });
+        req.log.error(error);
+        return reply.code(500).send({ error: 'Internal Server Error' });
+    }
+}
+
+export async function getMovementsHandler(req: FastifyRequest, reply: FastifyReply) {
+    try {
+        if (!req.user) return reply.code(401).send({ error: 'Unauthorized' });
+
+        const user = req.user as { organizationId: string };
+        const { productId, warehouseId, type, page = '1', pageSize = '10' } = req.query as any;
+
+        const result = await InventoryService.getMovements(user.organizationId, {
+            productId,
+            warehouseId,
+            type,
+            page: parseInt(page),
+            pageSize: parseInt(pageSize)
+        });
+        return result;
+    } catch (error) {
         req.log.error(error);
         return reply.code(500).send({ error: 'Internal Server Error' });
     }

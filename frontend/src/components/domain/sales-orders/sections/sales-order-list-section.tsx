@@ -1,7 +1,8 @@
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+'use client';
+
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
@@ -16,112 +17,77 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Pagination } from '@/components/shared/pagination';
-import { SearchInput } from '@/components/shared/search-input';
-import { getTranslations } from 'next-intl/server';
 import { SalesOrderModalManager } from '@/components/domain/sales-orders/sales-order-modal-manager';
 import { SalesOrderActions } from '@/components/domain/sales-orders/sales-order-actions';
-
-async function getSalesOrders(organizationId: string, page: number = 1, pageSize: number = 10, query: string = '') {
-    const skip = (page - 1) * pageSize;
-    const where: any = {
-        organizationId,
-    };
-
-    if (query) {
-        where.OR = [
-            { orderNumber: { contains: query } },
-            { customer: { name: { contains: query } } },
-        ];
-    }
-
-    const [orders, total] = await Promise.all([
-        prisma.salesOrder.findMany({
-            where,
-            include: {
-                customer: true,
-                warehouse: true,
-                items: {
-                    include: {
-                        product: true,
-                    },
-                },
-            },
-            orderBy: { createdAt: 'desc' },
-            skip,
-            take: pageSize,
-        }),
-        prisma.salesOrder.count({
-            where,
-        }),
-    ]);
-
-    return { orders, total };
-}
+import { salesOrderService } from '@/lib/services/salesOrderService';
+import { customerService } from '@/lib/services/customerService';
+import { warehouseService } from '@/lib/services/warehouseService';
+import { inventoryService } from '@/lib/services/inventoryService';
+import { LoadingState } from '@/components/shared/loading-state';
 
 interface SalesOrderListSectionProps {
     page: number;
     pageSize: number;
     search: string;
+    organizationId: string;
+    accessToken: string;
 }
 
-export async function SalesOrderListSection({ page, pageSize, search }: SalesOrderListSectionProps) {
-    const session = await auth();
-    const t = await getTranslations('sales');
-    const tCommon = await getTranslations('common');
+export function SalesOrderListSection({ page, pageSize, search, organizationId, accessToken }: SalesOrderListSectionProps) {
+    const t = useTranslations('sales');
+    const tCommon = useTranslations('common');
+    const queryClient = useQueryClient();
 
-    if (!session?.user || !session.user.organizationId) {
-        redirect('/login');
-    }
+    const { data: salesData, isLoading: isOrdersLoading } = useQuery({
+        queryKey: ['sales-orders', page, pageSize, search],
+        queryFn: () => salesOrderService.listSalesOrders({
+            organizationId,
+            page,
+            pageSize,
+            search,
+            token: accessToken
+        }),
+    });
 
-    const [salesData, customers, warehouses, products] = await Promise.all([
-        getSalesOrders(session.user.organizationId, page, pageSize, search),
-        prisma.customer.findMany({
-            where: { organizationId: session.user.organizationId, deletedAt: null },
-            select: { id: true, name: true },
-            orderBy: { name: 'asc' },
-        }),
-        prisma.warehouse.findMany({
-            where: { organizationId: session.user.organizationId, deletedAt: null, isActive: true },
-            select: { id: true, name: true },
-            orderBy: { name: 'asc' },
-        }),
-        prisma.product.findMany({
-            where: { organizationId: session.user.organizationId, deletedAt: null },
-            select: { id: true, name: true, sku: true, sellingPrice: true },
-            orderBy: { name: 'asc' },
-        }),
-    ]);
+    const { data: customers = [] } = useQuery({
+        queryKey: ['customers'],
+        queryFn: () => customerService.listCustomers({ organizationId, token: accessToken }).then(res => res.customers),
+    });
 
-    const { orders, total } = salesData;
+    const { data: warehouses = [] } = useQuery({
+        queryKey: ['warehouses'],
+        queryFn: () => warehouseService.listWarehouses(organizationId, accessToken),
+    });
+
+    const { data: productsData } = useQuery({
+        queryKey: ['products', 1, 100], // Fetch more for selection
+        queryFn: () => inventoryService.getInventory(organizationId, 1, 100),
+    });
+
+    if (isOrdersLoading) return <LoadingState />;
+
+    const orders = salesData?.orders || [];
+    const total = salesData?.total || 0;
     const totalPages = Math.ceil(total / pageSize);
 
-    // Serialize Decimal fields for client component
-    const serializedOrders = orders.map((order) => ({
-        ...order,
-        subtotal: Number(order.subtotal),
-        tax: Number(order.tax),
-        discount: Number(order.discount),
-        total: Number(order.total),
-        items: order.items.map((item) => ({
-            ...item,
-            unitPrice: Number(item.unitPrice),
-            discount: Number(item.discount),
-            lineTotal: Number(item.lineTotal),
-            product: {
-                ...item.product,
-                sellingPrice: Number(item.product.sellingPrice),
-                costPrice: Number(item.product.costPrice),
-            },
-        })),
+    // Filter/Map products for modal
+    const products = (productsData?.products || []).map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        sku: p.sku,
+        sellingPrice: Number(p.sellingPrice)
     }));
 
     return (
         <div className="space-y-6">
             <SalesOrderModalManager
-                orders={serializedOrders}
+                orders={orders}
                 customers={customers}
                 warehouses={warehouses}
-                products={products.map(p => ({ ...p, sellingPrice: Number(p.sellingPrice) }))}
+                products={products}
+                onSuccess={() => {
+                    queryClient.invalidateQueries({ queryKey: ['sales-orders'] });
+                }}
             />
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -141,7 +107,7 @@ export async function SalesOrderListSection({ page, pageSize, search }: SalesOrd
 
             <Card>
                 <CardContent className="p-0">
-                    {serializedOrders.length === 0 ? (
+                    {orders.length === 0 ? (
                         <div className="text-center py-12">
                             <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                             <p className="text-muted-foreground mb-4">
@@ -165,35 +131,32 @@ export async function SalesOrderListSection({ page, pageSize, search }: SalesOrd
                                             <TableHead>{t('columns.date')}</TableHead>
                                             <TableHead>{t('columns.status')}</TableHead>
                                             <TableHead className="text-right">{t('columns.total')}</TableHead>
-                                            <TableHead className="text-right">{t('columns.items')}</TableHead>
                                             <TableHead className="text-right">{tCommon('table.actions')}</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {serializedOrders.map((order) => (
+                                        {orders.map((order: any) => (
                                             <TableRow key={order.id}>
                                                 <TableCell className="font-medium">
                                                     {order.orderNumber}
+                                                    {!order.synced && <span className="ml-2 text-xs text-orange-500">(Offline)</span>}
                                                 </TableCell>
                                                 <TableCell>
                                                     {order.customer?.name || '-'}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {formatDate(order.orderDate)}
+                                                    {formatDate(order.orderDate || order.createdAt)}
                                                 </TableCell>
                                                 <TableCell>
                                                     <Badge
                                                         variant={
                                                             order.status === 'DRAFT' ? 'secondary' :
                                                                 order.status === 'CONFIRMED' ? 'default' :
-                                                                    order.status === 'FULFILLED' ? 'outline' : // Greenish usually
-                                                                        order.status === 'INVOICED' ? 'outline' :
-                                                                            'destructive'
+                                                                    order.status === 'FULFILLED' ? 'outline' :
+                                                                        'destructive'
                                                         }
                                                         className={
-                                                            order.status === 'FULFILLED' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 hover:bg-green-100' :
-                                                                order.status === 'INVOICED' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100 hover:bg-purple-100' :
-                                                                    ''
+                                                            order.status === 'FULFILLED' ? 'bg-green-100 text-green-800' : ''
                                                         }
                                                     >
                                                         {order.status}
@@ -201,9 +164,6 @@ export async function SalesOrderListSection({ page, pageSize, search }: SalesOrd
                                                 </TableCell>
                                                 <TableCell className="text-right font-medium">
                                                     {formatCurrency(Number(order.total))}
-                                                </TableCell>
-                                                <TableCell className="text-right text-muted-foreground">
-                                                    {order.items.length}
                                                 </TableCell>
                                                 <TableCell className="text-right">
                                                     <SalesOrderActions order={order} />

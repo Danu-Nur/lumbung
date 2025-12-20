@@ -1,8 +1,6 @@
 'use client';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import api from '@/lib/api';
-import { db } from '@/lib/db';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Pagination } from '@/components/shared/pagination';
@@ -11,11 +9,14 @@ import { Package, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { InventoryModalManager } from '@/components/domain/inventory/modals/inventory-modal-manager';
+import { inventoryService } from '@/lib/services/inventoryService';
+import { categoryService } from '@/lib/services/categoryService';
+import { warehouseService } from '@/lib/services/warehouseService';
+import { supplierService } from '@/lib/services/supplierService';
 import { InventoryTable } from '@/components/domain/inventory/tables/inventory-table';
 import { LoadingState } from '@/components/shared/loading-state';
 import { dashboardService } from '@/lib/services/dashboardService';
-import { AlertCircle, ArrowDown, ArrowUp, BarChart3, TrendingDown } from 'lucide-react';
-// import { importStockBatch } from '@/features/inventory/import-actions'; // Moved or Refactored?
+import { AlertCircle, BarChart3, TrendingDown } from 'lucide-react';
 
 interface InventoryListSectionProps {
     page: number;
@@ -34,31 +35,7 @@ export function InventoryListSection({ page, pageSize, search, modal, id, organi
 
     const { data, isLoading } = useQuery({
         queryKey: ['products', page, pageSize, search],
-        queryFn: async () => {
-            try {
-                const res = await api.get('/products', {
-                    params: { page, pageSize, q: search }
-                });
-                const { products: fetchedProducts, total: fetchedTotal } = res.data;
-
-                // Cache to Dexie (Offline First) - Mapping basics for offline search
-                await db.products.bulkPut(fetchedProducts.map((p: any) => ({
-                    id: p.id,
-                    name: p.name,
-                    sku: p.sku,
-                    sellingPrice: Number(p.sellingPrice),
-                    costPrice: Number(p.costPrice),
-                    organizationId: p.organizationId,
-                    updatedAt: new Date().toISOString()
-                })));
-
-                return { products: fetchedProducts, total: fetchedTotal };
-            } catch (error) {
-                console.warn('Offline mode or API error, fetching from local DB');
-                const localProducts = await db.products.toArray();
-                return { products: localProducts, total: localProducts.length };
-            }
-        }
+        queryFn: () => inventoryService.getInventory(organizationId, page, pageSize, search),
     });
 
     const products = data?.products || [];
@@ -68,26 +45,17 @@ export function InventoryListSection({ page, pageSize, search, modal, id, organi
     // Data needed for Modals
     const { data: categories = [] } = useQuery({
         queryKey: ['categories'],
-        queryFn: async () => {
-            const res = await api.get('/categories');
-            return res.data.categories || [];
-        }
+        queryFn: () => categoryService.listCategories(organizationId, accessToken)
     });
 
     const { data: warehouses = [] } = useQuery({
         queryKey: ['warehouses'],
-        queryFn: async () => {
-            const res = await api.get('/warehouses');
-            return res.data.warehouses || [];
-        }
+        queryFn: () => warehouseService.listWarehouses(organizationId, accessToken)
     });
 
     const { data: suppliers = [] } = useQuery({
         queryKey: ['suppliers'],
-        queryFn: async () => {
-            const res = await api.get('/suppliers');
-            return res.data.suppliers || [];
-        }
+        queryFn: () => supplierService.listSuppliers(organizationId, accessToken)
     });
 
     // const { data: session } = useSession();
@@ -204,7 +172,7 @@ export function InventoryListSection({ page, pageSize, search, modal, id, organi
                 </div>
             </div>
 
-            <Card>
+            <Card variant="no">
                 <CardContent className="p-0">
                     {serializedProducts.length === 0 ? (
                         <div className="text-center py-12">

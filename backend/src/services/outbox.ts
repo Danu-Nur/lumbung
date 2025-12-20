@@ -46,5 +46,17 @@ export const outboxService = {
                 });
             }
         }
+    },
+
+    async createEvent(data: { organizationId: string; topic: string; payload: any }, tx?: any) {
+        const client = tx || prisma;
+        return await client.outboxEvent.create({
+            data: {
+                organizationId: data.organizationId,
+                topic: data.topic,
+                payload: data.payload,
+                status: 'PENDING'
+            }
+        });
     }
 };

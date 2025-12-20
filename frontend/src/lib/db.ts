@@ -60,6 +60,7 @@ export interface OfflineOrder {
     synced: boolean; // true if already ON SERVER
     createdAt: string;
     organizationId: string;
+    customer?: { id: string; name: string };
 }
 
 export interface OfflinePurchaseOrder {
@@ -72,13 +73,14 @@ export interface OfflinePurchaseOrder {
     synced: boolean;
     createdAt: string;
     organizationId: string;
+    supplier?: { id: string; name: string };
 }
 
 // Queue for actions performed while offline
 export interface SyncQueueItem {
     id?: number;
     action: 'CREATE' | 'UPDATE' | 'DELETE';
-    resource: 'PRODUCT' | 'ORDER' | 'CUSTOMER' | 'SUPPLIER' | 'INVENTORY';
+    resource: 'PRODUCT' | 'ORDER' | 'CUSTOMER' | 'SUPPLIER' | 'INVENTORY' | 'PURCHASE_ORDER';
     data: any;
     createdAt: number;
 }

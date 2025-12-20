@@ -4,6 +4,7 @@ import { getCategoriesHandler, getWarehousesHandler, getSuppliersHandler } from 
 import { createCategoryHandler, updateCategoryHandler, deleteCategoryHandler } from '../controllers/category.js';
 import { createSupplierHandler, updateSupplierHandler, deleteSupplierHandler } from '../controllers/supplier.js';
 import { createWarehouseHandler, updateWarehouseHandler, deleteWarehouseHandler } from '../controllers/warehouse.js';
+import { createCustomerHandler, getCustomersHandler, updateCustomerHandler, deleteCustomerHandler } from '../controllers/customer.js';
 
 export async function masterRoutes(fastify: FastifyInstance) {
     fastify.addHook('onRequest', fastify.authenticate);
@@ -25,4 +26,10 @@ export async function masterRoutes(fastify: FastifyInstance) {
     fastify.post('/suppliers', createSupplierHandler);
     fastify.put('/suppliers/:id', updateSupplierHandler);
     fastify.delete('/suppliers/:id', deleteSupplierHandler);
+
+    // Customers
+    fastify.get('/customers', getCustomersHandler);
+    fastify.post('/customers', createCustomerHandler);
+    fastify.put('/customers/:id', updateCustomerHandler);
+    fastify.delete('/customers/:id', deleteCustomerHandler);
 }

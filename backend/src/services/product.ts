@@ -1,4 +1,5 @@
 import { prisma } from '../lib/prisma.js';
+import { cache } from '../lib/cache.js';
 
 export interface CreateProductData {
     name: string;
@@ -80,37 +81,41 @@ export class ProductService {
     }
 
     static async getProducts(organizationId: string, page = 1, pageSize = 10, search = '') {
-        const skip = (page - 1) * pageSize;
-        const where: any = {
-            organizationId,
-            deletedAt: null,
-        };
+        const cacheKey = `tenant:${organizationId}:products:page:${page}:size:${pageSize}:q:${search}`;
 
-        if (search) {
-            where.OR = [
-                { name: { contains: search, mode: 'insensitive' } },
-                { sku: { contains: search, mode: 'insensitive' } },
-            ];
-        }
+        return await cache.getOrSet(cacheKey, async () => {
+            const skip = (page - 1) * pageSize;
+            const where: any = {
+                organizationId,
+                deletedAt: null,
+            };
 
-        const [products, total] = await Promise.all([
-            prisma.product.findMany({
-                where,
-                orderBy: { createdAt: 'desc' },
-                include: {
-                    category: true,
-                    supplier: true,
-                    inventoryItems: {
-                        include: { warehouse: true }
-                    }
-                },
-                skip,
-                take: pageSize,
-            }),
-            prisma.product.count({ where })
-        ]);
+            if (search) {
+                where.OR = [
+                    { name: { contains: search, mode: 'insensitive' } },
+                    { sku: { contains: search, mode: 'insensitive' } },
+                ];
+            }
 
-        return { products, total };
+            const [products, total] = await Promise.all([
+                prisma.product.findMany({
+                    where,
+                    orderBy: { createdAt: 'desc' },
+                    include: {
+                        category: true,
+                        supplier: true,
+                        inventoryItems: {
+                            include: { warehouse: true }
+                        }
+                    },
+                    skip,
+                    take: pageSize,
+                }),
+                prisma.product.count({ where })
+            ]);
+
+            return { products, total };
+        }, 60); // 60 seconds TTL
     }
 
     static async updateProduct(id: string, organizationId: string, data: Partial<CreateProductData>) {

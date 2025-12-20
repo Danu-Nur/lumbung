@@ -11,9 +11,10 @@ interface PurchaseOrderModalManagerProps {
     suppliers: Array<{ id: string; name: string }>;
     warehouses: Array<{ id: string; name: string }>;
     products: Array<{ id: string; name: string; sku: string; costPrice: number }>;
+    onSuccess?: () => void;
 }
 
-export function PurchaseOrderModalManager({ orders, suppliers, warehouses, products }: PurchaseOrderModalManagerProps) {
+export function PurchaseOrderModalManager({ orders, suppliers, warehouses, products, onSuccess }: PurchaseOrderModalManagerProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -35,6 +36,7 @@ export function PurchaseOrderModalManager({ orders, suppliers, warehouses, produ
 
     const handleSuccess = () => {
         handleClose();
+        if (onSuccess) onSuccess();
         router.refresh();
     };
 

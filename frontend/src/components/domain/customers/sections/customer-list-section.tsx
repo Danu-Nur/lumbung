@@ -1,5 +1,7 @@
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,36 +16,48 @@ import { Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { CustomerModalManager } from '@/components/domain/customers/customer-modal-manager';
 import { CustomerActions } from '@/components/domain/customers/customer-actions';
-import { getTranslations } from 'next-intl/server';
 import { customerService } from '@/lib/services/customerService';
-import { SearchInput } from '@/components/shared/search-input';
 import { Pagination } from '@/components/shared/pagination';
+import { LoadingState } from '@/components/shared/loading-state';
 
 interface CustomerListSectionProps {
     page: number;
     pageSize: number;
     search: string;
+    organizationId: string;
+    accessToken: string;
 }
 
-export async function CustomerListSection({ page, pageSize, search }: CustomerListSectionProps) {
-    const session = await auth();
-    const t = await getTranslations('customers');
-    const tCommon = await getTranslations('common');
+export function CustomerListSection({ page, pageSize, search, organizationId, accessToken }: CustomerListSectionProps) {
+    const t = useTranslations('customers');
+    const tCommon = useTranslations('common');
+    const queryClient = useQueryClient();
 
-    if (!session?.user || !session.user.organizationId) {
-        redirect('/login');
-    }
-
-    const { customers, total, totalPages } = await customerService.listCustomers({
-        organizationId: session.user.organizationId,
-        page,
-        pageSize,
-        search,
+    const { data, isLoading } = useQuery({
+        queryKey: ['customers', page, pageSize, search],
+        queryFn: () => customerService.listCustomers({
+            organizationId,
+            page,
+            pageSize,
+            search,
+            token: accessToken
+        }),
     });
+
+    if (isLoading) return <LoadingState />;
+
+    const customers = data?.customers || [];
+    const total = data?.total || 0;
+    const totalPages = Math.ceil(total / pageSize);
 
     return (
         <div className="space-y-6">
-            <CustomerModalManager customers={customers} />
+            <CustomerModalManager
+                customers={customers}
+                onSuccess={() => {
+                    queryClient.invalidateQueries({ queryKey: ['customers'] });
+                }}
+            />
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -89,7 +103,7 @@ export async function CustomerListSection({ page, pageSize, search }: CustomerLi
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {customers.map((customer) => (
+                                        {customers.map((customer: any) => (
                                             <TableRow key={customer.id}>
                                                 <TableCell className="font-medium">
                                                     {customer.name}

@@ -7,10 +7,11 @@ import { CustomerEditModal } from "./customer-edit-modal";
 import { CustomerShowModal } from "./customer-show-modal";
 
 interface CustomerModalManagerProps {
-    customers: Customer[];
+    customers: any[];
+    onSuccess?: () => void;
 }
 
-export function CustomerModalManager({ customers }: CustomerModalManagerProps) {
+export function CustomerModalManager({ customers, onSuccess }: CustomerModalManagerProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -32,6 +33,7 @@ export function CustomerModalManager({ customers }: CustomerModalManagerProps) {
 
     const handleSuccess = () => {
         handleClose();
+        if (onSuccess) onSuccess();
         router.refresh();
     };
 

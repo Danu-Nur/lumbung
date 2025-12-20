@@ -33,6 +33,7 @@ export function AdjustmentShowModal({
 }: AdjustmentShowModalProps) {
     const router = useRouter();
     const t = useTranslations("adjustments");
+    const tCommon = useTranslations("common");
 
     if (!adjustment) return null;
 
@@ -50,71 +51,79 @@ export function AdjustmentShowModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[600px]">
-                <DialogHeader>
-                    <DialogTitle>{t("show.title")}</DialogTitle>
-                    <DialogDescription>{formatDateTime(adjustment.createdAt)}</DialogDescription>
-                </DialogHeader>
+            <DialogContent className="sm:max-w-[600px] p-0 border-2 border-black shadow-neo rounded-none bg-white">
+                <div className="bg-neo-blue border-b-2 border-black p-3 flex justify-between items-center text-white">
+                    <div className="flex flex-col">
+                        <h2 className="text-lg font-bold">{t("show.title")}</h2>
+                        <span className="text-[10px] uppercase font-black tracking-widest opacity-80">{formatDateTime(adjustment.createdAt)}</span>
+                    </div>
+                    <button onClick={() => onOpenChange(false)} className="w-6 h-6 bg-black text-white hover:bg-white hover:text-black border border-white hover:border-black flex items-center justify-center transition-colors text-xs rounded-none">✕</button>
+                </div>
 
-                <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h2 className="text-2xl font-bold">{t("show.details")}</h2>
-                        </div>
-                        <Button
-                            variant="destructive"
-                            size="sm"
+                <div className="p-5 space-y-4">
+                    <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-sm font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded-none">{t("show.details")}</h3>
+                        <button
                             onClick={handleReverse}
+                            className="bg-neo-orange text-white border-2 border-black px-3 py-1 font-black text-[10px] uppercase shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all rounded-none flex items-center gap-2"
                         >
-                            <RotateCcw className="w-4 h-4 mr-2" />
+                            <RotateCcw className="w-3 h-3" />
                             {t("show.reverseAdjustment")}
-                        </Button>
+                        </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground">{t("show.product")}</label>
-                            <p className="text-base font-medium mt-1">{adjustment.product.name}</p>
-                            <p className="text-sm text-muted-foreground">{adjustment.product.sku}</p>
+                    <div className="border border-black p-3 bg-gray-50 rounded-none mb-3">
+                        <p className="text-[10px] text-gray-500 uppercase mb-1 font-black">{t("show.product")}</p>
+                        <p className="text-base font-black uppercase">{adjustment.product.name}</p>
+                        <p className="text-[10px] font-bold text-gray-400">{adjustment.product.sku}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div className="border border-black p-3 bg-gray-50 rounded-none">
+                            <p className="text-[10px] text-gray-500 uppercase mb-1 font-black">{t("show.warehouse")}</p>
+                            <p className="font-bold text-sm uppercase">{adjustment.warehouse.name}</p>
                         </div>
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground">{t("show.warehouse")}</label>
-                            <p className="text-base font-medium mt-1">{adjustment.warehouse.name}</p>
-                        </div>
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground">{t("show.type")}</label>
-                            <div className="mt-1">
-                                <Badge variant={adjustment.adjustmentType === 'increase' ? 'default' : 'destructive'}>
-                                    {adjustment.adjustmentType.toUpperCase()}
-                                </Badge>
-                            </div>
-                        </div>
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground">{t("show.quantity")}</label>
-                            <p className={`text-base font-bold mt-1 ${adjustment.adjustmentType === 'increase'
-                                ? 'text-emerald-600 dark:text-emerald-400'
-                                : 'text-red-600 dark:text-red-400'
-                                }`}>
+                        <div className="border border-black p-3 bg-gray-50 rounded-none">
+                            <p className="text-[10px] text-gray-500 uppercase mb-1 font-black">{t("show.quantity")}</p>
+                            <p className={`text-base font-black ${adjustment.adjustmentType === 'increase' ? 'text-neo-green' : 'text-neo-orange'}`}>
                                 {adjustment.adjustmentType === 'increase' ? '+' : '-'}
-                                {adjustment.quantity} {adjustment.product.unit}
+                                {adjustment.quantity} <span className="text-[10px] uppercase">{adjustment.product.unit}</span>
                             </p>
                         </div>
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground">{t("show.reason")}</label>
-                            <p className="text-base font-medium mt-1">{adjustment.reason}</p>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 mb-3">
+                        <div className="border border-black p-3 bg-gray-50 rounded-none">
+                            <p className="text-[10px] text-gray-500 uppercase mb-1 font-black">{t("show.type")}</p>
+                            <span className={`px-1.5 py-0.5 border border-black text-[9px] font-black uppercase rounded-none ${adjustment.adjustmentType === 'increase' ? 'bg-neo-green text-black' : 'bg-neo-orange text-white'}`}>
+                                {adjustment.adjustmentType}
+                            </span>
                         </div>
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground">{t("show.createdBy")}</label>
-                            <p className="text-base font-medium mt-1">{adjustment.createdBy.name}</p>
+                        <div className="border border-black p-3 bg-gray-50 rounded-none">
+                            <p className="text-[10px] text-gray-500 uppercase mb-1 font-black">{t("show.reason")}</p>
+                            <p className="font-bold text-[10px] uppercase">{adjustment.reason}</p>
+                        </div>
+                        <div className="border border-black p-3 bg-gray-50 rounded-none">
+                            <p className="text-[10px] text-gray-500 uppercase mb-1 font-black">{t("show.createdBy")}</p>
+                            <p className="font-bold text-[10px] uppercase">{adjustment.createdBy.name}</p>
                         </div>
                     </div>
 
                     {adjustment.notes && (
-                        <div>
-                            <label className="text-sm font-medium text-muted-foreground">{t("show.notes")}</label>
-                            <p className="text-base mt-1 p-3 bg-muted/50 rounded-lg">{adjustment.notes}</p>
+                        <div className="border border-black p-3 bg-gray-50 rounded-none">
+                            <p className="text-[10px] text-gray-500 uppercase mb-1 font-black">{t("show.notes")}</p>
+                            <p className="text-xs font-medium text-gray-700 leading-relaxed italic">"{adjustment.notes}"</p>
                         </div>
                     )}
+                </div>
+
+                <div className="p-5 border-t-2 border-black bg-gray-50">
+                    <button
+                        onClick={() => onOpenChange(false)}
+                        className="w-full bg-black text-white font-bold py-2.5 border-2 border-transparent hover:bg-white hover:text-black hover:border-black transition-colors rounded-none text-sm uppercase tracking-widest"
+                    >
+                        {tCommon("buttons.close")}
+                    </button>
                 </div>
             </DialogContent>
         </Dialog>

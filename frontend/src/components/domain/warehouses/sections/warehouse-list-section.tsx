@@ -61,7 +61,7 @@ export function WarehouseListSection({ page, pageSize, search, organizationId }:
                 </div>
             </div>
 
-            <Card>
+            <Card variant="no">
                 <CardContent className="p-0">
                     {warehouses.length === 0 ? (
                         <div className="text-center py-12">

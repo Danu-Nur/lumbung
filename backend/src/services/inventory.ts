@@ -1,5 +1,6 @@
 import { prisma } from '../lib/prisma.js';
 import { AdjustmentReason } from '@prisma/client';
+import { cache } from '../lib/cache.js';
 
 export interface CreateStockAdjustmentData {
     productId: string;
@@ -7,7 +8,7 @@ export interface CreateStockAdjustmentData {
     type: 'increase' | 'decrease';
     quantity: number;
     reason: string;
-    notes?: string;
+    notes?: string | null;
     organizationId: string;
     userId: string;
 }
@@ -16,7 +17,7 @@ export class InventoryService {
     static async createStockAdjustment(data: CreateStockAdjustmentData) {
         const { productId, warehouseId, type, quantity, reason, notes, organizationId, userId } = data;
 
-        return await prisma.$transaction(async (tx) => {
+        const result = await prisma.$transaction(async (tx) => {
             // 1. Create Stock Adjustment record
             const adjustment = await tx.stockAdjustment.create({
                 data: {
@@ -40,7 +41,7 @@ export class InventoryService {
                     quantity: type === 'increase' ? quantity : -quantity,
                     referenceType: 'StockAdjustment',
                     referenceId: adjustment.id,
-                    notes,
+                    notes: notes || reason,
                     createdById: userId,
                 }
             });
@@ -55,15 +56,17 @@ export class InventoryService {
                 }
             });
 
+            const diff = type === 'increase' ? quantity : -quantity;
+
             if (inventoryItem) {
                 await tx.inventoryItem.update({
                     where: { id: inventoryItem.id },
                     data: {
                         quantityOnHand: {
-                            increment: type === 'increase' ? quantity : -quantity
+                            increment: diff
                         },
                         availableQty: {
-                            increment: type === 'increase' ? quantity : -quantity
+                            increment: diff
                         }
                     }
                 });
@@ -82,8 +85,30 @@ export class InventoryService {
                 });
             }
 
+            // 4. Create Outbox Event for Async Recalculation & Caching
+            await tx.outboxEvent.create({
+                data: {
+                    organizationId,
+                    topic: 'inventory.movement.created',
+                    payload: {
+                        productId,
+                        warehouseId,
+                        organizationId,
+                        movementId: adjustment.id,
+                        type: 'adjustment'
+                    }
+                }
+            });
+
             return adjustment;
         });
+
+        // Invalidate cache immediately for better UX
+        await cache.invalidate(`tenant:${organizationId}:product:${productId}`);
+        await cache.invalidatePattern(`tenant:${organizationId}:products:*`);
+        await cache.invalidate(`tenant:${organizationId}:inventory:stats`);
+
+        return result;
     }
 
     static async getInventory(organizationId: string, params: { page?: number; pageSize?: number; q?: string } = {}) {
@@ -220,14 +245,14 @@ export class InventoryService {
     static async createTransfer(data: {
         fromWarehouseId: string;
         toWarehouseId: string;
-        notes?: string;
+        notes?: string | null;
         items: Array<{ productId: string; quantity: number }>;
         organizationId: string;
         userId: string;
     }) {
         const { fromWarehouseId, toWarehouseId, notes, items, organizationId, userId } = data;
 
-        return await prisma.$transaction(async (tx) => {
+        const result = await prisma.$transaction(async (tx) => {
             const transferNumber = `TRF-${Date.now()}`;
             // 1. Create Transfer record
             const transfer = await tx.stockTransfer.create({
@@ -238,7 +263,7 @@ export class InventoryService {
                     notes,
                     organizationId,
                     createdById: userId,
-                    status: 'COMPLETED', // Auto complete for now
+                    status: 'COMPLETED',
                     items: {
                         create: items.map(item => ({
                             productId: item.productId,
@@ -310,22 +335,60 @@ export class InventoryService {
                         allocatedQty: 0
                     }
                 });
+
+                // 3. Create Outbox Events
+                await tx.outboxEvent.create({
+                    data: {
+                        organizationId,
+                        topic: 'inventory.movement.created',
+                        payload: {
+                            productId: item.productId,
+                            warehouseId: fromWarehouseId,
+                            organizationId,
+                            movementId: transfer.id,
+                            type: 'transfer_out'
+                        }
+                    }
+                });
+
+                await tx.outboxEvent.create({
+                    data: {
+                        organizationId,
+                        topic: 'inventory.movement.created',
+                        payload: {
+                            productId: item.productId,
+                            warehouseId: toWarehouseId,
+                            organizationId,
+                            movementId: transfer.id,
+                            type: 'transfer_in'
+                        }
+                    }
+                });
             }
 
             return transfer;
         });
+
+        // Invalidate cache immediately
+        for (const item of items) {
+            await cache.invalidate(`tenant:${organizationId}:product:${item.productId}`);
+        }
+        await cache.invalidatePattern(`tenant:${organizationId}:products:*`);
+        await cache.invalidate(`tenant:${organizationId}:inventory:stats`);
+
+        return result;
     }
 
     static async createStockOpname(data: {
         warehouseId: string;
-        notes?: string;
+        notes?: string | null;
         items: Array<{ productId: string; actualQty: number }>;
         organizationId: string;
         userId: string;
     }) {
         const { warehouseId, notes, items, organizationId, userId } = data;
 
-        return await prisma.$transaction(async (tx) => {
+        const result = await prisma.$transaction(async (tx) => {
             const opnameNumber = `OPN-${Date.now()}`;
             // 1. Create Stock Opname record
             const opname = await tx.stockOpname.create({
@@ -340,7 +403,7 @@ export class InventoryService {
                         create: items.map(item => ({
                             productId: item.productId,
                             actualQty: item.actualQty,
-                            systemQty: 0, // Placeholder, updated later
+                            systemQty: 0,
                         }))
                     }
                 },
@@ -384,10 +447,23 @@ export class InventoryService {
                             allocatedQty: 0
                         }
                     });
+
+                    // 3. Create Outbox Event
+                    await tx.outboxEvent.create({
+                        data: {
+                            organizationId,
+                            topic: 'inventory.movement.created',
+                            payload: {
+                                productId: item.productId,
+                                warehouseId,
+                                organizationId,
+                                movementId: opname.id,
+                                type: 'opname'
+                            }
+                        }
+                    });
                 }
 
-                // Update systemQty and difference in opname item
-                // Use updateMany because opname item doesn't have a simple ID accessible easily here without map
                 await tx.stockOpnameItem.updateMany({
                     where: { opnameId: opname.id, productId: item.productId },
                     data: {
@@ -399,5 +475,46 @@ export class InventoryService {
 
             return opname;
         });
+
+        // Invalidate cache immediately
+        for (const item of items) {
+            await cache.invalidate(`tenant:${organizationId}:product:${item.productId}`);
+        }
+        await cache.invalidatePattern(`tenant:${organizationId}:products:*`);
+        await cache.invalidate(`tenant:${organizationId}:inventory:stats`);
+
+        return result;
+    }
+
+    static async getMovements(organizationId: string, params: { productId?: string; warehouseId?: string; type?: string; page?: number; pageSize?: number } = {}) {
+        const { productId, warehouseId, type, page = 1, pageSize = 10 } = params;
+        const skip = (page - 1) * pageSize;
+
+        const where: any = {
+            product: {
+                organizationId
+            }
+        };
+
+        if (productId) where.productId = productId;
+        if (warehouseId) where.warehouseId = warehouseId;
+        if (type) where.movementType = type;
+
+        const [movements, total] = await Promise.all([
+            prisma.inventoryMovement.findMany({
+                where,
+                include: {
+                    product: true,
+                    warehouse: true,
+                    createdBy: true
+                },
+                skip,
+                take: pageSize,
+                orderBy: { createdAt: 'desc' }
+            }),
+            prisma.inventoryMovement.count({ where })
+        ]);
+
+        return { movements, total };
     }
 }

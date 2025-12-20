@@ -2,53 +2,108 @@ import { db } from './db';
 import api from './api';
 
 export class SyncService {
-    static async syncOrders() {
-        if (typeof window === 'undefined' || !db.salesOrders) return;
+    static isSyncing = false;
+
+    /**
+     * Main sync loop for the Queue
+     */
+    static async processQueue() {
+        if (typeof window === 'undefined' || this.isSyncing) return;
+        if (!navigator.onLine) return;
+
+        this.isSyncing = true;
+        console.log('[Sync] Processing sync queue...');
 
         try {
-            // 1. Get unsynced orders from Dexie
-            const unsyncedOrders = await db.salesOrders.filter(o => o.synced === false).toArray();
+            const queueItems = await db.syncQueue.orderBy('createdAt').toArray();
+            if (queueItems.length === 0) {
+                this.isSyncing = false;
+                return;
+            }
 
-            if (unsyncedOrders.length === 0) return;
-
-            for (const order of unsyncedOrders) {
+            for (const item of queueItems) {
                 try {
-                    // 2. Send to Backend
-                    await api.post('/sales-orders', { // Updated endpoint
-                        ...order,
-                        // Ensure we don't send local ID or sync flag if backend doesn't want them
-                        id: undefined,
-                        synced: undefined
-                    });
+                    console.log(`[Sync] Syncing ${item.resource} ${item.action}...`);
 
-                    // 3. Mark as synced
-                    await db.salesOrders.update(order.id!, { synced: true });
-                    console.log(`Order ${order.orderNumber} synced successfully.`);
+                    let endpoint = '';
+                    let method: 'post' | 'put' | 'delete' | 'patch' = 'post';
+                    const data = { ...item.data };
 
-                } catch (error) {
-                    console.error(`Failed to sync order ${order.orderNumber}:`, error);
-                    // Retry logic could be added here
+                    switch (item.resource) {
+                        case 'PRODUCT':
+                            endpoint = item.action === 'CREATE' ? '/products' : `/products/${data.id}`;
+                            method = item.action === 'CREATE' ? 'post' : item.action === 'UPDATE' ? 'put' : 'delete';
+                            break;
+                        case 'INVENTORY':
+                            endpoint = '/inventory/adjustment'; // Defaulting to adjustment for now
+                            method = 'post';
+                            break;
+                        case 'ORDER':
+                        case 'PURCHASE_ORDER':
+                            const isPurchaseOrder = item.resource === 'PURCHASE_ORDER' || data.type === 'PURCHASE';
+                            endpoint = isPurchaseOrder ? '/purchase-orders' : '/orders';
+                            method = 'post';
+                            break;
+                        case 'CUSTOMER':
+                            endpoint = item.action === 'CREATE' ? '/customers' : `/customers/${data.id}`;
+                            method = item.action === 'CREATE' ? 'post' : item.action === 'UPDATE' ? 'put' : 'delete';
+                            break;
+                        case 'SUPPLIER':
+                            endpoint = item.action === 'CREATE' ? '/suppliers' : `/suppliers/${data.id}`;
+                            method = item.action === 'CREATE' ? 'post' : item.action === 'UPDATE' ? 'put' : 'delete';
+                            break;
+                    }
+
+                    if (endpoint) {
+                        const config = data.token ? { headers: { Authorization: `Bearer ${data.token}` } } : {};
+
+                        if (method === 'post') await api.post(endpoint, data, config);
+                        else if (method === 'put') await api.put(endpoint, data, config);
+                        else if (method === 'delete') await api.delete(endpoint, { ...config, data });
+
+                        // Remove from queue on success
+                        await db.syncQueue.delete(item.id!);
+
+                        // Also update local record status if applicable
+                        if (item.resource === 'ORDER' || item.resource === 'PURCHASE_ORDER') {
+                            // Update local synced status (optional, since processQueue should be the primary)
+                        }
+
+                        console.log(`[Sync] ${item.resource} ${item.action} synced.`);
+                    }
+                } catch (error: any) {
+                    console.error(`[Sync] Failed to sync item ${item.id}:`, error.response?.data || error.message);
+                    // If it's a 4xx error (validation), it might never succeed, consider removing or flagging
+                    if (error.response?.status >= 400 && error.response?.status < 500) {
+                        console.warn('[Sync] Non-retryable error, removing from queue');
+                        await db.syncQueue.delete(item.id!);
+                    }
+                    // Break loop to retry later for network/5xx
+                    break;
                 }
             }
         } catch (error) {
-            console.error("SyncService error:", error);
+            console.error("[Sync] Queue processing error:", error);
+        } finally {
+            this.isSyncing = false;
         }
     }
 
-    // Polling or Trigger-based sync
-    static startSync(intervalMs: number = 60000) {
+    static startSync(intervalMs: number = 30000) {
         if (typeof window === 'undefined') return;
 
-        // Run immediately on start
-        if (navigator.onLine) {
-            this.syncOrders();
-        }
+        // Run immediately
+        this.processQueue();
 
+        // Setup listeners
+        window.addEventListener('online', () => {
+            console.log('[Sync] Network back online, triggering sync...');
+            this.processQueue();
+        });
+
+        // Polling
         setInterval(() => {
-            if (navigator.onLine) {
-                this.syncOrders();
-            }
+            this.processQueue();
         }, intervalMs);
     }
 }
-

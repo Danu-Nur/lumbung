@@ -2,6 +2,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
+import { MasterService } from '../services/master.js';
 
 const supplierSchema = z.object({
     name: z.string().min(1),
@@ -36,6 +37,8 @@ export const createSupplierHandler = async (req: FastifyRequest, reply: FastifyR
                 organizationId
             }
         });
+
+        await MasterService.invalidateMasterCache(organizationId, 'suppliers');
 
         return reply.code(201).send(supplier);
     } catch (error) {
@@ -74,6 +77,9 @@ export const updateSupplierHandler = async (req: FastifyRequest<{ Params: { id: 
             where: { id },
             data
         });
+
+        await MasterService.invalidateMasterCache(organizationId, 'suppliers');
+
         return reply.send(updated);
     } catch (error) {
         req.log.error(error);
@@ -101,6 +107,9 @@ export const deleteSupplierHandler = async (req: FastifyRequest<{ Params: { id: 
             where: { id },
             data: { deletedAt: new Date() }
         });
+
+        await MasterService.invalidateMasterCache(organizationId, 'suppliers');
+
         return reply.send({ success: true });
     } catch (error) {
         req.log.error(error);

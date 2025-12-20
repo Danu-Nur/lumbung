@@ -122,253 +122,265 @@ export function InventoryCreateModal({
     return (
         <>
             <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle>{t("form.createTitle")}</DialogTitle>
-                        <DialogDescription>{t("form.createDescription")}</DialogDescription>
-                    </DialogHeader>
+                <DialogContent className="sm:max-w-[800px] p-0 border-2 border-black dark:border-white shadow-neo dark:shadow-neo-white rounded-none bg-white dark:bg-neo-dark max-h-[90vh] flex flex-col">
+                    <div className="bg-neo-green border-b-2 border-black dark:border-white p-3 flex justify-between items-center text-black">
+                        <div className="flex flex-col">
+                            <h2 className="text-lg font-bold">{t("form.createTitle")}</h2>
+                            <span className="text-[10px] uppercase font-black tracking-widest opacity-80">{t("form.createDescription")}</span>
+                        </div>
+                        <button onClick={() => onOpenChange(false)} className="w-6 h-6 bg-white dark:bg-black border border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black flex items-center justify-center transition-colors text-xs rounded-none">✕</button>
+                    </div>
 
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="name"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t("form.name")}</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder={t("form.namePlaceholder")} {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="sku"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t("form.sku")}</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder={t("form.skuPlaceholder")} {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="barcode"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t("form.barcode")}</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder={t("form.barcodePlaceholder")} {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="categoryId"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t("form.category")}</FormLabel>
-                                            <div className="flex gap-2">
-                                                <select
-                                                    className="flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 neo-brutal-style"
-                                                    {...field}
-                                                >
-                                                    <option value="">{t("form.selectCategory")}</option>
-                                                    {availableCategories.map((category) => (
-                                                        <option key={category.id} value={category.id}>
-                                                            {category.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    size="icon"
-                                                    onClick={() => setCategoryModalOpen(true)}
-                                                    title={t("form.addCategory")}
-                                                >
-                                                    <Plus className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            <FormField
-                                control={form.control}
-                                name="supplierId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{t("form.supplier") || "Preferred Supplier"}</FormLabel>
-                                        <div className="flex gap-2">
-                                            <select
-                                                className="flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 neo-brutal-style"
-                                                {...field}
-                                            >
-                                                <option value="">{t("form.selectSupplier") || "Select Supplier"}</option>
-                                                {suppliers.map((supplier) => (
-                                                    <option key={supplier.id} value={supplier.id}>
-                                                        {supplier.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="description"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{t("form.description")}</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={t("form.descriptionPlaceholder")} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="unit"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t("form.unit")}</FormLabel>
-                                            <select
-                                                className="flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 neo-brutal-style"
-                                                {...field}
-                                            >
-                                                <option value="pcs">{t("units.pcs")}</option>
-                                                <option value="box">{t("units.box")}</option>
-                                                <option value="kg">{t("units.kg")}</option>
-                                                <option value="liter">{t("units.liter")}</option>
-                                                <option value="meter">{t("units.meter")}</option>
-                                            </select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="sellingPrice"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t("form.sellingPrice")}</FormLabel>
-                                            <FormControl>
-                                                <Input type="number" step="0.01" placeholder="0.00" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="costPrice"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t("form.costPrice")}</FormLabel>
-                                            <FormControl>
-                                                <Input type="number" step="0.01" placeholder="0.00" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            <FormField
-                                control={form.control}
-                                name="lowStockThreshold"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{t("form.lowStockThreshold")}</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" placeholder="10" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <div className="border-t pt-4 mt-4">
-                                <h3 className="text-sm font-medium mb-3">{t("form.initialStockTitle") || "Initial Stock"}</h3>
+                    <div className="flex-1 overflow-y-auto p-5">
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <FormField
                                         control={form.control}
-                                        name="warehouseId"
+                                        name="name"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>{t("form.warehouse") || "Warehouse"}</FormLabel>
-                                                <div className="flex gap-2">
-                                                    <select
-                                                        className="flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 neo-brutal-style"
-                                                        {...field}
-                                                    >
-                                                        <option value="">{t("form.selectWarehouse") || "Select Warehouse"}</option>
-                                                        {warehouses.map((warehouse) => (
-                                                            <option key={warehouse.id} value={warehouse.id}>
-                                                                {warehouse.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="icon"
-                                                        onClick={() => setWarehouseModalOpen(true)}
-                                                        title={t("form.addWarehouse") || "Add Warehouse"}
-                                                    >
-                                                        <Plus className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.name")}</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder={t("form.namePlaceholder")} {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
+                                                </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                     <FormField
                                         control={form.control}
-                                        name="initialStock"
+                                        name="sku"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>{t("form.quantity") || "Quantity"}</FormLabel>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.sku")}</FormLabel>
                                                 <FormControl>
-                                                    <Input type="number" placeholder="0" {...field} />
+                                                    <Input placeholder={t("form.skuPlaceholder")} {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                 </div>
-                            </div>
 
-                            <DialogFooter>
-                                <Button type="button" variant="slate" onClick={() => onOpenChange(false)}>
-                                    {tCommon("actions.cancel")}
-                                </Button>
-                                <Button type="submit" variant="emerald" disabled={form.formState.isSubmitting}>
-                                    {form.formState.isSubmitting ? tCommon("actions.saving") : tCommon("buttons.save")}
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </Form>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="barcode"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.barcode")}</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder={t("form.barcodePlaceholder")} {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="categoryId"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.category")}</FormLabel>
+                                                <div className="flex gap-2">
+                                                    <select
+                                                        className="flex h-10 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white"
+                                                        {...field}
+                                                    >
+                                                        <option value="">{t("form.selectCategory")}</option>
+                                                        {availableCategories.map((category) => (
+                                                            <option key={category.id} value={category.id}>
+                                                                {category.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setCategoryModalOpen(true)}
+                                                        className="h-10 w-10 flex items-center justify-center bg-white dark:bg-gray-800 border-2 border-black dark:border-white shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all rounded-none text-black dark:text-white"
+                                                        title={t("form.addCategory")}
+                                                    >
+                                                        <Plus className="h-4 w-4" />
+                                                    </button>
+                                                </div>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <FormField
+                                    control={form.control}
+                                    name="supplierId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.supplier") || "Preferred Supplier"}</FormLabel>
+                                            <div className="flex gap-2">
+                                                <select
+                                                    className="flex h-10 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white"
+                                                    {...field}
+                                                >
+                                                    <option value="">{t("form.selectSupplier") || "Select Supplier"}</option>
+                                                    {suppliers.map((supplier) => (
+                                                        <option key={supplier.id} value={supplier.id}>
+                                                            {supplier.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.description")}</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder={t("form.descriptionPlaceholder")} {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="unit"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.unit")}</FormLabel>
+                                                <select
+                                                    className="flex h-10 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white"
+                                                    {...field}
+                                                >
+                                                    <option value="pcs">{t("units.pcs")}</option>
+                                                    <option value="box">{t("units.box")}</option>
+                                                    <option value="kg">{t("units.kg")}</option>
+                                                    <option value="liter">{t("units.liter")}</option>
+                                                    <option value="meter">{t("units.meter")}</option>
+                                                </select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="sellingPrice"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.sellingPrice")}</FormLabel>
+                                                <FormControl>
+                                                    <Input type="number" step="0.01" placeholder="0.00" {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="costPrice"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.costPrice")}</FormLabel>
+                                                <FormControl>
+                                                    <Input type="number" step="0.01" placeholder="0.00" {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <FormField
+                                    control={form.control}
+                                    name="lowStockThreshold"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.lowStockThreshold")}</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="10" {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <div className="border-t-2 border-black border-dashed pt-4 mt-4">
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest bg-black text-white px-2 py-0.5 inline-block mb-3">{t("form.initialStockTitle") || "Initial Stock"}</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="warehouseId"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.warehouse") || "Warehouse"}</FormLabel>
+                                                    <div className="flex gap-2">
+                                                        <select
+                                                            className="flex h-10 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white"
+                                                            {...field}
+                                                        >
+                                                            <option value="">{t("form.selectWarehouse") || "Select Warehouse"}</option>
+                                                            {warehouses.map((warehouse) => (
+                                                                <option key={warehouse.id} value={warehouse.id}>
+                                                                    {warehouse.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setWarehouseModalOpen(true)}
+                                                            className="h-10 w-10 flex items-center justify-center bg-white dark:bg-gray-800 border-2 border-black dark:border-white shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all rounded-none text-black dark:text-white"
+                                                            title={t("form.addWarehouse") || "Add Warehouse"}
+                                                        >
+                                                            <Plus className="h-4 w-4" />
+                                                        </button>
+                                                    </div>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="initialStock"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.quantity") || "Quantity"}</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="number" placeholder="0" {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+                            </form>
+                        </Form>
+                    </div>
+
+                    <div className="p-5 border-t-2 border-black dark:border-white bg-gray-50 dark:bg-gray-900 flex gap-3">
+                        <button
+                            type="button"
+                            onClick={() => onOpenChange(false)}
+                            className="flex-1 bg-white dark:bg-gray-800 text-black dark:text-white font-bold py-2.5 border-2 border-black dark:border-white shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all text-sm rounded-none uppercase tracking-widest"
+                        >
+                            {tCommon("actions.cancel")}
+                        </button>
+                        <button
+                            type="submit"
+                            onClick={form.handleSubmit(onSubmit)}
+                            disabled={form.formState.isSubmitting}
+                            className="flex-1 bg-black dark:bg-white text-white dark:text-black font-bold py-2.5 border-2 border-black dark:border-white shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none hover:bg-neo-green hover:text-black transition-all text-sm rounded-none uppercase tracking-widest"
+                        >
+                            {form.formState.isSubmitting ? tCommon("actions.saving") : tCommon("buttons.save")}
+                        </button>
+                    </div>
                 </DialogContent>
             </Dialog>
 

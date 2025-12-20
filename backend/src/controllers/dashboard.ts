@@ -1,70 +1,76 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma } from '../lib/prisma.js';
 import { SalesOrderStatus, PurchaseOrderStatus } from '@prisma/client';
+import { cache } from '../lib/cache.js';
 
 export async function getDashboardStatsHandler(req: FastifyRequest, reply: FastifyReply) {
     try {
         const user = req.user as { organizationId: string };
         const organizationId = user.organizationId;
+        const cacheKey = `tenant:${organizationId}:inventory:stats`;
 
-        const [
-            totalProducts,
-            inventoryItems,
-            activeSalesOrders,
-            lowStockItems,
-            salesAgg,
-            purchaseAgg
-        ] = await Promise.all([
-            prisma.product.count({
-                where: { organizationId, deletedAt: null },
-            }),
-            prisma.inventoryItem.findMany({
-                where: { product: { organizationId } },
-                include: { product: true },
-            }),
-            prisma.salesOrder.count({
-                where: { organizationId, status: { in: [SalesOrderStatus.DRAFT, SalesOrderStatus.CONFIRMED] } },
-            }),
-            prisma.inventoryItem.findMany({
-                where: { product: { organizationId, deletedAt: null } },
-                include: { product: true, warehouse: true },
-            }),
-            prisma.salesOrder.aggregate({
-                where: { organizationId, status: { not: SalesOrderStatus.CANCELLED } },
-                _sum: { total: true },
-            }),
-            prisma.purchaseOrder.aggregate({
-                where: { organizationId, status: { not: PurchaseOrderStatus.CANCELLED } },
-                _sum: { total: true },
-            }),
-        ]);
+        const stats = await cache.getOrSet(cacheKey, async () => {
+            const [
+                totalProducts,
+                inventoryItems,
+                activeSalesOrders,
+                lowStockItems,
+                salesAgg,
+                purchaseAgg
+            ] = await Promise.all([
+                prisma.product.count({
+                    where: { organizationId, deletedAt: null },
+                }),
+                prisma.inventoryItem.findMany({
+                    where: { product: { organizationId } },
+                    include: { product: true },
+                }),
+                prisma.salesOrder.count({
+                    where: { organizationId, status: { in: [SalesOrderStatus.DRAFT, SalesOrderStatus.CONFIRMED] } },
+                }),
+                prisma.inventoryItem.findMany({
+                    where: { product: { organizationId, deletedAt: null } },
+                    include: { product: true, warehouse: true },
+                }),
+                prisma.salesOrder.aggregate({
+                    where: { organizationId, status: { not: SalesOrderStatus.CANCELLED } },
+                    _sum: { total: true },
+                }),
+                prisma.purchaseOrder.aggregate({
+                    where: { organizationId, status: { not: PurchaseOrderStatus.CANCELLED } },
+                    _sum: { total: true },
+                }),
+            ]);
 
-        const totalStockValue = inventoryItems.reduce((sum, item) => {
-            return sum + item.quantityOnHand * Number(item.product.costPrice);
-        }, 0);
+            const totalStockValue = inventoryItems.reduce((sum, item) => {
+                return sum + item.quantityOnHand * Number(item.product.costPrice);
+            }, 0);
 
-        const outOfStockCount = lowStockItems.filter(
-            (item) => item.quantityOnHand <= 0
-        ).length;
+            const outOfStockCount = lowStockItems.filter(
+                (item) => item.quantityOnHand <= 0
+            ).length;
 
-        const lowStockCount = lowStockItems.filter(
-            (item) => item.quantityOnHand > 0 && item.quantityOnHand <= item.product.lowStockThreshold
-        ).length;
+            const lowStockCount = lowStockItems.filter(
+                (item) => item.quantityOnHand > 0 && item.quantityOnHand <= item.product.lowStockThreshold
+            ).length;
 
-        const totalSales = Number(salesAgg._sum.total || 0);
-        const totalPurchases = Number(purchaseAgg._sum.total || 0);
-        const profit = totalSales - totalPurchases;
+            const totalSales = Number(salesAgg._sum.total || 0);
+            const totalPurchases = Number(purchaseAgg._sum.total || 0);
+            const profit = totalSales - totalPurchases;
 
-        return reply.send({
-            totalProducts,
-            totalStockValue,
-            activeSalesOrders,
-            lowStockCount,
-            outOfStockCount,
-            totalSales,
-            totalPurchases,
-            profit
-        });
+            return {
+                totalProducts,
+                totalStockValue,
+                activeSalesOrders,
+                lowStockCount,
+                outOfStockCount,
+                totalSales,
+                totalPurchases,
+                profit
+            };
+        }, 300); // 5 minutes cache
+
+        return reply.send(stats);
     } catch (error) {
         req.log.error(error);
         return reply.status(500).send({ error: 'Failed to fetch dashboard stats' });

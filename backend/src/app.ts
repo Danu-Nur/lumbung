@@ -10,6 +10,7 @@ import { masterRoutes } from './routes/master.js';
 import { subscriptionRoutes } from './routes/subscription.js';
 import { dashboardRoutes } from './routes/dashboard.js';
 import { marketingRoutes } from './routes/marketing.js';
+import { purchaseOrderRoutes } from './routes/purchaseOrder.js';
 
 const fastify = Fastify({
     logger: true
@@ -48,6 +49,7 @@ fastify.register(masterRoutes, { prefix: '/api' });
 fastify.register(subscriptionRoutes, { prefix: '/api' });
 fastify.register(dashboardRoutes, { prefix: '/api' });
 fastify.register(marketingRoutes, { prefix: '/api' });
+fastify.register(purchaseOrderRoutes, { prefix: '/api/purchase-orders' });
 
 // Health Check
 fastify.get('/health', async (request, reply) => {
@@ -57,12 +59,22 @@ fastify.get('/health', async (request, reply) => {
 // Run the server
 // Run the server only if run directly
 import { fileURLToPath } from 'url';
+import { outboxService } from './services/outbox.js';
+import './queue/worker.js'; // Start BullMQ workers
 
 const start = async () => {
     try {
         const port = parseInt(process.env.PORT || '4000');
         await fastify.listen({ port, host: '0.0.0.0' });
         console.log(`Server listening on http://localhost:${port}`);
+
+        // Start Outbox Processor (Every 10 seconds)
+        if (process.env.ENABLE_QUEUE !== 'false') {
+            console.log('Outbox Processor started');
+            setInterval(async () => {
+                await outboxService.processEvents();
+            }, 10000);
+        }
     } catch (err) {
         fastify.log.error(err);
         process.exit(1);
