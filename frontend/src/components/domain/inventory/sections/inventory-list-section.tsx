@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { db } from '@/lib/db';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,6 +13,8 @@ import { useTranslations } from 'next-intl';
 import { InventoryModalManager } from '@/components/domain/inventory/modals/inventory-modal-manager';
 import { InventoryTable } from '@/components/domain/inventory/tables/inventory-table';
 import { LoadingState } from '@/components/shared/loading-state';
+import { dashboardService } from '@/lib/services/dashboardService';
+import { AlertCircle, ArrowDown, ArrowUp, BarChart3, TrendingDown } from 'lucide-react';
 // import { importStockBatch } from '@/features/inventory/import-actions'; // Moved or Refactored?
 
 interface InventoryListSectionProps {
@@ -21,11 +23,14 @@ interface InventoryListSectionProps {
     search: string;
     modal?: string;
     id?: string;
+    organizationId: string;
+    accessToken: string;
 }
 
-export function InventoryListSection({ page, pageSize, search, modal, id }: InventoryListSectionProps) {
+export function InventoryListSection({ page, pageSize, search, modal, id, organizationId, accessToken }: InventoryListSectionProps) {
     const t = useTranslations('inventory');
     const tCommon = useTranslations('common');
+    const queryClient = useQueryClient();
 
     const { data, isLoading } = useQuery({
         queryKey: ['products', page, pageSize, search],
@@ -85,7 +90,20 @@ export function InventoryListSection({ page, pageSize, search, modal, id }: Inve
         }
     });
 
-    if (isLoading) return <LoadingState message={tCommon('table.loading') || 'Loading...'} />;
+    // const { data: session } = useSession();
+    // const token = (session?.user as any)?.accessToken;
+    // const organizationId = (session?.user as any)?.organizationId;
+
+    const { data: stats, isLoading: isStatsLoading } = useQuery({
+        queryKey: ['inventory-stats', organizationId],
+        queryFn: async () => {
+            if (!organizationId) return null;
+            return await dashboardService.getDashboardStats(organizationId, accessToken);
+        },
+        enabled: !!organizationId,
+    });
+
+    if (isLoading || isStatsLoading) return <LoadingState message={tCommon('table.loading') || 'Loading...'} />;
 
     const serializedProducts = products.map((product: any) => ({
         ...product,
@@ -95,14 +113,79 @@ export function InventoryListSection({ page, pageSize, search, modal, id }: Inve
         totalStock: product.inventoryItems?.reduce((acc: number, item: any) => acc + item.quantityOnHand, 0) || 0,
     }));
 
+
+
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             <InventoryModalManager
                 products={serializedProducts}
                 categories={categories}
                 warehouses={warehouses}
                 suppliers={suppliers}
+                onSuccess={() => {
+                    queryClient.invalidateQueries({ queryKey: ['products'] });
+                    queryClient.invalidateQueries({ queryKey: ['inventory-stats'] });
+                }}
             />
+
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card className="neo-stat-card">
+                    <CardContent className="stat-content">
+                        <div className="stat-layout">
+                            <div className="stat-info">
+                                <p className="stat-label">{t('summary.totalProducts') || 'Total Products'}</p>
+                                <h3 className="stat-value">{stats?.totalProducts || 0}</h3>
+                            </div>
+                            <div className="stat-icon neo-icon-indigo">
+                                <Package className="w-6 h-6 text-white" />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="neo-stat-card">
+                    <CardContent className="stat-content">
+                        <div className="stat-layout">
+                            <div className="stat-info">
+                                <p className="stat-label">{t('summary.outOfStock') || 'Out of Stock'}</p>
+                                <h3 className="stat-value">{stats?.outOfStockCount || 0}</h3>
+                            </div>
+                            <div className="stat-icon neo-icon-red">
+                                <TrendingDown className="w-6 h-6 text-white" />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="neo-stat-card">
+                    <CardContent className="stat-content">
+                        <div className="stat-layout">
+                            <div className="stat-info">
+                                <p className="stat-label">{t('summary.lowStock') || 'Low Stock'}</p>
+                                <h3 className="stat-value">{stats?.lowStockCount || 0}</h3>
+                            </div>
+                            <div className="stat-icon neo-icon-amber">
+                                <AlertCircle className="w-6 h-6 text-white" />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="neo-stat-card">
+                    <CardContent className="stat-content">
+                        <div className="stat-layout">
+                            <div className="stat-info">
+                                <p className="stat-label">{t('summary.stockValue') || 'Stock Value'}</p>
+                                <h3 className="stat-value">{formatCurrency(stats?.totalStockValue || 0)}</h3>
+                            </div>
+                            <div className="stat-icon neo-icon-emerald">
+                                <BarChart3 className="w-6 h-6 text-white" />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>

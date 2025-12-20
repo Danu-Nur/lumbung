@@ -6,12 +6,12 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import api from '@/lib/api';
-import { cookies } from 'next/headers';
 
 export async function createProduct(formData: FormData) {
     const session = await auth();
+    const token = (session?.user as any)?.accessToken;
 
-    if (!session?.user || !session.user.organizationId) {
+    if (!token || !session?.user || !session.user.organizationId) {
         throw new Error('Unauthorized');
     }
 
@@ -33,34 +33,38 @@ export async function createProduct(formData: FormData) {
         throw new Error('Missing required fields');
     }
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
+    try {
+        await productService.createProduct({
+            organizationId: session.user.organizationId!,
+            name,
+            sku,
+            barcode: barcode || null,
+            description: description || null,
+            categoryId: categoryId || null,
+            supplierId: supplierId || null,
+            unit,
+            sellingPrice,
+            costPrice,
+            lowStockThreshold: lowStockThreshold || 10,
+            initialStock,
+            warehouseId: warehouseId || undefined,
+            createdById: session.user.id,
+            token,
+        });
 
-    await productService.createProduct({
-        organizationId: session.user.organizationId!,
-        name,
-        sku,
-        barcode: barcode || null,
-        description: description || null,
-        categoryId: categoryId || null,
-        supplierId: supplierId || null,
-        unit,
-        sellingPrice,
-        costPrice,
-        lowStockThreshold: lowStockThreshold || 10,
-        initialStock,
-        warehouseId: warehouseId || undefined,
-        createdById: session.user.id,
-        token,
-    });
-
-    revalidatePath('/inventory');
+        revalidatePath('/inventory');
+    } catch (error: any) {
+        let message = error.response?.data?.error || error.message || 'Failed to create product';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
+    }
 }
 
 export async function updateProduct(productId: string, formData: FormData) {
     const session = await auth();
+    const token = (session?.user as any)?.accessToken;
 
-    if (!session?.user || !session.user.organizationId) {
+    if (!token || !session?.user || !session.user.organizationId) {
         throw new Error('Unauthorized');
     }
 
@@ -75,49 +79,56 @@ export async function updateProduct(productId: string, formData: FormData) {
     const costPrice = parseFloat(formData.get('costPrice') as string);
     const lowStockThreshold = parseInt(formData.get('lowStockThreshold') as string);
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
+    try {
+        await productService.updateProduct({
+            id: productId,
+            organizationId: session.user.organizationId,
+            data: {
+                name,
+                sku,
+                barcode: barcode || null,
+                description: description || null,
+                categoryId: categoryId || null,
+                supplierId: supplierId || null,
+                unit,
+                sellingPrice,
+                costPrice,
+                lowStockThreshold: lowStockThreshold || 10,
+            },
+            updatedById: session.user.id,
+            token,
+        });
 
-    await productService.updateProduct({
-        id: productId,
-        organizationId: session.user.organizationId,
-        data: {
-            name,
-            sku,
-            barcode: barcode || null,
-            description: description || null,
-            categoryId: categoryId || null,
-            supplierId: supplierId || null,
-            unit,
-            sellingPrice,
-            costPrice,
-            lowStockThreshold: lowStockThreshold || 10,
-        },
-        updatedById: session.user.id,
-        token,
-    });
-
-    revalidatePath('/inventory');
+        revalidatePath('/inventory');
+    } catch (error: any) {
+        let message = error.response?.data?.error || error.message || 'Failed to update product';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
+    }
 }
 
 export async function deleteProduct(productId: string) {
     const session = await auth();
+    const token = (session?.user as any)?.accessToken;
 
-    if (!session?.user || !session.user.organizationId) {
+    if (!token || !session?.user || !session.user.organizationId) {
         throw new Error('Unauthorized');
     }
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
+    try {
+        await productService.deleteProduct({
+            id: productId,
+            organizationId: session.user.organizationId,
+            updatedById: session.user.id,
+            token,
+        });
 
-    await productService.deleteProduct({
-        id: productId,
-        organizationId: session.user.organizationId,
-        updatedById: session.user.id,
-        token,
-    });
-
-    revalidatePath('/inventory');
+        revalidatePath('/inventory');
+    } catch (error: any) {
+        let message = error.response?.data?.error || error.message || 'Failed to delete product';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
+    }
 }
 
 export async function getProductHistory(productId: string) {
@@ -155,27 +166,33 @@ export async function createStockAdjustment(data: {
     notes?: string;
 }) {
     const session = await auth();
-    if (!session?.user || !session.user.organizationId) {
+    const token = (session?.user as any)?.accessToken;
+
+    if (!token || !session?.user || !session.user.organizationId) {
         throw new Error('Unauthorized');
     }
 
     const { productId, warehouseId, type, quantity, reason, notes } = data;
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
 
-    // Call Backend API
-    await api.post('/inventory/adjustment', {
-        productId,
-        warehouseId,
-        type,
-        quantity,
-        reason,
-        notes
-    }, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-    });
+    try {
+        // Call Backend API
+        await api.post('/inventory/adjustment', {
+            productId,
+            warehouseId,
+            type, // Backend expects 'type'
+            quantity,
+            reason,
+            notes
+        }, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
 
-    revalidatePath('/inventory');
+        revalidatePath('/inventory');
+    } catch (error: any) {
+        let message = error.response?.data?.error || error.message || 'Failed to create adjustment';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
+    }
 }
 
 export async function createStockAdjustmentFromForm(formData: FormData) {

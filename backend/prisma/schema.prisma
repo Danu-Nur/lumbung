@@ -667,3 +667,41 @@ model StockOpnameItem {
   @@index([productId])
   @@map("stock_opname_items")
 }
+
+// ============================================
+// INFRASTRUCTURE & READ MODELS
+// ============================================
+
+model OutboxEvent {
+  id             String   @id @default(cuid())
+  organizationId String
+  topic          String   // e.g., "inventory.movement.created"
+  payload        Json
+  status         String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  attempts       Int      @default(0)
+  lastError      String?
+  createdAt      DateTime @default(now())
+  processedAt    DateTime?
+
+  @@index([organizationId])
+  @@index([status, createdAt])
+  @@map("outbox_events")
+}
+
+// Denormalized Read Model for performance
+model StockSummary {
+  id             String   @id @default(cuid())
+  organizationId String
+  warehouseId    String
+  productId      String
+  totalIn        Int      @default(0)
+  totalOut       Int      @default(0)
+  currentStock   Int      @default(0)
+  lastMovementAt DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([organizationId, warehouseId, productId])
+  @@index([organizationId, warehouseId])
+  @@map("stock_summaries")
+}
+

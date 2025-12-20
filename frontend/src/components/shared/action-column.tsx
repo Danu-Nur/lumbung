@@ -45,7 +45,7 @@ export function ActionColumn({
                     <Tooltip key={index}>
                         <TooltipTrigger asChild>
                             <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="icon"
                                 onClick={action.onClick}
                                 className={`h-8 w-8 ${action.variant === 'destructive'
@@ -67,7 +67,7 @@ export function ActionColumn({
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="icon"
                                 onClick={onView}
                                 className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
@@ -86,7 +86,7 @@ export function ActionColumn({
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="icon"
                                 onClick={onEdit}
                                 className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50"
@@ -105,7 +105,7 @@ export function ActionColumn({
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="icon"
                                 onClick={onDelete}
                                 className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"

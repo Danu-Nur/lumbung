@@ -10,6 +10,12 @@
         "warehouses": "Warehouses",
         "suppliers": "Suppliers"
     },
+    "summary": {
+        "totalProducts": "Total Products",
+        "outOfStock": "Out of Stock",
+        "lowStock": "Low Stock",
+        "stockValue": "Stock Value"
+    },
     "columns": {
         "product": "Product",
         "sku": "SKU",

@@ -43,8 +43,12 @@ export async function getDashboardStatsHandler(req: FastifyRequest, reply: Fasti
             return sum + item.quantityOnHand * Number(item.product.costPrice);
         }, 0);
 
+        const outOfStockCount = lowStockItems.filter(
+            (item) => item.quantityOnHand <= 0
+        ).length;
+
         const lowStockCount = lowStockItems.filter(
-            (item) => item.quantityOnHand <= item.product.lowStockThreshold
+            (item) => item.quantityOnHand > 0 && item.quantityOnHand <= item.product.lowStockThreshold
         ).length;
 
         const totalSales = Number(salesAgg._sum.total || 0);
@@ -56,6 +60,7 @@ export async function getDashboardStatsHandler(req: FastifyRequest, reply: Fasti
             totalStockValue,
             activeSalesOrders,
             lowStockCount,
+            outOfStockCount,
             totalSales,
             totalPurchases,
             profit

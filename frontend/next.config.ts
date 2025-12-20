@@ -7,7 +7,9 @@ const withPWA = withPWAInit({
     dest: "public",
     disable: false, // Enabled for testing
     register: true,
-    skipWaiting: true,
+    workboxOptions: {
+        skipWaiting: true,
+    },
 });
 
 /** @type {import('next').NextConfig} */

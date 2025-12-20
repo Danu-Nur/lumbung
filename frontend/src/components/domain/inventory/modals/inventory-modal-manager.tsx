@@ -14,9 +14,10 @@ interface InventoryModalManagerProps {
     categories: Category[];
     warehouses: Warehouse[];
     suppliers?: { id: string; name: string }[];
+    onSuccess?: () => void;
 }
 
-export function InventoryModalManager({ products, categories, warehouses, suppliers = [] }: InventoryModalManagerProps) {
+export function InventoryModalManager({ products, categories, warehouses, suppliers = [], onSuccess }: InventoryModalManagerProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -40,6 +41,7 @@ export function InventoryModalManager({ products, categories, warehouses, suppli
     const handleSuccess = () => {
         handleClose();
         router.refresh();
+        if (onSuccess) onSuccess();
     };
 
     return (

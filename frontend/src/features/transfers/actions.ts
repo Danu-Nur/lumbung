@@ -10,7 +10,7 @@ async function getSession() {
 
 export async function createTransfer(formData: FormData) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     const rawData = {
         fromWarehouseId: formData.get('fromWarehouseId') as string,
@@ -21,20 +21,22 @@ export async function createTransfer(formData: FormData) {
 
     try {
         const response = await api.post('/inventory/transfers', rawData, {
-            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+            headers: { Authorization: `Bearer ${(session?.user as any).accessToken}` }
         });
 
         revalidatePath('/transfers');
         revalidatePath('/inventory');
         return response.data;
     } catch (error: any) {
-        throw new Error(error.response?.data?.error || 'Failed to create transfer');
+        let message = error.response?.data?.error || error.message || 'Failed to create transfer';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
     }
 }
 
 export async function sendTransfer(transferId: string) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     try {
         // await api.post(`/inventory/transfers/${transferId}/send`, {}, { ... });
@@ -46,7 +48,7 @@ export async function sendTransfer(transferId: string) {
 
 export async function completeTransfer(transferId: string) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     try {
         // await api.post(`/inventory/transfers/${transferId}/complete`, {}, { ... });

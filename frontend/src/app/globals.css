@@ -1,13 +1,17 @@
-/* === Tailwind core === */
+/* =========================
+   Tailwind v4 Core
+========================= */
 @import "tailwindcss";
 
 /* Plugin animate (shadcn style) */
 @plugin "tailwindcss-animate";
 
-/* Custom variant untuk dark mode via .dark di html/body */
-@custom-variant dark (&:is(.dark *));
+/* Custom variant: dark mode via .dark di html/body */
+@custom-variant dark (&:where(.dark, .dark *));
 
-/* ===== THEME MAPPING KE TAILWIND TOKENS ===== */
+/* =========================
+   THEME MAPPING -> Tailwind Tokens
+========================= */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -47,41 +51,44 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* ===== LIGHT THEME (OKLCH) ===== */
+/* =========================
+   LIGHT THEME (OKLCH)
+========================= */
 :root {
   --radius: 0rem;
+
   --background: oklch(1 0 0);
-  /* White */
   --foreground: oklch(0 0 0);
-  /* Black */
+
   --card: oklch(1 0 0);
   --card-foreground: oklch(0 0 0);
+
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0 0 0);
+
   --primary: oklch(0.65 0.25 30);
-  /* Vibrant Orange/Red */
   --primary-foreground: oklch(0 0 0);
+
   --secondary: oklch(0.85 0.15 80);
-  /* Muted Orange/Yellow */
   --secondary-foreground: oklch(0 0 0);
+
   --muted: oklch(0.95 0 0);
   --muted-foreground: oklch(0.3 0 0);
+
   --accent: oklch(0.8 0.2 150);
-  /* Vibrant Green */
   --accent-foreground: oklch(0 0 0);
+
   --destructive: oklch(0.6 0.25 20);
   --border: oklch(0 0 0);
-  /* Pure Black Borders */
   --input: oklch(0 0 0);
   --ring: oklch(0 0 0);
+
   --chart-1: oklch(0.65 0.25 30);
   --chart-2: oklch(0.8 0.2 150);
   --chart-3: oklch(0.5 0.25 270);
-  /* Purple */
   --chart-4: oklch(0.9 0.15 95);
-  /* Yellow */
   --chart-5: oklch(0 0 0);
-  --radius: 0rem;
+
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0 0 0);
   --sidebar-primary: oklch(0.65 0.25 30);
@@ -90,34 +97,48 @@
   --sidebar-accent-foreground: oklch(0 0 0);
   --sidebar-border: oklch(0 0 0);
   --sidebar-ring: oklch(0 0 0);
+
   --brutal-shadow: oklch(0 0 0);
 }
 
+/* =========================
+   DARK THEME
+========================= */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
+
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
+
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
+
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
+
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
+
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
+
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
+
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(0.985 0 0);
   --input: oklch(0.985 0 0);
   --ring: oklch(0.556 0 0);
+
   --brutal-shadow: oklch(0.985 0 0);
+
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
+
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -128,8 +149,9 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-
-/* ===== BASE LAYER ===== */
+/* =========================
+   BASE LAYER
+========================= */
 @layer base {
   html {
     scroll-behavior: smooth !important;
@@ -144,17 +166,122 @@
     font-family: var(--font-space), var(--font-sans), sans-serif;
   }
 
+  /* =========================
+     Neobrutalism Components
+  ========================= */
+  .neo-card {
+    @apply border-2 border-border bg-card transition-all;
+    box-shadow: 4px 4px 0px 0px var(--brutal-shadow);
+  }
+
+  .neo-card:hover {
+    box-shadow: 2px 2px 0px 0px var(--brutal-shadow);
+  }
+
+  .neo-card:active {
+    box-shadow: 1px 1px 0px 0px var(--brutal-shadow);
+  }
+
+  .neo-stat-card {
+    @apply border-2 border-border bg-card transition-all;
+    box-shadow: 4px 4px 0px 0px var(--brutal-shadow);
+  }
+
+  .neo-stat-card:hover {
+    box-shadow: 2px 2px 0px 0px var(--brutal-shadow);
+  }
+
+  .neo-stat-card:active {
+    box-shadow: 1px 1px 0px 0px var(--brutal-shadow);
+  }
+
+  .neo-stat-card .stat-content {
+    @apply p-6;
+  }
+
+  .neo-stat-card .stat-layout {
+    @apply flex items-center justify-between;
+  }
+
+  .neo-stat-card .stat-info {
+    @apply flex flex-col gap-1;
+  }
+
+  .neo-stat-card .stat-label {
+    @apply text-xs font-bold uppercase tracking-wider text-muted-foreground;
+  }
+
+  .neo-stat-card .stat-value {
+    @apply text-3xl font-black text-foreground;
+  }
+
+  .neo-stat-card .stat-icon {
+    @apply p-3 border-2 border-border rounded-lg;
+  }
+
   .neo-brutal-style {
-    @apply transition-all border-2 border-border shadow-[4px_4px_0px_0px_var(--brutal-shadow)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_var(--brutal-shadow)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none dark:border-white dark:shadow-[4px_4px_0px_0px_#ffffff] dark:hover:shadow-[2px_2px_0px_0px_#ffffff];
+    @apply transition-all border-2 border-border;
+    box-shadow: 4px 4px 0px 0px var(--brutal-shadow);
+  }
+
+  .neo-brutal-style:hover {
+    @apply translate-x-0.5 translate-y-0.5;
+    box-shadow: 2px 2px 0px 0px var(--brutal-shadow);
+  }
+
+  .neo-brutal-style:active {
+    @apply translate-x-1 translate-y-1;
+    box-shadow: none;
   }
 }
 
+/* =========================
+   UTILITIES
+========================= */
 @layer utilities {
+
+  /* Icon color variants */
+  .neo-icon-indigo {
+    background-color: #6366f1;
+  }
+
+  .neo-icon-red {
+    background-color: #ef4444;
+  }
+
+  .neo-icon-amber {
+    background-color: #f59e0b;
+  }
+
+  .neo-icon-emerald {
+    background-color: #10b981;
+  }
+
+  .neo-icon-blue {
+    background-color: #3b82f6;
+  }
+
+  .neo-icon-purple {
+    background-color: #a855f7;
+  }
+
+  .neo-icon-pink {
+    background-color: #ec4899;
+  }
+
+  .neo-icon-cyan {
+    background-color: #06b6d4;
+  }
+
+  /* Scroll animation */
   .animate-scroll {
     animation: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
   }
 }
 
+/* =========================
+   KEYFRAMES
+========================= */
 @keyframes scroll {
   to {
     transform: translate(calc(-50% - 0.5rem));

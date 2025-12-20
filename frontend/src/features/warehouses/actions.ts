@@ -16,17 +16,19 @@ export async function createWarehouse(data: {
     phone?: string;
 }) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     try {
         const response = await api.post('/warehouses', data, {
-            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+            headers: { Authorization: `Bearer ${(session?.user as any).accessToken}` }
         });
 
         revalidatePath('/warehouses');
         return response.data;
     } catch (error: any) {
-        throw new Error(error.response?.data?.error || 'Failed to create warehouse');
+        let message = error.response?.data?.error || error.message || 'Failed to create warehouse';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
     }
 }
 
@@ -39,32 +41,36 @@ export async function updateWarehouse(id: string, data: {
     isActive: boolean;
 }) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     try {
         const response = await api.patch(`/warehouses/${id}`, data, {
-            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+            headers: { Authorization: `Bearer ${(session?.user as any).accessToken}` }
         });
 
         revalidatePath('/warehouses');
         revalidatePath(`/warehouses/${id}`);
         return response.data;
     } catch (error: any) {
-        throw new Error(error.response?.data?.error || 'Failed to update warehouse');
+        let message = error.response?.data?.error || error.message || 'Failed to update warehouse';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
     }
 }
 
 export async function deleteWarehouse(id: string) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     try {
         await api.delete(`/warehouses/${id}`, {
-            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+            headers: { Authorization: `Bearer ${(session?.user as any).accessToken}` }
         });
         revalidatePath('/warehouses');
     } catch (error: any) {
-        throw new Error(error.response?.data?.error || 'Failed to delete warehouse');
+        let message = error.response?.data?.error || error.message || 'Failed to delete warehouse';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
     }
 }
 

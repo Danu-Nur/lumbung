@@ -129,17 +129,30 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
                 const stock = row.getValue('totalStock') as number;
                 const minStock = row.original.lowStockThreshold;
                 const isLowStock = stock <= minStock;
+                const isOutOfStock = stock <= 0;
 
                 return (
-                    <div className="flex items-center gap-2">
-                        <span className={isLowStock ? "text-destructive font-bold" : ""}>
-                            {stock} {row.original.unit}
-                        </span>
-                        {isLowStock && (
-                            <Badge variant="destructive" className="h-5 px-1.5 text-[10px]">
+                    <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full shrink-0 ${isOutOfStock ? "bg-red-600 animate-pulse" : isLowStock ? "bg-amber-500" : "bg-emerald-500"}`} />
+                        <div className="flex flex-col">
+                            <span className={`text-sm ${isOutOfStock ? "text-red-700 font-bold" : isLowStock ? "text-amber-700 font-semibold" : "text-foreground font-medium"}`}>
+                                {stock} {row.original.unit}
+                            </span>
+                            {isLowStock && (
+                                <span className="text-[10px] text-muted-foreground leading-none">
+                                    Min: {minStock}
+                                </span>
+                            )}
+                        </div>
+                        {isOutOfStock ? (
+                            <Badge variant="destructive" className="h-5 px-1.5 text-[10px] uppercase font-bold">
+                                Out
+                            </Badge>
+                        ) : isLowStock ? (
+                            <Badge variant="outline" className="h-5 px-1.5 text-[10px] uppercase font-bold border-amber-500 text-amber-600 bg-amber-50">
                                 Low
                             </Badge>
-                        )}
+                        ) : null}
                     </div>
                 );
             },

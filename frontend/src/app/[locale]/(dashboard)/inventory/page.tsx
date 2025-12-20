@@ -27,6 +27,8 @@ export default async function InventoryPage({
                     search={search}
                     modal={modal}
                     id={id}
+                    organizationId={orgId}
+                    accessToken={token}
                 />
             </div>
         </div>

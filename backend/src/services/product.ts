@@ -144,6 +144,13 @@ export class ProductService {
                 costPrice: updateData.costPrice,
                 lowStockThreshold: updateData.lowStockThreshold,
                 updatedById: userId
+            },
+            include: {
+                category: true,
+                supplier: true,
+                inventoryItems: {
+                    include: { warehouse: true }
+                }
             }
         });
     }

@@ -35,46 +35,51 @@ export async function createSalesOrder(formData: FormData) {
     const totalDiscount = items.reduce((sum: number, item) => sum + item.discount, 0);
     const total = subtotal - totalDiscount;
 
-    // Create order in transaction
-    const order = await prisma.$transaction(async (tx) => {
-        const orderNumber = generateOrderNumber('SO');
+    try {
+        const order = await prisma.$transaction(async (tx) => {
+            const orderNumber = generateOrderNumber('SO');
 
-        const salesOrder = await tx.salesOrder.create({
-            data: {
-                orderNumber,
-                customerId: customerId || null,
-                warehouseId,
-                status: 'DRAFT',
-                notes: notes || null,
-                subtotal,
-                tax: 0,
-                discount: totalDiscount,
-                total,
-                organizationId: session.user.organizationId!,
-                createdById: session.user.id,
-            },
-        });
-
-        // Create line items with price snapshots
-        for (const item of items) {
-            const lineTotal = (item.quantity * item.unitPrice) - item.discount;
-            await tx.salesOrderItem.create({
+            const salesOrder = await tx.salesOrder.create({
                 data: {
-                    salesOrderId: salesOrder.id,
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    unitPrice: item.unitPrice, // Price snapshot
-                    discount: item.discount,
-                    lineTotal,
+                    orderNumber,
+                    customerId: customerId || null,
+                    warehouseId,
+                    status: 'DRAFT',
+                    notes: notes || null,
+                    subtotal,
+                    tax: 0,
+                    discount: totalDiscount,
+                    total,
+                    organizationId: session.user.organizationId!,
+                    createdById: session.user.id,
                 },
             });
-        }
 
-        return salesOrder;
-    });
+            // Create line items with price snapshots
+            for (const item of items) {
+                const lineTotal = (item.quantity * item.unitPrice) - item.discount;
+                await tx.salesOrderItem.create({
+                    data: {
+                        salesOrderId: salesOrder.id,
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        unitPrice: item.unitPrice, // Price snapshot
+                        discount: item.discount,
+                        lineTotal,
+                    },
+                });
+            }
 
-    revalidatePath('/sales-orders');
-    return order;
+            return salesOrder;
+        });
+
+        revalidatePath('/sales-orders');
+        return order;
+    } catch (error: any) {
+        let message = error.response?.data?.error || error.message || 'Failed to create sales order';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
+    }
 }
 
 
@@ -86,10 +91,16 @@ export async function fulfillSalesOrder(orderId: string) {
         throw new Error('Unauthorized');
     }
 
-    await salesOrderService.fulfillSalesOrder(orderId, session.user.organizationId, session.user.id);
+    try {
+        await salesOrderService.fulfillSalesOrder(orderId, session.user.organizationId, session.user.id);
 
-    revalidatePath('/sales-orders');
-    revalidatePath(`/sales-orders/${orderId}`);
+        revalidatePath('/sales-orders');
+        revalidatePath(`/sales-orders/${orderId}`);
+    } catch (error: any) {
+        let message = error.response?.data?.error || error.message || 'Failed to fulfill sales order';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
+    }
 }
 
 export async function updateOrderStatus(orderId: string, status: string) {
@@ -99,13 +110,19 @@ export async function updateOrderStatus(orderId: string, status: string) {
         throw new Error('Unauthorized');
     }
 
-    await prisma.salesOrder.update({
-        where: { id: orderId },
-        data: { status: status as any },
-    });
+    try {
+        await prisma.salesOrder.update({
+            where: { id: orderId },
+            data: { status: status as any },
+        });
 
-    revalidatePath('/sales-orders');
-    revalidatePath(`/sales-orders/${orderId}`);
+        revalidatePath('/sales-orders');
+        revalidatePath(`/sales-orders/${orderId}`);
+    } catch (error: any) {
+        let message = error.response?.data?.error || error.message || 'Failed to update order status';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
+    }
 }
 
 export async function confirmSalesOrder(orderId: string) {
@@ -115,10 +132,16 @@ export async function confirmSalesOrder(orderId: string) {
         throw new Error('Unauthorized');
     }
 
-    await salesOrderService.confirmSalesOrder(orderId, session.user.organizationId);
+    try {
+        await salesOrderService.confirmSalesOrder(orderId, session.user.organizationId);
 
-    revalidatePath('/sales-orders');
-    revalidatePath(`/sales-orders/${orderId}`);
+        revalidatePath('/sales-orders');
+        revalidatePath(`/sales-orders/${orderId}`);
+    } catch (error: any) {
+        let message = error.response?.data?.error || error.message || 'Failed to confirm sales order';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
+    }
 }
 
 export async function cancelSalesOrder(orderId: string) {
@@ -128,8 +151,14 @@ export async function cancelSalesOrder(orderId: string) {
         throw new Error('Unauthorized');
     }
 
-    await salesOrderService.cancelSalesOrder(orderId, session.user.organizationId);
+    try {
+        await salesOrderService.cancelSalesOrder(orderId, session.user.organizationId);
 
-    revalidatePath('/sales-orders');
-    revalidatePath(`/sales-orders/${orderId}`);
+        revalidatePath('/sales-orders');
+        revalidatePath(`/sales-orders/${orderId}`);
+    } catch (error: any) {
+        let message = error.response?.data?.error || error.message || 'Failed to cancel sales order';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
+    }
 }

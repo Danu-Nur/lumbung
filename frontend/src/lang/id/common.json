@@ -95,6 +95,7 @@
         "create": "Buat"
     },
     "table": {
+        "loading": "Memuat...",
         "noData": "Tidak ada data",
         "actions": "Aksi",
         "name": "Nama",

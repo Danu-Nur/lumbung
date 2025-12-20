@@ -9,7 +9,7 @@ import {
     createStockOpnameHandler
 } from '../controllers/inventory.js';
 
-export default async function inventoryRoutes(fastify: FastifyInstance) {
+export async function inventoryRoutes(fastify: FastifyInstance) {
     // Protect all routes with JWT verification hook if needed (or check in handler)
     fastify.addHook('onRequest', fastify.authenticate);
 

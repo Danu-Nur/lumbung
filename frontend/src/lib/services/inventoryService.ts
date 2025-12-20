@@ -13,14 +13,16 @@ export const inventoryService = {
             // 1. Try Online
             const response = await api.post('/inventory/movements', params);
 
-            // 2. Update Local Cache on success (Mirroring server)
-            await this._updateLocalInventory(params);
+            // 2. Update Local Cache on success (Mirroring server) - Browser only
+            if (typeof window !== 'undefined') {
+                await this._updateLocalInventory(params);
+            }
 
             return response.data;
         } catch (error: any) {
             const isOffline = !error.response || error.code === 'ERR_NETWORK';
 
-            if (isOffline) {
+            if (typeof window !== 'undefined' && isOffline) {
                 console.warn('Inventory: Offline Movement - Queued');
 
                 // 1. Optimistic Update Local DB
@@ -48,6 +50,7 @@ export const inventoryService = {
      * Helper to update local Dexie state for inventory
      */
     async _updateLocalInventory(params: CreateInventoryMovementParams) {
+        if (typeof window === 'undefined') return;
         const { productId, warehouseId, quantity } = params;
 
         const item = await db.inventoryItems.where({ productId, warehouseId }).first();
@@ -77,8 +80,11 @@ export const inventoryService = {
             const response = await api.get('/inventory/stock', { params: { productId, warehouseId } });
             return response.data;
         } catch (error) {
-            const item = await db.inventoryItems.where({ productId, warehouseId }).first();
-            return item || null;
+            if (typeof window !== 'undefined') {
+                const item = await db.inventoryItems.where({ productId, warehouseId }).first();
+                return item || null;
+            }
+            throw error;
         }
     },
 
@@ -91,8 +97,8 @@ export const inventoryService = {
                 params: { organizationId, page, pageSize, search }
             });
 
-            // Background: Update local cache with latest data
-            if (response.data.products) {
+            // Background: Update local cache with latest data (Browser only)
+            if (typeof window !== 'undefined' && response.data.products) {
                 await db.transaction('rw', db.products, db.inventoryItems, async () => {
                     for (const p of response.data.products) {
                         // Cache Product
@@ -125,32 +131,35 @@ export const inventoryService = {
 
             return response.data;
         } catch (error) {
-            console.warn('Inventory: Offline Fetch');
+            if (typeof window !== 'undefined') {
+                console.warn('Inventory: Offline Fetch');
 
-            let query = db.products.where({ organizationId });
+                let query = db.products.where({ organizationId });
 
-            if (search) {
-                // Dexie doesn't support complex OR search natively easily without full scan or mult-index
-                // Simple filter for now
-                query = query.filter(p =>
-                    p.name.toLowerCase().includes(search.toLowerCase()) ||
-                    p.sku.toLowerCase().includes(search.toLowerCase())
-                );
+                if (search) {
+                    // Dexie doesn't support complex OR search natively easily without full scan or mult-index
+                    // Simple filter for now
+                    query = query.filter(p =>
+                        p.name.toLowerCase().includes(search.toLowerCase()) ||
+                        p.sku.toLowerCase().includes(search.toLowerCase())
+                    );
+                }
+
+                const count = await query.count();
+                const products = await query
+                    .offset((page - 1) * pageSize)
+                    .limit(pageSize)
+                    .toArray();
+
+                // Re-attach inventory items from local DB
+                const productsWithInventory = await Promise.all(products.map(async p => {
+                    const inventoryItems = await db.inventoryItems.where({ productId: p.id }).toArray();
+                    return { ...p, inventoryItems };
+                }));
+
+                return { products: productsWithInventory, total: count };
             }
-
-            const count = await query.count();
-            const products = await query
-                .offset((page - 1) * pageSize)
-                .limit(pageSize)
-                .toArray();
-
-            // Re-attach inventory items from local DB
-            const productsWithInventory = await Promise.all(products.map(async p => {
-                const inventoryItems = await db.inventoryItems.where({ productId: p.id }).toArray();
-                return { ...p, inventoryItems };
-            }));
-
-            return { products: productsWithInventory, total: count };
+            throw error;
         }
     },
 };

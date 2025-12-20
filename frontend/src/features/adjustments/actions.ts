@@ -10,7 +10,7 @@ async function getSession() {
 
 export async function createStockAdjustment(formData: FormData) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     const productId = formData.get('productId') as string;
     const warehouseId = formData.get('warehouseId') as string;
@@ -32,20 +32,24 @@ export async function createStockAdjustment(formData: FormData) {
             reason,
             notes
         }, {
-            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+            headers: { Authorization: `Bearer ${(session?.user as any).accessToken}` }
         });
 
         revalidatePath('/adjustments');
         revalidatePath('/inventory');
         return response.data;
     } catch (error: any) {
-        throw new Error(error.response?.data?.error || 'Failed to create adjustment');
+        let message = error.response?.data?.error || error.message || 'Failed to create adjustment';
+        if (typeof message !== 'string') {
+            message = JSON.stringify(message);
+        }
+        throw new Error(message);
     }
 }
 
 export async function reverseStockAdjustment(adjustmentId: string) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     // For now, if backend doesn't have reversal, we might need to add it or skip
     // Let's assume we want to keep it simple and just revalidate if we implement it later
@@ -60,12 +64,12 @@ export async function reverseStockAdjustment(adjustmentId: string) {
 
 export async function getStockHistory(productId: string) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     try {
         const response = await api.get(`/inventory/movements`, {
             params: { productId, limit: 5 },
-            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+            headers: { Authorization: `Bearer ${(session?.user as any).accessToken}` }
         });
         return response.data.movements || [];
     } catch (error) {

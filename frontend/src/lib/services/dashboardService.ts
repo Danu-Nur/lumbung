@@ -7,6 +7,7 @@ export interface DashboardStats {
     totalStockValue: number;
     activeSalesOrders: number;
     lowStockCount: number;
+    outOfStockCount: number;
     totalSales: number;
     totalPurchases: number;
     profit: number;
@@ -40,6 +41,7 @@ export const dashboardService = {
                 totalStockValue: 0,
                 activeSalesOrders: ordersCount,
                 lowStockCount: 0,
+                outOfStockCount: 0,
                 totalSales: 0,
                 totalPurchases: 0,
                 profit: 0

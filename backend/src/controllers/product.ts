@@ -5,16 +5,16 @@ import { ProductService } from '../services/product.js';
 const createProductSchema = z.object({
     name: z.string().min(1),
     sku: z.string().min(1),
-    barcode: z.string().optional(),
-    description: z.string().optional(),
-    categoryId: z.string().optional(),
-    supplierId: z.string().optional(),
+    barcode: z.string().optional().nullable(),
+    description: z.string().optional().nullable(),
+    categoryId: z.string().optional().nullable(),
+    supplierId: z.string().optional().nullable(),
     unit: z.string().min(1),
     sellingPrice: z.number().min(0),
     costPrice: z.number().min(0),
     lowStockThreshold: z.number().int().optional(),
     initialStock: z.number().int().min(0).optional(),
-    warehouseId: z.string().optional(),
+    warehouseId: z.string().optional().nullable(),
 });
 
 export async function createProductHandler(req: FastifyRequest, reply: FastifyReply) {

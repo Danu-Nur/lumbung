@@ -16,7 +16,7 @@ async function getSession() {
 
 export async function createCategory(formData: FormData) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     const data = {
         name: formData.get('name') as string,
@@ -27,19 +27,21 @@ export async function createCategory(formData: FormData) {
 
     try {
         const response = await api.post('/categories', validated, {
-            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+            headers: { Authorization: `Bearer ${(session?.user as any).accessToken}` }
         });
 
         revalidatePath('/categories');
         return response.data;
     } catch (error: any) {
-        throw new Error(error.response?.data?.error || 'Failed to create category');
+        let message = error.response?.data?.error || error.message || 'Failed to create category';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
     }
 }
 
 export async function updateCategory(id: string, formData: FormData) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     const data = {
         name: formData.get('name') as string,
@@ -50,28 +52,32 @@ export async function updateCategory(id: string, formData: FormData) {
 
     try {
         const response = await api.put(`/categories/${id}`, validated, {
-            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+            headers: { Authorization: `Bearer ${(session?.user as any).accessToken}` }
         });
 
         revalidatePath('/categories');
         return response.data;
     } catch (error: any) {
-        throw new Error(error.response?.data?.error || 'Failed to update category');
+        let message = error.response?.data?.error || error.message || 'Failed to update category';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
     }
 }
 
 export async function deleteCategory(id: string) {
     const session = await getSession();
-    if (!(session as any)?.accessToken) throw new Error('Unauthorized');
+    if (!(session?.user as any)?.accessToken) throw new Error('Unauthorized');
 
     try {
         await api.delete(`/categories/${id}`, {
-            headers: { Authorization: `Bearer ${(session as any).accessToken}` }
+            headers: { Authorization: `Bearer ${(session?.user as any).accessToken}` }
         });
 
         revalidatePath('/categories');
         revalidatePath('/inventory');
     } catch (error: any) {
-        throw new Error(error.response?.data?.error || 'Failed to delete category');
+        let message = error.response?.data?.error || error.message || 'Failed to delete category';
+        if (typeof message !== 'string') message = JSON.stringify(message);
+        throw new Error(message);
     }
 }

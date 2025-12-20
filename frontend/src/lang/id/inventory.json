@@ -10,6 +10,12 @@
         "warehouses": "Gudang",
         "suppliers": "Pemasok"
     },
+    "summary": {
+        "totalProducts": "Total Produk",
+        "outOfStock": "Stok Habis",
+        "lowStock": "Stok Rendah",
+        "stockValue": "Nilai Stok"
+    },
     "columns": {
         "product": "Produk",
         "sku": "SKU",
