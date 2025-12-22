@@ -19,10 +19,10 @@ export function StatsCard({ title, value, icon: Icon, trend, color = 'blue', var
 
     // Default styles (neutral card, colored icon bg)
     const defaultColorClasses = {
-        blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
-        green: 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400',
-        purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
-        orange: 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400',
+        blue: 'neo-icon-blue text-white dark:border-white',
+        green: 'neo-icon-emerald text-white dark:border-white',
+        purple: 'neo-icon-purple text-white dark:border-white',
+        orange: 'neo-icon-amber text-white dark:border-white',
     };
 
     // Filled styles (colored card, white/light text)

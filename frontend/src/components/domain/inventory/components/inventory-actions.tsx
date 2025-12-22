@@ -13,11 +13,12 @@ import { ClipboardList } from "lucide-react";
 interface InventoryActionsProps {
     product: SerializedProduct;
     warehouses: Array<{ id: string; name: string }>;
+    onSuccess?: () => void;
 }
 
 import { AdjustmentRowModal } from "@/components/domain/adjustments/adjustment-row-modal";
 
-export function InventoryActions({ product, warehouses }: InventoryActionsProps) {
+export function InventoryActions({ product, warehouses, onSuccess }: InventoryActionsProps) {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [adjustmentOpen, setAdjustmentOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -37,6 +38,7 @@ export function InventoryActions({ product, warehouses }: InventoryActionsProps)
             toast.success(tCommon("actions.deleteSuccess"));
             setDeleteOpen(false);
             router.refresh();
+            if (onSuccess) onSuccess();
         } catch (error: any) {
             console.error(error);
             toast.error(error.message || tCommon("actions.deleteError"));
@@ -85,6 +87,7 @@ export function InventoryActions({ product, warehouses }: InventoryActionsProps)
                 onOpenChange={setAdjustmentOpen}
                 product={product}
                 warehouses={warehouses}
+                onSuccess={onSuccess}
             />
         </div>
     );

@@ -19,9 +19,10 @@ import { SerializedProduct } from '@/types/serialized';
 interface InventoryTableProps {
     data: SerializedProduct[];
     warehouses: any[]; // Prop passed to actions
+    onSuccess?: () => void;
 }
 
-export function InventoryTable({ data, warehouses }: InventoryTableProps) {
+export function InventoryTable({ data, warehouses, onSuccess }: InventoryTableProps) {
     const t = useTranslations('inventory');
     const tCommon = useTranslations('common');
 
@@ -182,7 +183,7 @@ export function InventoryTable({ data, warehouses }: InventoryTableProps) {
         },
         {
             id: 'actions',
-            cell: ({ row }) => <div className='text-center'><InventoryActions product={row.original} warehouses={warehouses} /></div>,
+            cell: ({ row }) => <div className='text-center'><InventoryActions product={row.original} warehouses={warehouses} onSuccess={onSuccess} /></div>,
             header: () => <div className="text-center">{tCommon('table.actions')}</div>
         },
     ], [t, tCommon, warehouses]);

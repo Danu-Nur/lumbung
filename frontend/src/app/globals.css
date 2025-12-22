@@ -268,6 +268,39 @@
 ========================= */
 @layer utilities {
 
+  /* Icon color variants */
+  .neo-icon-indigo {
+    background-color: #6366f1;
+  }
+
+  .neo-icon-red {
+    background-color: #ef4444;
+  }
+
+  .neo-icon-amber {
+    background-color: #f59e0b;
+  }
+
+  .neo-icon-emerald {
+    background-color: #10b981;
+  }
+
+  .neo-icon-blue {
+    background-color: #3b82f6;
+  }
+
+  .neo-icon-purple {
+    background-color: #a855f7;
+  }
+
+  .neo-icon-pink {
+    background-color: #ec4899;
+  }
+
+  .neo-icon-cyan {
+    background-color: #06b6d4;
+  }
+  
   .neo-transition {
     transition: all 0.1s ease-in-out;
   }

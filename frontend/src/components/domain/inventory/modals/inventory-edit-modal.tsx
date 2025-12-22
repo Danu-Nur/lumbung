@@ -142,7 +142,7 @@ export function InventoryEditModal({
                                         name="name"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.name")}</FormLabel>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.name")}</FormLabel>
                                                 <FormControl>
                                                     <Input placeholder={t("form.namePlaceholder")} {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
                                                 </FormControl>
@@ -155,7 +155,7 @@ export function InventoryEditModal({
                                         name="sku"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.sku")}</FormLabel>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.sku")}</FormLabel>
                                                 <FormControl>
                                                     <Input placeholder={t("form.skuPlaceholder")} {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
                                                 </FormControl>
@@ -171,7 +171,7 @@ export function InventoryEditModal({
                                         name="barcode"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.barcode")}</FormLabel>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.barcode")}</FormLabel>
                                                 <FormControl>
                                                     <Input placeholder={t("form.barcodePlaceholder")} {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
                                                 </FormControl>
@@ -184,7 +184,7 @@ export function InventoryEditModal({
                                         name="categoryId"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.category")}</FormLabel>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.category")}</FormLabel>
                                                 <div className="flex gap-2">
                                                     <select
                                                         className="flex h-10 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white"
@@ -217,7 +217,7 @@ export function InventoryEditModal({
                                     name="supplierId"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.supplier") || "Preferred Supplier"}</FormLabel>
+                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.supplier") || "Preferred Supplier"}</FormLabel>
                                             <div className="flex gap-2">
                                                 <select
                                                     className="flex h-10 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white"
@@ -241,7 +241,7 @@ export function InventoryEditModal({
                                     name="description"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.description")}</FormLabel>
+                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.description")}</FormLabel>
                                             <FormControl>
                                                 <Input placeholder={t("form.descriptionPlaceholder")} {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
                                             </FormControl>
@@ -256,7 +256,7 @@ export function InventoryEditModal({
                                         name="unit"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.unit")}</FormLabel>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.unit")}</FormLabel>
                                                 <select
                                                     className="flex h-10 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white"
                                                     {...field}
@@ -276,7 +276,7 @@ export function InventoryEditModal({
                                         name="sellingPrice"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.sellingPrice")}</FormLabel>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.sellingPrice")}</FormLabel>
                                                 <FormControl>
                                                     <Input type="number" step="0.01" placeholder="0.00" {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
                                                 </FormControl>
@@ -289,7 +289,7 @@ export function InventoryEditModal({
                                         name="costPrice"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.costPrice")}</FormLabel>
+                                                <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.costPrice")}</FormLabel>
                                                 <FormControl>
                                                     <Input type="number" step="0.01" placeholder="0.00" {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
                                                 </FormControl>
@@ -304,9 +304,9 @@ export function InventoryEditModal({
                                     name="lowStockThreshold"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.lowStockThreshold")}</FormLabel>
+                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.lowStockThreshold")}</FormLabel>
                                             <FormControl>
-                                                <Input type="number" placeholder="10" {...field} className="w-full bg-white border-2 border-black p-2 text-sm focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm rounded-none" />
+                                                <Input type="number" placeholder="10" {...field} className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-yellow/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white rounded-none dark:text-white" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

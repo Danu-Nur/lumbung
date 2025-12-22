@@ -26,7 +26,7 @@ export class ProductService {
             initialStock, warehouseId, organizationId, userId
         } = data;
 
-        return await prisma.$transaction(async (tx) => {
+        const result = await prisma.$transaction(async (tx) => {
             // Check SKU
             const existing = await tx.product.findFirst({
                 where: { organizationId, sku, deletedAt: null }
@@ -78,6 +78,12 @@ export class ProductService {
 
             return product;
         });
+
+        // Invalidate stats and products cache
+        await cache.invalidate(`tenant:${organizationId}:inventory:stats`);
+        await cache.invalidatePattern(`tenant:${organizationId}:products:*`);
+
+        return result;
     }
 
     static async getProducts(organizationId: string, page = 1, pageSize = 10, search = '') {
@@ -135,7 +141,7 @@ export class ProductService {
             if (existing) throw new Error('SKU already exists');
         }
 
-        return await prisma.product.update({
+        const updated = await prisma.product.update({
             where: { id, organizationId },
             data: {
                 name: updateData.name,
@@ -158,6 +164,12 @@ export class ProductService {
                 }
             }
         });
+
+        // Invalidate stats and products cache
+        await cache.invalidate(`tenant:${organizationId}:inventory:stats`);
+        await cache.invalidatePattern(`tenant:${organizationId}:products:*`);
+
+        return updated;
     }
 
     static async deleteProduct(id: string, organizationId: string, userId: string) {
@@ -167,12 +179,18 @@ export class ProductService {
         });
         if (inventory) throw new Error('Cannot delete product with existing stock');
 
-        return await prisma.product.update({
+        const deleted = await prisma.product.update({
             where: { id, organizationId },
             data: {
                 deletedAt: new Date(),
                 updatedById: userId
             }
         });
+
+        // Invalidate stats and products cache
+        await cache.invalidate(`tenant:${organizationId}:inventory:stats`);
+        await cache.invalidatePattern(`tenant:${organizationId}:products:*`);
+
+        return deleted;
     }
 }

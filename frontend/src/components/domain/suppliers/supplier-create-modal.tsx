@@ -81,13 +81,18 @@ export function SupplierCreateModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[500px] p-0 border-2 border-black shadow-neo rounded-none bg-white overflow-hidden">
-                <div className="bg-neo-green border-b-2 border-black p-3 flex justify-between items-center">
+            <DialogContent className="sm:max-w-[500px] p-0 border-2 border-black dark:border-white shadow-neo dark:shadow-neo-white rounded-none bg-white dark:bg-neo-dark overflow-hidden">
+                <div className="bg-neo-green border-b-2 border-black dark:border-white p-3 flex justify-between items-center text-black">
                     <div className="flex flex-col">
-                        <h2 className="text-lg font-bold">{t("form.createTitle")}</h2>
+                        <h2 className="text-lg font-bold uppercase">{t("form.createTitle")}</h2>
                         <span className="text-[10px] uppercase font-black tracking-widest opacity-80">{t("form.createDescription")}</span>
                     </div>
-                    <button onClick={() => onOpenChange(false)} className="w-6 h-6 bg-white border border-black hover:bg-black hover:text-white flex items-center justify-center transition-colors text-xs rounded-none">✕</button>
+                    <button
+                        onClick={() => onOpenChange(false)}
+                        className="w-6 h-6 bg-white dark:bg-white text-black border border-black dark:border-white flex items-center justify-center transition-colors text-xs rounded-none shadow-neo-hover dark:shadow-neo-hover-white hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]"
+                    >
+                        ✕
+                    </button>
                 </div>
 
                 <div className="p-5">
@@ -98,9 +103,13 @@ export function SupplierCreateModal({
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.name")}</FormLabel>
+                                        <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.name")}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={t("form.namePlaceholder")} {...field} className="w-full bg-white border-2 border-black p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm rounded-none" />
+                                            <Input
+                                                placeholder={t("form.namePlaceholder")}
+                                                {...field}
+                                                className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white dark:text-white rounded-none"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -113,9 +122,13 @@ export function SupplierCreateModal({
                                     name="email"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.email")}</FormLabel>
+                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.email")}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder={t("form.emailPlaceholder")} {...field} className="w-full bg-white border-2 border-black p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm rounded-none" />
+                                                <Input
+                                                    placeholder={t("form.emailPlaceholder")}
+                                                    {...field}
+                                                    className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white dark:text-white rounded-none"
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -126,9 +139,13 @@ export function SupplierCreateModal({
                                     name="phone"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.phone")}</FormLabel>
+                                            <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.phone")}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder={t("form.phonePlaceholder")} {...field} className="w-full bg-white border-2 border-black p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm rounded-none" />
+                                                <Input
+                                                    placeholder={t("form.phonePlaceholder")}
+                                                    {...field}
+                                                    className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white dark:text-white rounded-none"
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -141,9 +158,13 @@ export function SupplierCreateModal({
                                 name="address"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.address")}</FormLabel>
+                                        <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.address")}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={t("form.addressPlaceholder")} {...field} className="w-full bg-white border-2 border-black p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm rounded-none" />
+                                            <Input
+                                                placeholder={t("form.addressPlaceholder")}
+                                                {...field}
+                                                className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white dark:text-white rounded-none"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -155,9 +176,13 @@ export function SupplierCreateModal({
                                 name="city"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider">{t("form.city")}</FormLabel>
+                                        <FormLabel className="block font-black text-[10px] mb-1 uppercase tracking-wider dark:text-white">{t("form.city")}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={t("form.cityPlaceholder")} {...field} className="w-full bg-white border-2 border-black p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm rounded-none" />
+                                            <Input
+                                                placeholder={t("form.cityPlaceholder")}
+                                                {...field}
+                                                className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white p-2 text-sm focus:outline-none focus:bg-neo-green/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white dark:text-white rounded-none"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -168,14 +193,14 @@ export function SupplierCreateModal({
                                 <button
                                     type="button"
                                     onClick={() => onOpenChange(false)}
-                                    className="flex-1 bg-white text-black font-bold py-2.5 border-2 border-black shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all text-sm rounded-none uppercase tracking-widest"
+                                    className="flex-1 bg-white dark:bg-gray-800 text-black dark:text-white font-bold py-2.5 border-2 border-black dark:border-white shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all text-sm rounded-none uppercase tracking-widest"
                                 >
-                                    {tCommon("actions.cancel")}
+                                    {tCommon("buttons.cancel")}
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={form.formState.isSubmitting}
-                                    className="flex-1 bg-black text-white font-bold py-2.5 border-2 border-black shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none hover:bg-neo-green hover:text-black transition-all text-sm rounded-none uppercase tracking-widest"
+                                    className="flex-1 bg-black dark:bg-white text-white dark:text-black font-bold py-2.5 border-2 border-black dark:border-white shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none hover:bg-neo-green dark:hover:bg-neo-green hover:text-black transition-all text-sm rounded-none uppercase tracking-widest"
                                 >
                                     {form.formState.isSubmitting ? tCommon("actions.saving") : tCommon("buttons.save")}
                                 </button>

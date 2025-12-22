@@ -27,6 +27,11 @@ export async function createProductHandler(req: FastifyRequest, reply: FastifyRe
 
         const product = await ProductService.createProduct({
             ...data,
+            barcode: data.barcode ?? undefined,
+            description: data.description ?? undefined,
+            categoryId: data.categoryId ?? undefined,
+            supplierId: data.supplierId ?? undefined,
+            warehouseId: data.warehouseId ?? undefined,
             organizationId: user.organizationId,
             userId: user.id
         });
@@ -72,6 +77,11 @@ export async function updateProductHandler(req: FastifyRequest<{ Params: { id: s
 
         const updated = await ProductService.updateProduct(id, user.organizationId, {
             ...data,
+            barcode: data.barcode ?? undefined,
+            description: data.description ?? undefined,
+            categoryId: data.categoryId ?? undefined,
+            supplierId: data.supplierId ?? undefined,
+            warehouseId: data.warehouseId ?? undefined,
             organizationId: user.organizationId,
             userId: user.id
         });

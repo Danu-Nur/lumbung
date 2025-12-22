@@ -11,26 +11,21 @@ export async function getDashboardStatsHandler(req: FastifyRequest, reply: Fasti
 
         const stats = await cache.getOrSet(cacheKey, async () => {
             const [
-                totalProducts,
-                inventoryItems,
+                products,
                 activeSalesOrders,
-                lowStockItems,
                 salesAgg,
                 purchaseAgg
             ] = await Promise.all([
-                prisma.product.count({
+                prisma.product.findMany({
                     where: { organizationId, deletedAt: null },
-                }),
-                prisma.inventoryItem.findMany({
-                    where: { product: { organizationId } },
-                    include: { product: true },
+                    include: {
+                        inventoryItems: {
+                            select: { quantityOnHand: true }
+                        }
+                    }
                 }),
                 prisma.salesOrder.count({
                     where: { organizationId, status: { in: [SalesOrderStatus.DRAFT, SalesOrderStatus.CONFIRMED] } },
-                }),
-                prisma.inventoryItem.findMany({
-                    where: { product: { organizationId, deletedAt: null } },
-                    include: { product: true, warehouse: true },
                 }),
                 prisma.salesOrder.aggregate({
                     where: { organizationId, status: { not: SalesOrderStatus.CANCELLED } },
@@ -42,18 +37,22 @@ export async function getDashboardStatsHandler(req: FastifyRequest, reply: Fasti
                 }),
             ]);
 
-            const totalStockValue = inventoryItems.reduce((sum, item) => {
-                return sum + item.quantityOnHand * Number(item.product.costPrice);
-            }, 0);
+            let outOfStockCount = 0;
+            let lowStockCount = 0;
+            let totalStockValue = 0;
 
-            const outOfStockCount = lowStockItems.filter(
-                (item) => item.quantityOnHand <= 0
-            ).length;
+            products.forEach(product => {
+                const totalStock = product.inventoryItems.reduce((sum, item) => sum + item.quantityOnHand, 0);
+                totalStockValue += totalStock * Number(product.costPrice);
 
-            const lowStockCount = lowStockItems.filter(
-                (item) => item.quantityOnHand > 0 && item.quantityOnHand <= item.product.lowStockThreshold
-            ).length;
+                if (totalStock <= 0) {
+                    outOfStockCount++;
+                } else if (totalStock <= (product.lowStockThreshold || 0)) {
+                    lowStockCount++;
+                }
+            });
 
+            const totalProducts = products.length;
             const totalSales = Number(salesAgg._sum.total || 0);
             const totalPurchases = Number(purchaseAgg._sum.total || 0);
             const profit = totalSales - totalPurchases;
@@ -68,7 +67,7 @@ export async function getDashboardStatsHandler(req: FastifyRequest, reply: Fasti
                 totalPurchases,
                 profit
             };
-        }, 300); // 5 minutes cache
+        }, 60); // 1 minute cache for stats
 
         return reply.send(stats);
     } catch (error) {

@@ -36,11 +36,23 @@ export const cache = {
      * Invalidate by pattern (e.g. "tenant:123:*")
      */
     async invalidatePattern(pattern: string): Promise<void> {
-        const stream = redis.scanStream({ match: pattern });
-        stream.on('data', async (keys: string[]) => {
-            if (keys.length) {
-                await redis.del(...keys);
-            }
+        const keys: string[] = [];
+        return new Promise((resolve, reject) => {
+            const stream = redis.scanStream({ match: pattern });
+            stream.on('data', (chunk: string[]) => {
+                keys.push(...chunk);
+            });
+            stream.on('end', async () => {
+                try {
+                    if (keys.length) {
+                        await redis.del(...keys);
+                    }
+                    resolve();
+                } catch (err) {
+                    reject(err);
+                }
+            });
+            stream.on('error', (err) => reject(err));
         });
     }
 };

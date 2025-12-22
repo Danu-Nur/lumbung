@@ -4,6 +4,7 @@ import { getQueryClient } from '@/lib/query';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { dashboardService } from '@/lib/services/dashboardService';
+import { inventoryService } from '@/lib/services/inventoryService';
 
 export default async function InventoryPage({
     searchParams,
@@ -28,16 +29,10 @@ export default async function InventoryPage({
         const authHeader = { Authorization: `Bearer ${token}` };
 
         await Promise.allSettled([
-            // 1. Products
+            // 1. Products (Inventory)
             queryClient.prefetchQuery({
-                queryKey: ['products', page, pageSize, search],
-                queryFn: async () => {
-                    const res = await api.get('/products', {
-                        params: { page, pageSize, q: search },
-                        headers: authHeader
-                    });
-                    return res.data;
-                }
+                queryKey: ['products', orgId, page, pageSize, search],
+                queryFn: () => inventoryService.getInventory(orgId, page, pageSize, search, token)
             }),
             // 2. Stats
             queryClient.prefetchQuery({

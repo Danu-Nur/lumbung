@@ -154,9 +154,9 @@ export function InventoryShowModal({
                                     {history.movements?.length > 0 && (
                                         <div>
                                             <h4 className="text-xs font-black uppercase tracking-wider text-gray-500 mb-2">{t("show.stockMovements")}</h4>
-                                            <div className="border-2 border-black rounded-none overflow-hidden max-h-[250px] overflow-y-auto neo-scrollbar">
+                                            <div className="border-2 border-black dark:border-white rounded-none overflow-hidden max-h-[250px] overflow-y-auto neo-scrollbar">
                                                 <table className="w-full text-[10px]">
-                                                    <thead className="bg-gray-100 border-b-2 border-black sticky top-0">
+                                                    <thead className="bg-gray-100 dark:bg-gray-800 border-b-2 border-black dark:border-white sticky top-0 text-black dark:text-white">
                                                         <tr>
                                                             <th className="px-3 py-2 text-left font-black uppercase">{t("show.date")}</th>
                                                             <th className="px-3 py-2 text-left font-black uppercase">{t("show.type")}</th>
@@ -170,7 +170,7 @@ export function InventoryShowModal({
                                                             <tr key={m.id} className="border-b border-black dark:border-white last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800">
                                                                 <td className="px-3 py-2 font-medium">{new Date(m.createdAt).toLocaleDateString()}</td>
                                                                 <td className="px-3 py-2">
-                                                                    <span className="border border-black px-1 py-0.5 text-[9px] font-black uppercase bg-gray-100">{m.movementType}</span>
+                                                                    <span className="border border-black dark:border-white px-1 py-0.5 text-[9px] font-black uppercase bg-gray-100 dark:bg-gray-700">{m.movementType}</span>
                                                                 </td>
                                                                 <td className="px-3 py-2 text-right font-black">
                                                                     <span className={m.quantity > 0 ? "text-neo-green" : "text-neo-orange"}>
@@ -178,7 +178,7 @@ export function InventoryShowModal({
                                                                     </span>
                                                                 </td>
                                                                 <td className="px-3 py-2 font-bold">{m.warehouse?.name || "-"}</td>
-                                                                <td className="px-3 py-2 text-[8px] font-black text-gray-500 uppercase">{m.referenceType} #{m.referenceId?.slice(-6)}</td>
+                                                                <td className="px-3 py-2 text-[8px] font-black text-gray-500 dark:text-gray-400 uppercase">{m.referenceType} #{m.referenceId?.slice(-6)}</td>
                                                             </tr>
                                                         ))}
                                                     </tbody>

@@ -13,6 +13,7 @@ import { AdjustmentTable } from '@/components/domain/inventory/tables/adjustment
 import { ImportModal } from '@/components/shared/import-modal';
 import { importAdjustmentBatch } from '@/features/adjustments/import-actions';
 import { LoadingState } from '@/components/shared/loading-state';
+import { serializeProduct } from '@/lib/utils/serialization';
 
 interface InventoryAdjustmentSectionProps {
     page: number;
@@ -69,18 +70,17 @@ export function InventoryAdjustmentSection({ page, pageSize, search, modal, id, 
     // Serialize Decimal fields for client component
     const serializedAdjustments = adjustments.map((adjustment: any) => ({
         ...adjustment,
-        product: {
-            ...adjustment.product,
-            sellingPrice: Number(adjustment.product.sellingPrice),
-            costPrice: Number(adjustment.product.costPrice),
-        },
+        product: serializeProduct(adjustment.product),
     }));
+
+    // Serialize products for dropdown
+    const serializedProducts = products.map((p: any) => serializeProduct(p));
 
     return (
         <div className="space-y-4">
             <AdjustmentModalManager
                 adjustments={serializedAdjustments}
-                products={products}
+                products={serializedProducts}
                 warehouses={warehouses}
             />
 

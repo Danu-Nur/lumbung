@@ -7,6 +7,7 @@ import { Pagination } from '@/components/shared/pagination';
 import { formatCurrency } from '@/lib/utils';
 import { Package, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { InventoryModalManager } from '@/components/domain/inventory/modals/inventory-modal-manager';
 import { inventoryService } from '@/lib/services/inventoryService';
@@ -17,6 +18,7 @@ import { InventoryTable } from '@/components/domain/inventory/tables/inventory-t
 import { LoadingState } from '@/components/shared/loading-state';
 import { dashboardService } from '@/lib/services/dashboardService';
 import { AlertCircle, BarChart3, TrendingDown } from 'lucide-react';
+import { serializeProduct } from '@/lib/utils/serialization';
 
 interface InventoryListSectionProps {
     page: number;
@@ -32,10 +34,11 @@ export function InventoryListSection({ page, pageSize, search, modal, id, organi
     const t = useTranslations('inventory');
     const tCommon = useTranslations('common');
     const queryClient = useQueryClient();
+    const router = useRouter();
 
     const { data, isLoading } = useQuery({
-        queryKey: ['products', page, pageSize, search],
-        queryFn: () => inventoryService.getInventory(organizationId, page, pageSize, search),
+        queryKey: ['products', organizationId, page, pageSize, search],
+        queryFn: () => inventoryService.getInventory(organizationId, page, pageSize, search, accessToken),
     });
 
     const products = data?.products || [];
@@ -73,15 +76,26 @@ export function InventoryListSection({ page, pageSize, search, modal, id, organi
 
     if (isLoading || isStatsLoading) return <LoadingState message={tCommon('table.loading') || 'Loading...'} />;
 
+    // Serialize Decimal fields using shared utility
     const serializedProducts = products.map((product: any) => ({
-        ...product,
-        sellingPrice: Number(product.sellingPrice),
-        costPrice: Number(product.costPrice),
-        lowStockThreshold: Number(product.lowStockThreshold || 0),
+        ...serializeProduct(product),
         totalStock: product.inventoryItems?.reduce((acc: number, item: any) => acc + item.quantityOnHand, 0) || 0,
     }));
 
 
+    const handleSuccess = async () => {
+        // 1. Invalidate all relevant queries to trigger fresh data fetch
+        await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ['products'], refetchType: 'all' }),
+            queryClient.invalidateQueries({ queryKey: ['inventory-stats'], refetchType: 'all' }),
+            queryClient.invalidateQueries({ queryKey: ['categories'], refetchType: 'all' }),
+            queryClient.invalidateQueries({ queryKey: ['warehouses'], refetchType: 'all' }),
+            queryClient.invalidateQueries({ queryKey: ['suppliers'], refetchType: 'all' }),
+        ]);
+
+        // 2. Refresh the server component state as well
+        router.refresh();
+    };
 
     return (
         <div className="space-y-6">
@@ -90,10 +104,7 @@ export function InventoryListSection({ page, pageSize, search, modal, id, organi
                 categories={categories}
                 warehouses={warehouses}
                 suppliers={suppliers}
-                onSuccess={() => {
-                    queryClient.invalidateQueries({ queryKey: ['products'] });
-                    queryClient.invalidateQueries({ queryKey: ['inventory-stats'] });
-                }}
+                onSuccess={handleSuccess}
             />
 
             {/* Summary Cards */}
@@ -155,13 +166,12 @@ export function InventoryListSection({ page, pageSize, search, modal, id, organi
                 </Card>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
+            <div className="flex flex-row sm:items-center justify-between gap-4">
+                <div className="flex flex-col justify-start items-start gap-2">
                     <h2 className="text-lg font-semibold tracking-tight">{t('tabs.stock')}</h2>
                     <p className="text-sm text-muted-foreground">{t('description')}</p>
                 </div>
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                    {/* <SearchInput className="w-full sm:w-[300px]" placeholder={`${tCommon('buttons.search')}...`} /> */}
+                <div className="flex items-center gap-2 justify-end">
                     {/* Placeholder for Import */}
                     <Link href="?view=stock&modal=create">
                         <Button className="shrink-0 w-10 h-10 p-0 sm:w-auto sm:h-10 sm:px-4 sm:py-2" variant="indigo">
@@ -190,7 +200,7 @@ export function InventoryListSection({ page, pageSize, search, modal, id, organi
                     ) : (
                         <>
                             <div className="relative w-full overflow-auto p-4">
-                                <InventoryTable data={serializedProducts} warehouses={warehouses} />
+                                <InventoryTable data={serializedProducts} warehouses={warehouses} onSuccess={handleSuccess} />
                             </div>
                             <div className="p-4 border-t">
                                 <Pagination

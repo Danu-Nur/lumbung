@@ -91,11 +91,15 @@ export const inventoryService = {
     /**
      * Get paginated inventory list
      */
-    async getInventory(organizationId: string, page: number = 1, pageSize: number = 10, search: string = '') {
+    async getInventory(organizationId: string, page: number = 1, pageSize: number = 10, q: string = '', token?: string) {
         try {
-            const response = await api.get('/inventory', {
-                params: { organizationId, page, pageSize, search }
-            });
+            const config = {
+                params: { organizationId, page, pageSize, q },
+                headers: token ? { Authorization: `Bearer ${token}` } : {}
+            };
+
+            // Backend typically serves product list for inventory at /products
+            const response = await api.get('/products', config);
 
             // Background: Update local cache with latest data (Browser only)
             if (typeof window !== 'undefined' && response.data.products) {
@@ -130,18 +134,18 @@ export const inventoryService = {
             }
 
             return response.data;
-        } catch (error) {
-            if (typeof window !== 'undefined') {
+        } catch (error: any) {
+            const isNetworkError = !error.response || error.code === 'ERR_NETWORK';
+
+            if (typeof window !== 'undefined' && isNetworkError) {
                 console.warn('Inventory: Offline Fetch');
 
                 let query = db.products.where({ organizationId });
 
-                if (search) {
-                    // Dexie doesn't support complex OR search natively easily without full scan or mult-index
-                    // Simple filter for now
+                if (q) {
                     query = query.filter(p =>
-                        p.name.toLowerCase().includes(search.toLowerCase()) ||
-                        p.sku.toLowerCase().includes(search.toLowerCase())
+                        p.name.toLowerCase().includes(q.toLowerCase()) ||
+                        p.sku.toLowerCase().includes(q.toLowerCase())
                     );
                 }
 
@@ -151,7 +155,6 @@ export const inventoryService = {
                     .limit(pageSize)
                     .toArray();
 
-                // Re-attach inventory items from local DB
                 const productsWithInventory = await Promise.all(products.map(async p => {
                     const inventoryItems = await db.inventoryItems.where({ productId: p.id }).toArray();
                     return { ...p, inventoryItems };
@@ -159,6 +162,7 @@ export const inventoryService = {
 
                 return { products: productsWithInventory, total: count };
             }
+            // If it's a server error (401, 500), throw it so react-query knows it failed
             throw error;
         }
     },
