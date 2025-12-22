@@ -16,9 +16,9 @@ export async function createPurchaseOrder(formData: FormData) {
     }
 
     const rawData = {
-        supplierId: formData.get('supplierId') as string,
-        warehouseId: formData.get('warehouseId') as string,
-        notes: formData.get('notes') as string,
+        supplierId: (formData.get('supplierId') as string) || "",
+        warehouseId: (formData.get('warehouseId') as string) || "",
+        notes: (formData.get('notes') as string) || "",
         items: JSON.parse(formData.get('items') as string || '[]'),
     };
 
@@ -30,14 +30,14 @@ export async function createPurchaseOrder(formData: FormData) {
 
     const { supplierId, warehouseId, notes, items } = validatedFields.data;
 
-    const order = await purchaseOrderService.createPurchaseOrderDraft({
+    const order = await purchaseOrderService.createPurchaseOrder({
         organizationId: session.user.organizationId!,
         supplierId,
         warehouseId,
         items,
         notes,
         createdById: session.user.id,
-    });
+    }, (session.user as any).accessToken);
 
     revalidatePath('/purchase-orders');
     return order;
@@ -73,7 +73,7 @@ export async function receivePurchaseOrder(orderId: string) {
         receivedItems,
         notes: 'Full receipt via action',
         userId: session.user.id,
-    });
+    }, (session.user as any).accessToken);
 
     revalidatePath('/purchase-orders');
     revalidatePath(`/purchase-orders/${orderId}`);

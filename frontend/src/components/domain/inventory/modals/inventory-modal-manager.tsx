@@ -89,7 +89,9 @@ export function InventoryModalManager({ products, categories, warehouses, suppli
                     name: p.name,
                     sku: p.sku,
                     costPrice: p.costPrice,
-                    supplierId: p.supplier?.id
+                    supplierId: p.supplier?.id,
+                    unit: p.unit,
+                    inventoryItems: p.inventoryItems
                 }))}
                 suppliers={suppliers}
                 warehouses={warehouses}

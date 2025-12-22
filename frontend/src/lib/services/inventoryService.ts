@@ -1,7 +1,7 @@
 import api from "@/lib/api";
 import { db } from "@/lib/db";
 import { CreateInventoryMovementParams } from "@/types/domain";
-import { serializeProduct } from "@/lib/utils/serialization";
+import { serializeProduct, serializeAny } from "@/lib/utils/serialization";
 
 export const inventoryService = {
     /**
@@ -104,7 +104,7 @@ export const inventoryService = {
 
             // Ensure data is serialized (convert Decimals to numbers) to prevent "Only plain objects..." errors in Next.js Server Components
             if (response.data?.products) {
-                response.data.products = response.data.products.map((p: any) => serializeProduct(p));
+                response.data.products = response.data.products.map((p: any) => serializeAny(p));
             }
 
             // Background: Update local cache with latest data (Browser only)

@@ -219,6 +219,21 @@ async function main() {
             createdById: user1.id,
             supplierId: supplier1.id,
         }
+    })
+
+        ;
+
+    // Create price history for product1
+    await prisma.productPriceHistory.create({
+        data: {
+            productId: product1.id,
+            priceType: PriceType.SELLING,
+            price: 25000,
+            currency: 'IDR',
+            effectiveAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+            notes: 'Initial selling price',
+            createdById: user1.id
+        }
     });
 
     // Batch 1 (Old)
@@ -268,6 +283,19 @@ async function main() {
             organizationId: org1.id,
             createdById: user1.id,
             supplierId: supplier1.id,
+        }
+    });
+
+    // Create price history for product2
+    await prisma.productPriceHistory.create({
+        data: {
+            productId: product2.id,
+            priceType: PriceType.SELLING,
+            price: 65000,
+            currency: 'IDR',
+            effectiveAt: new Date(),
+            notes: 'Initial selling price',
+            createdById: user1.id
         }
     });
 

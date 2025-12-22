@@ -94,5 +94,44 @@ export const purchaseOrderService = {
             await db.purchaseOrders.update(id, { status: 'COMPLETED' });
         }
         return response.data;
+    },
+
+    async createPurchaseReceipt(data: {
+        purchaseOrderId: string;
+        organizationId: string;
+        receivedItems: Array<{ productId: string; quantity: number }>;
+        notes?: string;
+        userId: string;
+    }, token?: string) {
+        try {
+            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+            const response = await api.post(`/purchase-orders/${data.purchaseOrderId}/receive`, {
+                receivedItems: data.receivedItems,
+                notes: data.notes
+            }, config);
+
+            // Update local cache
+            if (typeof window !== 'undefined') {
+                await db.purchaseOrders.update(data.purchaseOrderId, {
+                    status: response.data.status || 'PARTIALLY_RECEIVED'
+                });
+            }
+
+            return response.data;
+        } catch (error: any) {
+            if (!navigator.onLine || error.code === 'ECONNABORTED') {
+                // Queue for offline sync
+                if (typeof window !== 'undefined') {
+                    await db.syncQueue.add({
+                        action: 'CREATE',
+                        resource: 'PURCHASE_ORDER',
+                        data: data,
+                        createdAt: Date.now()
+                    });
+                }
+                return { id: `offline-receipt-${Date.now()}`, ...data, synced: false };
+            }
+            throw error;
+        }
     }
 };

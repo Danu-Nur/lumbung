@@ -18,7 +18,7 @@ import { InventoryTable } from '@/components/domain/inventory/tables/inventory-t
 import { LoadingState } from '@/components/shared/loading-state';
 import { dashboardService } from '@/lib/services/dashboardService';
 import { AlertCircle, BarChart3, TrendingDown } from 'lucide-react';
-import { serializeProduct } from '@/lib/utils/serialization';
+import { serializeAny } from '@/lib/utils/serialization';
 
 interface InventoryListSectionProps {
     page: number;
@@ -78,7 +78,7 @@ export function InventoryListSection({ page, pageSize, search, modal, id, organi
 
     // Serialize Decimal fields using shared utility
     const serializedProducts = products.map((product: any) => ({
-        ...serializeProduct(product),
+        ...serializeAny(product),
         totalStock: product.inventoryItems?.reduce((acc: number, item: any) => acc + item.quantityOnHand, 0) || 0,
     }));
 

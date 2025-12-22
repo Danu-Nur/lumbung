@@ -42,39 +42,61 @@ export class ProductService {
                     barcode: barcode || null,
                     description: description || null,
                     categoryId: categoryId || null,
-                    supplierId: supplierId || null,
+                    supplierId: supplierId || null,  // Cache: preferred supplier
                     unit,
-                    sellingPrice,
-                    costPrice,
+                    sellingPrice,  // Cache: will be synced with ProductPriceHistory
+                    costPrice,     // Cache: will be synced with InventoryItem avg
                     lowStockThreshold: lowStockThreshold || 10,
                     createdById: userId,
                 }
             });
 
+            // Create initial selling price history
+            await tx.productPriceHistory.create({
+                data: {
+                    productId: product.id,
+                    priceType: 'SELLING',
+                    price: sellingPrice,
+                    currency: 'IDR',
+                    effectiveAt: new Date(),
+                    notes: 'Initial selling price',
+                    createdById: userId
+                }
+            });
+
             // Initial Stock Logic
-            if (initialStock && initialStock > 0 && warehouseId) {
+            // Always create inventory item if warehouse is selected (even with 0 stock)
+            // This ensures supplier relationship is tracked from the start
+            if (warehouseId) {
                 await tx.inventoryItem.create({
                     data: {
                         productId: product.id,
                         warehouseId,
-                        quantityOnHand: initialStock,
-                        availableQty: initialStock,
-                        allocatedQty: 0
+                        supplierId: supplierId || null,  // Set supplier for this batch
+                        unitCost: costPrice,              // Set cost for this batch
+                        quantityOnHand: initialStock || 0,  // Allow 0 stock
+                        availableQty: initialStock || 0,
+                        allocatedQty: 0,
+                        batchNumber: `INIT-${product.sku}`,
+                        receivedDate: new Date()
                     }
                 });
 
-                await tx.inventoryMovement.create({
-                    data: {
-                        productId: product.id,
-                        warehouseId,
-                        movementType: 'IN',
-                        quantity: initialStock,
-                        referenceType: 'InitialStock',
-                        referenceId: product.id,
-                        notes: 'Initial Stock',
-                        createdById: userId,
-                    }
-                });
+                // Only create movement if there's actual stock
+                if (initialStock && initialStock > 0) {
+                    await tx.inventoryMovement.create({
+                        data: {
+                            productId: product.id,
+                            warehouseId,
+                            movementType: 'IN',
+                            quantity: initialStock,
+                            referenceType: 'InitialStock',
+                            referenceId: product.id,
+                            notes: 'Initial Stock',
+                            createdById: userId,
+                        }
+                    });
+                }
             }
 
             return product;
@@ -112,7 +134,10 @@ export class ProductService {
                         category: true,
                         supplier: true,
                         inventoryItems: {
-                            include: { warehouse: true }
+                            include: {
+                                warehouse: true,
+                                supplier: true
+                            }
                         }
                     },
                     skip,
@@ -161,7 +186,10 @@ export class ProductService {
                 category: true,
                 supplier: true,
                 inventoryItems: {
-                    include: { warehouse: true }
+                    include: {
+                        warehouse: true,
+                        supplier: true
+                    }
                 }
             }
         });
@@ -193,5 +221,144 @@ export class ProductService {
         await cache.invalidatePattern(`tenant:${organizationId}:products:*`);
 
         return deleted;
+    }
+
+    /**
+     * Update product selling price
+     * Creates new price history entry and updates cache
+     */
+    static async updateSellingPrice(
+        productId: string,
+        organizationId: string,
+        newPrice: number,
+        userId: string,
+        notes?: string
+    ) {
+        const result = await prisma.$transaction(async (tx) => {
+            // Verify product exists and belongs to organization
+            const product = await tx.product.findFirst({
+                where: { id: productId, organizationId, deletedAt: null }
+            });
+            if (!product) throw new Error('Product not found');
+
+            // Create price history
+            await tx.productPriceHistory.create({
+                data: {
+                    productId,
+                    priceType: 'SELLING',
+                    price: newPrice,
+                    currency: 'IDR',
+                    effectiveAt: new Date(),
+                    notes: notes || 'Price update',
+                    createdById: userId
+                }
+            });
+
+            // Update cached selling price
+            const updated = await tx.product.update({
+                where: { id: productId },
+                data: {
+                    sellingPrice: newPrice,
+                    updatedById: userId
+                }
+            });
+
+            return updated;
+        });
+
+        // Invalidate cache
+        await cache.invalidatePattern(`tenant:${organizationId}:products:*`);
+
+        return result;
+    }
+
+    /**
+     * Calculate and update weighted average cost from inventory items
+     * Should be called after receiving new stock
+     */
+    static async updateAverageCost(productId: string, organizationId: string) {
+        const result = await prisma.$transaction(async (tx) => {
+            // Get all inventory items with stock
+            const items = await tx.inventoryItem.findMany({
+                where: {
+                    productId,
+                    quantityOnHand: { gt: 0 }
+                }
+            });
+
+            if (items.length === 0) {
+                // No stock, keep current cost
+                return null;
+            }
+
+            // Calculate weighted average: sum(qty * cost) / sum(qty)
+            const totalValue = items.reduce(
+                (sum, item) => sum + (item.quantityOnHand * Number(item.unitCost)),
+                0
+            );
+            const totalQty = items.reduce((sum, item) => sum + item.quantityOnHand, 0);
+            const avgCost = totalValue / totalQty;
+
+            // Update cached cost price
+            const updated = await tx.product.update({
+                where: { id: productId, organizationId },
+                data: { costPrice: avgCost }
+            });
+
+            return updated;
+        });
+
+        if (result) {
+            await cache.invalidatePattern(`tenant:${organizationId}:products:*`);
+        }
+
+        return result;
+    }
+
+    /**
+     * Get current selling price from history
+     * Fallback to cached price if no history found
+     */
+    static async getCurrentSellingPrice(productId: string): Promise<number> {
+        const priceHistory = await prisma.productPriceHistory.findFirst({
+            where: {
+                productId,
+                priceType: 'SELLING',
+                effectiveAt: { lte: new Date() }
+            },
+            orderBy: { effectiveAt: 'desc' }
+        });
+
+        if (priceHistory) {
+            return Number(priceHistory.price);
+        }
+
+        // Fallback to cached price
+        const product = await prisma.product.findUnique({
+            where: { id: productId }
+        });
+
+        return product ? Number(product.sellingPrice) : 0;
+    }
+
+    /**
+     * Get price history for a product
+     */
+    static async getPriceHistory(productId: string, priceType?: 'SELLING' | 'COST') {
+        return prisma.productPriceHistory.findMany({
+            where: {
+                productId,
+                ...(priceType && { priceType })
+            },
+            orderBy: { effectiveAt: 'desc' },
+            include: {
+                createdBy: {
+                    select: {
+                        name: true,
+                        email: true
+                    }
+                }
+            }
+        });
     }
 }

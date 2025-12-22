@@ -89,7 +89,7 @@ export function PurchaseOrderListSection({ page, pageSize, search, organizationI
                 }}
             />
 
-            <Card>
+            <Card variant='no'>
                 <CardHeader>
                     <CardTitle>{t('title')}</CardTitle>
                 </CardHeader>
@@ -125,7 +125,7 @@ export function PurchaseOrderListSection({ page, pageSize, search, organizationI
                                         <TableRow key={order.id}>
                                             <TableCell className="font-medium">
                                                 {order.poNumber}
-                                                {!order.synced && <span className="ml-2 text-xs text-orange-500">(Offline)</span>}
+                                                {/* {!order.synced && <span className="ml-2 text-xs text-orange-500">(Offline)</span>} */}
                                             </TableCell>
                                             <TableCell>
                                                 {order.supplier?.name || '-'}

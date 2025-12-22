@@ -45,7 +45,7 @@ export default async function PurchaseOrdersPage({
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <div className="space-y-6">
+            <div className="space-y-6 w-full">
                 <PageHeader
                     title={t('title')}
                     description={t('description')}

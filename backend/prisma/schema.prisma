@@ -200,10 +200,14 @@ model Product {
   barcode           String?
   description       String?
   categoryId        String?
-  supplierId        String?
+  
+  // DEPRECATED: Use ProductPriceHistory for selling price & InventoryItem.supplierId for supplier tracking
+  // Kept for backward compatibility & as cache. Will be auto-updated by triggers/services.
+  supplierId        String?   // CACHE: Most frequent supplier (auto-updated)
+  sellingPrice      Decimal   @db.Decimal(12, 2) // CACHE: Current selling price (from ProductPriceHistory)
+  costPrice         Decimal   @db.Decimal(12, 2) // CACHE: Weighted avg cost (from InventoryItem.unitCost)
+  
   unit              String    @default("pcs") // pcs, kg, liter, box, etc.
-  sellingPrice      Decimal   @db.Decimal(12, 2) // Current selling price (cache)
-  costPrice         Decimal   @db.Decimal(12, 2) // Current cost price (cache)
   lowStockThreshold Int       @default(10)
   customAttributes  Json?     // Flexible attributes (size, color, brand, etc.)
   organizationId    String
@@ -215,7 +219,7 @@ model Product {
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   category     Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  supplier     Supplier?    @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  supplier     Supplier?    @relation(fields: [supplierId], references: [id], onDelete: SetNull) // DEPRECATED
   createdBy    User         @relation("ProductCreatedBy", fields: [createdById], references: [id])
   updatedBy    User?        @relation("ProductUpdatedBy", fields: [updatedById], references: [id])
 

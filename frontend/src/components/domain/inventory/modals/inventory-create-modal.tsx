@@ -30,6 +30,7 @@ import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { CategoryCreateModal } from "@/components/domain/categories/category-create-modal";
 import { WarehouseModal } from "@/components/domain/warehouses/warehouse-modal";
+import { SupplierModal } from "@/components/domain/suppliers/supplier-modal";
 
 interface InventoryCreateModalProps {
     open: boolean;
@@ -54,7 +55,9 @@ export function InventoryCreateModal({
     const tValidation = useTranslations("common.validation");
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
     const [warehouseModalOpen, setWarehouseModalOpen] = useState(false);
+    const [supplierModalOpen, setSupplierModalOpen] = useState(false);
     const [availableCategories, setAvailableCategories] = useState<Category[]>(categories);
+    const [availableSuppliers, setAvailableSuppliers] = useState<{ id: string; name: string }[]>(suppliers);
 
     const formSchema = z.object({
         name: z.string().min(1, tValidation("required")),
@@ -222,12 +225,20 @@ export function InventoryCreateModal({
                                                     {...field}
                                                 >
                                                     <option value="">{t("form.selectSupplier") || "Select Supplier"}</option>
-                                                    {suppliers.map((supplier) => (
+                                                    {availableSuppliers.map((supplier) => (
                                                         <option key={supplier.id} value={supplier.id}>
                                                             {supplier.name}
                                                         </option>
                                                     ))}
                                                 </select>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSupplierModalOpen(true)}
+                                                    className="h-10 w-10 flex items-center justify-center bg-white dark:bg-gray-800 border-2 border-black dark:border-white shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all rounded-none text-black dark:text-white"
+                                                    title={t("form.addSupplier") || "Add Supplier"}
+                                                >
+                                                    <Plus className="h-4 w-4" />
+                                                </button>
                                             </div>
                                             <FormMessage />
                                         </FormItem>
@@ -401,6 +412,18 @@ export function InventoryCreateModal({
                 onOpenChange={setWarehouseModalOpen}
                 onSuccess={() => {
                     router.refresh();
+                }}
+            />
+
+            <SupplierModal
+                open={supplierModalOpen}
+                onOpenChange={setSupplierModalOpen}
+                onSuccess={(newSupplier: any) => {
+                    if (newSupplier) {
+                        setAvailableSuppliers((prev) => [...prev, { id: newSupplier.id, name: newSupplier.name }]);
+                        form.setValue("supplierId", newSupplier.id);
+                        router.refresh();
+                    }
                 }}
             />
         </>

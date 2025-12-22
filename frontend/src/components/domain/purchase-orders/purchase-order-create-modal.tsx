@@ -52,7 +52,15 @@ interface PurchaseOrderCreateModalProps {
     onOpenChange: (open: boolean) => void;
     suppliers: Array<{ id: string; name: string }>;
     warehouses: Array<{ id: string; name: string }>;
-    products: Array<{ id: string; name: string; sku: string; costPrice: number; supplierId?: string | null }>;
+    products: Array<{
+        id: string;
+        name: string;
+        sku: string;
+        costPrice: number;
+        supplierId?: string | null;
+        unit?: string;
+        inventoryItems?: Array<{ warehouseId: string; quantityOnHand: number }>;
+    }>;
     onSuccess?: () => void;
     initialProductId?: string;
 }
@@ -181,11 +189,42 @@ export function PurchaseOrderCreateModal({
                                                             {...field}
                                                         >
                                                             <option value="">{t("form.selectSupplier")}</option>
-                                                            {localSuppliers.map((supplier) => (
-                                                                <option key={supplier.id} value={supplier.id}>
-                                                                    {supplier.name}
-                                                                </option>
-                                                            ))}
+                                                            {localSuppliers.map((supplier) => {
+                                                                // Check if this supplier is the preferred supplier for any product in items
+                                                                let isPreferred = false;
+
+                                                                // Check from initialProductId's inventory items
+                                                                if (initialProductId) {
+                                                                    const initialProduct = products.find(p => p.id === initialProductId);
+                                                                    // Check if any inventory item/batch has this supplier
+                                                                    isPreferred = initialProduct?.inventoryItems?.some(
+                                                                        (item: any) => item.supplierId === supplier.id
+                                                                    ) || false;
+
+                                                                    // Fallback: check Product.supplierId if no inventory items
+                                                                    if (!isPreferred && (!initialProduct?.inventoryItems || initialProduct.inventoryItems.length === 0)) {
+                                                                        isPreferred = initialProduct?.supplierId === supplier.id;
+                                                                    }
+                                                                }
+
+                                                                // Also check from current items in form
+                                                                if (!isPreferred && form.watch("items")?.length > 0) {
+                                                                    const currentItems = form.watch("items");
+                                                                    isPreferred = currentItems.some((item: any) => {
+                                                                        const product = products.find(p => p.id === item.productId);
+                                                                        // Check if any inventory item/batch has this supplier
+                                                                        return product?.inventoryItems?.some(
+                                                                            (invItem: any) => invItem.supplierId === supplier.id
+                                                                        ) || false;
+                                                                    });
+                                                                }
+
+                                                                return (
+                                                                    <option key={supplier.id} value={supplier.id}>
+                                                                        {supplier.name}{isPreferred ? ' ✓ Pernah supply produk ini' : ''}
+                                                                    </option>
+                                                                );
+                                                            })}
                                                         </select>
                                                     </FormControl>
                                                     <Button
@@ -215,11 +254,21 @@ export function PurchaseOrderCreateModal({
                                                             {...field}
                                                         >
                                                             <option value="">{t("form.selectWarehouse")}</option>
-                                                            {warehouses.map((warehouse) => (
-                                                                <option key={warehouse.id} value={warehouse.id}>
-                                                                    {warehouse.name}
-                                                                </option>
-                                                            ))}
+                                                            {warehouses.map((warehouse: any) => {
+                                                                // Get stock in this warehouse for the initial product
+                                                                const initialProduct = initialProductId ? products.find(p => p.id === initialProductId) : null;
+                                                                const inventoryItem = initialProduct?.inventoryItems?.find(
+                                                                    (item: any) => item.warehouseId === warehouse.id
+                                                                );
+                                                                const stock = inventoryItem?.quantityOnHand || 0;
+                                                                const unit = initialProduct?.unit || 'pcs';
+
+                                                                return (
+                                                                    <option key={warehouse.id} value={warehouse.id}>
+                                                                        {warehouse.name} {initialProductId ? `(Stok: ${stock} ${unit})` : ''}
+                                                                    </option>
+                                                                );
+                                                            })}
                                                         </select>
                                                     </FormControl>
                                                     <Button

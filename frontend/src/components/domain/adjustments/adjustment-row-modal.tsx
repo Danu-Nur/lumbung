@@ -205,11 +205,20 @@ export function AdjustmentRowModal({
                                                                 {...field}
                                                             >
                                                                 <option value="">{t("form.selectWarehouse")}</option>
-                                                                {warehouses.map((warehouse) => (
-                                                                    <option key={warehouse.id} value={warehouse.id}>
-                                                                        {warehouse.name}
-                                                                    </option>
-                                                                ))}
+                                                                {warehouses.map((warehouse) => {
+                                                                    // Find stock in this warehouse
+                                                                    const inventoryItem = product.inventoryItems?.find(
+                                                                        (item: any) => item.warehouseId === warehouse.id
+                                                                    );
+                                                                    const stock = inventoryItem?.quantityOnHand || 0;
+                                                                    const hasStock = stock > 0;
+
+                                                                    return (
+                                                                        <option key={warehouse.id} value={warehouse.id}>
+                                                                            {warehouse.name} {hasStock ? `(${stock} ${product.unit})` : '(Stok: 0)'}
+                                                                        </option>
+                                                                    );
+                                                                })}
                                                             </select>
                                                         </FormControl>
                                                         <Button
@@ -223,6 +232,9 @@ export function AdjustmentRowModal({
                                                         </Button>
                                                     </div>
                                                     <FormMessage />
+                                                    <p className="text-xs text-muted-foreground mt-1">
+                                                        Total stok: <span className="font-semibold">{product.inventoryItems?.reduce((acc: number, item: any) => acc + item.quantityOnHand, 0) || 0} {product.unit}</span>
+                                                    </p>
                                                 </FormItem>
                                             )}
                                         />
