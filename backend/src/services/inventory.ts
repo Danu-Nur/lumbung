@@ -46,43 +46,64 @@ export class InventoryService {
                 }
             });
 
-            // 3. Update Inventory Item
-            const inventoryItem = await tx.inventoryItem.findUnique({
-                where: {
-                    productId_warehouseId: {
-                        productId,
-                        warehouseId
-                    }
-                }
-            });
-
             const diff = type === 'increase' ? quantity : -quantity;
 
-            if (inventoryItem) {
-                await tx.inventoryItem.update({
-                    where: { id: inventoryItem.id },
-                    data: {
-                        quantityOnHand: {
-                            increment: diff
-                        },
-                        availableQty: {
-                            increment: diff
-                        }
-                    }
-                });
-            } else {
-                if (type === 'decrease') {
-                    throw new Error('Cannot decrease stock for non-existent inventory item');
-                }
-                await tx.inventoryItem.create({
+            if (type === 'increase') {
+                // For increase, we create a new batch/entry
+                const product = await tx.product.findUnique({ where: { id: productId } });
+                const inventoryItem = await tx.inventoryItem.create({
                     data: {
                         productId,
                         warehouseId,
+                        unitCost: product?.costPrice || 0,
                         quantityOnHand: quantity,
                         availableQty: quantity,
-                        allocatedQty: 0
+                        batchNumber: `ADJ-${Date.now()}`,
+                        receivedDate: new Date()
                     }
                 });
+
+                // Update movement with linked item
+                await tx.inventoryMovement.update({
+                    where: { id: (await tx.inventoryMovement.findFirst({ where: { referenceId: adjustment.id, referenceType: 'StockAdjustment' } }))?.id || '' },
+                    data: { inventoryItemId: inventoryItem.id }
+                });
+            } else {
+                // For decrease, we use FIFO to deduct from existing batches
+                let remainingToDeduct = quantity;
+                const batches = await tx.inventoryItem.findMany({
+                    where: { productId, warehouseId, availableQty: { gt: 0 } },
+                    orderBy: { receivedDate: 'asc' }
+                });
+
+                for (const batch of batches) {
+                    if (remainingToDeduct <= 0) break;
+                    const take = Math.min(batch.availableQty, remainingToDeduct);
+
+                    await tx.inventoryItem.update({
+                        where: { id: batch.id },
+                        data: {
+                            quantityOnHand: { decrement: take },
+                            availableQty: { decrement: take }
+                        }
+                    });
+
+                    // Update existing movement or create sub-movements? 
+                    // To keep it simple, we'll link the main movement to the first batch or create a more complex structure.
+                    // For now, let's just link it to the first batch and we might need to improve this for multi-batch adjustments.
+                    if (remainingToDeduct === quantity) {
+                        await tx.inventoryMovement.update({
+                            where: { id: (await tx.inventoryMovement.findFirst({ where: { referenceId: adjustment.id, referenceType: 'StockAdjustment' } }))?.id || '' },
+                            data: { inventoryItemId: batch.id }
+                        });
+                    }
+
+                    remainingToDeduct -= take;
+                }
+
+                if (remainingToDeduct > 0) {
+                    throw new Error('Insufficient stock across all batches');
+                }
             }
 
             // 4. Create Outbox Event for Async Recalculation & Caching
@@ -116,35 +137,35 @@ export class InventoryService {
         const skip = (page - 1) * pageSize;
 
         const where: any = {
-            warehouse: {
-                organizationId
-            }
+            organizationId,
+            deletedAt: null
         };
 
         if (q) {
-            where.product = {
-                OR: [
-                    { name: { contains: q, mode: 'insensitive' } },
-                    { sku: { contains: q, mode: 'insensitive' } }
-                ]
-            };
+            where.OR = [
+                { name: { contains: q, mode: 'insensitive' } },
+                { sku: { contains: q, mode: 'insensitive' } }
+            ];
         }
 
-        const [items, total] = await Promise.all([
-            prisma.inventoryItem.findMany({
+        const [products, total] = await Promise.all([
+            prisma.product.findMany({
                 where,
                 include: {
-                    product: true,
-                    warehouse: true
+                    category: true,
+                    inventoryItems: {
+                        include: { warehouse: true, supplier: true },
+                        orderBy: { receivedDate: 'asc' }
+                    }
                 },
                 skip,
                 take: pageSize,
-                orderBy: { product: { name: 'asc' } }
+                orderBy: { name: 'asc' }
             }),
-            prisma.inventoryItem.count({ where })
+            prisma.product.count({ where })
         ]);
 
-        return { items, total };
+        return { products, total };
     }
 
     static async getAdjustments(organizationId: string, params: { page?: number; pageSize?: number; q?: string } = {}) {
@@ -274,80 +295,85 @@ export class InventoryService {
                 include: { items: true }
             });
 
-            // 2. Create Movements and Update Inventory for each item
+            // 2. Create Movements and Update Inventory for each item (FIFO)
             for (const item of items) {
-                // Outbound movement
-                await tx.inventoryMovement.create({
-                    data: {
-                        productId: item.productId,
-                        warehouseId: fromWarehouseId,
-                        movementType: 'TRANSFER_OUT',
-                        quantity: -item.quantity,
-                        referenceType: 'StockTransfer',
-                        referenceId: transfer.id,
-                        notes: `Transfer to ${toWarehouseId}`,
-                        createdById: userId,
-                    }
+                let remainingToTransfer = item.quantity;
+
+                // Get source batches (FIFO)
+                const sourceBatches = await tx.inventoryItem.findMany({
+                    where: { productId: item.productId, warehouseId: fromWarehouseId, availableQty: { gt: 0 } },
+                    orderBy: { receivedDate: 'asc' }
                 });
 
-                // Inbound movement
-                await tx.inventoryMovement.create({
-                    data: {
-                        productId: item.productId,
-                        warehouseId: toWarehouseId,
-                        movementType: 'TRANSFER_IN',
-                        quantity: item.quantity,
-                        referenceType: 'StockTransfer',
-                        referenceId: transfer.id,
-                        notes: `Transfer from ${fromWarehouseId}`,
-                        createdById: userId,
-                    }
-                });
+                for (const batch of sourceBatches) {
+                    if (remainingToTransfer <= 0) break;
+                    const take = Math.min(batch.availableQty, remainingToTransfer);
 
-                // Update From Warehouse inventory
-                await tx.inventoryItem.upsert({
-                    where: { productId_warehouseId: { productId: item.productId, warehouseId: fromWarehouseId } },
-                    update: {
-                        quantityOnHand: { decrement: item.quantity },
-                        availableQty: { decrement: item.quantity }
-                    },
-                    create: {
-                        productId: item.productId,
-                        warehouseId: fromWarehouseId,
-                        quantityOnHand: -item.quantity,
-                        availableQty: -item.quantity,
-                        allocatedQty: 0
-                    }
-                });
+                    // Deduct from source batch
+                    await tx.inventoryItem.update({
+                        where: { id: batch.id },
+                        data: {
+                            quantityOnHand: { decrement: take },
+                            availableQty: { decrement: take }
+                        }
+                    });
 
-                // Update To Warehouse inventory
-                await tx.inventoryItem.upsert({
-                    where: { productId_warehouseId: { productId: item.productId, warehouseId: toWarehouseId } },
-                    update: {
-                        quantityOnHand: { increment: item.quantity },
-                        availableQty: { increment: item.quantity }
-                    },
-                    create: {
-                        productId: item.productId,
-                        warehouseId: toWarehouseId,
-                        quantityOnHand: item.quantity,
-                        availableQty: item.quantity,
-                        allocatedQty: 0
-                    }
-                });
+                    // Create new batch in destination (Preserve Price!)
+                    const destBatch = await tx.inventoryItem.create({
+                        data: {
+                            productId: item.productId,
+                            warehouseId: toWarehouseId,
+                            unitCost: batch.unitCost, // PRESERVE ORIGINAL COST
+                            supplierId: batch.supplierId,
+                            quantityOnHand: take,
+                            availableQty: take,
+                            batchNumber: batch.batchNumber,
+                            receivedDate: batch.receivedDate // Keep original receipt date for FIFO chain?
+                        }
+                    });
+
+                    // Create Movements
+                    await tx.inventoryMovement.create({
+                        data: {
+                            productId: item.productId,
+                            warehouseId: fromWarehouseId,
+                            inventoryItemId: batch.id,
+                            movementType: 'TRANSFER_OUT',
+                            quantity: -take,
+                            referenceType: 'StockTransfer',
+                            referenceId: transfer.id,
+                            notes: `Transfer to ${toWarehouseId}`,
+                            createdById: userId,
+                        }
+                    });
+
+                    await tx.inventoryMovement.create({
+                        data: {
+                            productId: item.productId,
+                            warehouseId: toWarehouseId,
+                            inventoryItemId: destBatch.id,
+                            movementType: 'TRANSFER_IN',
+                            quantity: take,
+                            referenceType: 'StockTransfer',
+                            referenceId: transfer.id,
+                            notes: `Transfer from ${fromWarehouseId}`,
+                            createdById: userId,
+                        }
+                    });
+
+                    remainingToTransfer -= take;
+                }
+
+                if (remainingToTransfer > 0) {
+                    throw new Error(`Insufficient stock for product ${item.productId} in source warehouse`);
+                }
 
                 // 3. Create Outbox Events
                 await tx.outboxEvent.create({
                     data: {
                         organizationId,
                         topic: 'inventory.movement.created',
-                        payload: {
-                            productId: item.productId,
-                            warehouseId: fromWarehouseId,
-                            organizationId,
-                            movementId: transfer.id,
-                            type: 'transfer_out'
-                        }
+                        payload: { productId: item.productId, warehouseId: fromWarehouseId, organizationId }
                     }
                 });
 
@@ -355,13 +381,7 @@ export class InventoryService {
                     data: {
                         organizationId,
                         topic: 'inventory.movement.created',
-                        payload: {
-                            productId: item.productId,
-                            warehouseId: toWarehouseId,
-                            organizationId,
-                            movementId: transfer.id,
-                            type: 'transfer_in'
-                        }
+                        payload: { productId: item.productId, warehouseId: toWarehouseId, organizationId }
                     }
                 });
             }
@@ -412,18 +432,36 @@ export class InventoryService {
 
             // 2. Adjust inventory for each item
             for (const item of items) {
-                const existing = await tx.inventoryItem.findUnique({
-                    where: { productId_warehouseId: { productId: item.productId, warehouseId } }
+                // Get all batches for this product/warehouse to calculate system quantity
+                const batches = await tx.inventoryItem.findMany({
+                    where: { productId: item.productId, warehouseId }
                 });
 
-                const systemQty = existing?.quantityOnHand || 0;
+                const systemQty = batches.reduce((acc, b) => acc + b.quantityOnHand, 0);
                 const adjustmentQty = item.actualQty - systemQty;
 
                 if (adjustmentQty !== 0) {
+                    // Link to the newest batch if increasing, or newest batches for decrease?
+                    // For Opname, we usually create a new "Adjustment Batch" to keep it clean.
+                    const product = await tx.product.findUnique({ where: { id: item.productId } });
+
+                    const adjustmentBatch = await tx.inventoryItem.create({
+                        data: {
+                            productId: item.productId,
+                            warehouseId,
+                            unitCost: product?.costPrice || 0,
+                            quantityOnHand: adjustmentQty,
+                            availableQty: adjustmentQty,
+                            batchNumber: `OPN-${opname.opnameNumber}`,
+                            receivedDate: new Date(),
+                        }
+                    });
+
                     await tx.inventoryMovement.create({
                         data: {
                             productId: item.productId,
                             warehouseId,
+                            inventoryItemId: adjustmentBatch.id,
                             movementType: 'ADJUST',
                             quantity: adjustmentQty,
                             referenceType: 'StockOpname',
@@ -433,33 +471,12 @@ export class InventoryService {
                         }
                     });
 
-                    await tx.inventoryItem.upsert({
-                        where: { productId_warehouseId: { productId: item.productId, warehouseId } },
-                        update: {
-                            quantityOnHand: item.actualQty,
-                            availableQty: item.actualQty - (existing?.allocatedQty || 0)
-                        },
-                        create: {
-                            productId: item.productId,
-                            warehouseId,
-                            quantityOnHand: item.actualQty,
-                            availableQty: item.actualQty,
-                            allocatedQty: 0
-                        }
-                    });
-
                     // 3. Create Outbox Event
                     await tx.outboxEvent.create({
                         data: {
                             organizationId,
                             topic: 'inventory.movement.created',
-                            payload: {
-                                productId: item.productId,
-                                warehouseId,
-                                organizationId,
-                                movementId: opname.id,
-                                type: 'opname'
-                            }
+                            payload: { productId: item.productId, warehouseId, organizationId }
                         }
                     });
                 }

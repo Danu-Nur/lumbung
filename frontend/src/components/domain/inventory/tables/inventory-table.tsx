@@ -6,9 +6,16 @@ import { DataTable } from '@/components/shared/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/shared/data-table/data-table-column-header';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { formatCurrency } from '@/lib/utils';
 import { InventoryActions } from '@/components/domain/inventory/components/inventory-actions';
 import { useTranslations } from 'next-intl';
+import { ChevronDown } from 'lucide-react';
 
 // Export utils
 import * as XLSX from 'xlsx';
@@ -19,10 +26,11 @@ import { SerializedProduct } from '@/types/serialized';
 interface InventoryTableProps {
     data: SerializedProduct[];
     warehouses: any[]; // Prop passed to actions
+    suppliers: any[]; // Prop passed to actions
     onSuccess?: () => void;
 }
 
-export function InventoryTable({ data, warehouses, onSuccess }: InventoryTableProps) {
+export function InventoryTable({ data, warehouses, suppliers, onSuccess }: InventoryTableProps) {
     const t = useTranslations('inventory');
     const tCommon = useTranslations('common');
 
@@ -87,38 +95,34 @@ export function InventoryTable({ data, warehouses, onSuccess }: InventoryTablePr
             },
         },
         {
-            accessorKey: 'supplier',
+            accessorKey: 'costPrice',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title={t('columns.supplier')} />
+                <DataTableColumnHeader column={column} title={t('columns.costPrice')} />
             ),
             cell: ({ row }) => {
-                const supplier = row.original.supplier;
+                const batches = row.original.inventoryItems;
+                const activeBatches = batches.filter(b => b.quantityOnHand > 0);
+
+                if (activeBatches.length === 0) {
+                    return <span className="text-muted-foreground text-xs">{formatCurrency(row.original.costPrice)}</span>;
+                }
+
+                const prices = activeBatches.map(b => b.unitCost);
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+
+                if (minPrice === maxPrice) {
+                    return <div className="font-medium">{formatCurrency(minPrice)}</div>;
+                }
+
                 return (
-                    <div className="flex items-center">
-                        {supplier ? (
-                            <span className="text-sm truncate max-w-[150px]" title={supplier.name}>
-                                {supplier.name}
-                            </span>
-                        ) : (
-                            <span className="text-muted-foreground text-xs">-</span>
-                        )}
+                    <div className="flex flex-col">
+                        <span className="font-medium text-xs text-blue-600">Range:</span>
+                        <span className="text-xs font-bold">
+                            {formatCurrency(minPrice)} - {formatCurrency(maxPrice)}
+                        </span>
                     </div>
                 );
-            },
-        },
-        {
-            accessorKey: 'sellingPrice',
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title={t('columns.sellingPrice')} className='justify-start' />
-            ),
-            cell: ({ row }) => {
-                const formattedPrice = new Intl.NumberFormat('id-ID', {
-                    style: 'currency',
-                    currency: 'IDR',
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                }).format(row.getValue('sellingPrice'));
-                return <div className="font-medium">{formattedPrice}</div>;
             },
         },
         {
@@ -127,7 +131,7 @@ export function InventoryTable({ data, warehouses, onSuccess }: InventoryTablePr
                 <DataTableColumnHeader column={column} title={t('columns.totalStock')} className='justify-start' />
             ),
             cell: ({ row }) => {
-                const stock = row.getValue('totalStock') as number;
+                const stock = row.original.inventoryItems.reduce((acc, item) => acc + item.quantityOnHand, 0);
                 const minStock = row.original.lowStockThreshold;
                 const isLowStock = stock <= minStock;
                 const isOutOfStock = stock <= 0;
@@ -159,34 +163,68 @@ export function InventoryTable({ data, warehouses, onSuccess }: InventoryTablePr
             },
         },
         {
-            accessorKey: 'warehouse',
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title={t('columns.warehouse')} />
-            ),
+            id: 'batches',
+            header: () => <div className="text-sm font-semibold">{t('columns.warehouse')} / Batches</div>,
             cell: ({ row }) => {
-                const stock = row.original.inventoryItems;
-                if (!stock || stock.length === 0) return <span className="text-muted-foreground">-</span>;
-
-                // Show first warehouse and count of others
-                const firstWarehouse = stock[0].warehouse.name;
-                const otherCount = stock.length - 1;
+                const batches = row.original.inventoryItems.filter(b => b.quantityOnHand > 0);
+                if (batches.length === 0) return <span className="text-muted-foreground text-xs">-</span>;
 
                 return (
-                    <div className="flex flex-col text-xs">
-                        <span>{firstWarehouse}</span>
-                        {otherCount > 0 && (
-                            <span className="text-muted-foreground">+{otherCount} others</span>
-                        )}
-                    </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="h-8 px-2 text-xs border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+                                {batches.length} Batches <ChevronDown className="ml-1 h-3 w-3" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-[300px] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-0 overflow-hidden">
+                            <div className="bg-neo-blue text-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border-b-2 border-black">
+                                Stock Breakdown
+                            </div>
+                            <div className="max-h-[200px] overflow-auto">
+                                <table className="w-full text-[11px]">
+                                    <thead className="bg-gray-100 border-b border-black font-bold">
+                                        <tr>
+                                            <th className="px-2 py-1 text-left">Gudang</th>
+                                            <th className="px-2 py-1 text-left">Modal</th>
+                                            <th className="px-2 py-1 text-right">Stok</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200">
+                                        {batches.map((batch) => (
+                                            <tr key={batch.id}>
+                                                <td className="px-2 py-1.5">
+                                                    <div className="flex flex-col">
+                                                        <span className="font-semibold">{batch.warehouse?.name || 'Unknown Warehouse'}</span>
+                                                        <span className="text-[9px] text-muted-foreground">{batch.supplier?.name || 'No Supplier'}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-2 py-1.5">{formatCurrency(batch.unitCost)}</td>
+                                                <td className="px-2 py-1.5 text-right font-bold">{batch.quantityOnHand}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 );
             },
         },
         {
             id: 'actions',
-            cell: ({ row }) => <div className='text-center'><InventoryActions product={row.original} warehouses={warehouses} onSuccess={onSuccess} /></div>,
+            cell: ({ row }) => (
+                <div className='text-center'>
+                    <InventoryActions
+                        product={row.original}
+                        warehouses={warehouses}
+                        suppliers={suppliers}
+                        onSuccess={onSuccess}
+                    />
+                </div>
+            ),
             header: () => <div className="text-center">{tCommon('table.actions')}</div>
         },
-    ], [t, tCommon, warehouses]);
+    ], [t, tCommon, warehouses, suppliers]);
 
     // Export Handlers
     const handleExportExcel = (rows: SerializedProduct[]) => {

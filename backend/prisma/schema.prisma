@@ -301,22 +301,30 @@ model Warehouse {
   @@map("warehouses")
 }
 
-// Current on-hand stock per product per warehouse (computed/maintained field)
+// Current on-hand stock per batch per warehouse
 model InventoryItem {
   id             String   @id @default(cuid())
   productId      String
   warehouseId    String
-  quantityOnHand Int      @default(0) // Current stock (derived from movements)
+  supplierId     String?
+  unitCost       Decimal  @db.Decimal(12, 2) @default(0)
+  quantityOnHand Int      @default(0) // Current stock in this batch
   allocatedQty   Int      @default(0) // Reserved for confirmed sales orders
   availableQty   Int      @default(0) // quantityOnHand - allocatedQty
+  batchNumber    String?
+  receivedDate   DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
   warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  supplier  Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
 
-  @@unique([productId, warehouseId])
+  inventoryMovements InventoryMovement[]
+
   @@index([warehouseId])
   @@index([productId])
+  @@index([supplierId])
+  @@index([batchNumber])
   @@map("inventory_items")
 }
 
@@ -330,23 +338,26 @@ enum MovementType {
 
 // Append-only audit log of all stock changes
 model InventoryMovement {
-  id            String       @id @default(cuid())
-  productId     String
-  warehouseId   String
-  movementType  MovementType
-  quantity      Int          // Positive for IN, negative for OUT
-  referenceType String?      // "SalesOrder", "PurchaseOrder", "StockAdjustment", "StockTransfer"
-  referenceId   String?      // ID of the source document
-  notes         String?
-  createdById   String
-  createdAt     DateTime     @default(now())
+  id              String       @id @default(cuid())
+  productId       String
+  warehouseId     String
+  inventoryItemId String?      // Linked to specific batch
+  movementType    MovementType
+  quantity        Int          // Positive for IN, negative for OUT
+  referenceType   String?      // "SalesOrder", "PurchaseOrder", "StockAdjustment", "StockTransfer"
+  referenceId     String?      // ID of the source document
+  notes           String?
+  createdById     String
+  createdAt       DateTime     @default(now())
 
-  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
-  createdBy User      @relation("InventoryMovementCreatedBy", fields: [createdById], references: [id])
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  warehouse     Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  inventoryItem InventoryItem? @relation(fields: [inventoryItemId], references: [id], onDelete: SetNull)
+  createdBy     User           @relation("InventoryMovementCreatedBy", fields: [createdById], references: [id])
 
   @@index([productId])
   @@index([warehouseId])
+  @@index([inventoryItemId])
   @@index([referenceType, referenceId])
   @@index([createdAt])
   @@map("inventory_movements")
@@ -428,6 +439,7 @@ model Supplier {
   organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   purchaseOrders PurchaseOrder[]
   products       Product[]
+  inventoryItems InventoryItem[]
 
   @@index([organizationId])
   @@map("suppliers")

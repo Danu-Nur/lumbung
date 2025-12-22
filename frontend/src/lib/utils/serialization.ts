@@ -17,5 +17,9 @@ export function serializeProduct(product: any): any {
         sellingPrice: serializeDecimal(product.sellingPrice),
         costPrice: serializeDecimal(product.costPrice),
         lowStockThreshold: serializeDecimal(product.lowStockThreshold),
+        inventoryItems: product.inventoryItems?.map((item: any) => ({
+            ...item,
+            unitCost: serializeDecimal(item.unitCost)
+        })) || []
     };
 }

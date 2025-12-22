@@ -78,12 +78,18 @@ export type UserWithRole = User & {
 // Product Types
 export type SerializedCategory = Category;
 
+export type SerializedInventoryItem = Omit<InventoryItem, "unitCost"> & {
+    unitCost: number;
+    warehouse: Warehouse;
+    supplier?: Supplier | null;
+};
+
 export type SerializedProduct = Omit<Product, "sellingPrice" | "costPrice"> & {
     sellingPrice: number;
     costPrice: number;
     category: Category | null;
     supplier: Supplier | null;
-    inventoryItems: (InventoryItem & { warehouse: Warehouse })[];
+    inventoryItems: SerializedInventoryItem[];
 };
 
 // Stock Opname Types

@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { ProductService } from '../services/product.js';
+import { InventoryService } from '../services/inventory.js';
 
 const createProductSchema = z.object({
     name: z.string().min(1),
@@ -59,7 +60,7 @@ export async function getProductsHandler(req: FastifyRequest<{ Querystring: { pa
         const pageSize = parseInt(req.query.pageSize || '10');
         const search = req.query.q || '';
 
-        const result = await ProductService.getProducts(user.organizationId, page, pageSize, search);
+        const result = await InventoryService.getInventory(user.organizationId, { page, pageSize, q: search });
         return result;
     } catch (error) {
         req.log.error(error);

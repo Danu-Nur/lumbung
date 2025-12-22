@@ -1,6 +1,9 @@
 {
     "title": "Inventaris",
     "description": "Kelola inventaris produk Anda di seluruh gudang",
+    "actions": {
+        "purchase": "Order Lagi"
+    },
     "tabs": {
         "stock": "Daftar Inventaris",
         "categories": "Kategori",

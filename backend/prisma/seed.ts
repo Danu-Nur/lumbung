@@ -1,10 +1,32 @@
-import { PrismaClient, MovementType, PriceType } from '@prisma/client';
+import { PrismaClient, MovementType, PriceType, SalesOrderStatus, PurchaseOrderStatus, AdjustmentReason, StockTransferStatus, StockOpnameStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
-    console.log('🌱 Starting database seed...');
+    console.log('🌱 Starting full database seed...');
+
+    // 0. Cleanup existing data (Optional, but makes it easier to re-run)
+    console.log('Cleaning up existing data...');
+    await prisma.inventoryMovement.deleteMany();
+    await prisma.inventoryItem.deleteMany();
+    await prisma.stockOpnameItem.deleteMany();
+    await prisma.stockOpname.deleteMany();
+    await prisma.stockTransferItem.deleteMany();
+    await prisma.stockTransfer.deleteMany();
+    await prisma.stockAdjustment.deleteMany();
+    await prisma.purchaseOrderItem.deleteMany();
+    await prisma.purchaseReceipt.deleteMany();
+    await prisma.purchaseOrder.deleteMany();
+    await prisma.salesOrderItem.deleteMany();
+    await prisma.salesOrder.deleteMany();
+    await prisma.productPriceHistory.deleteMany();
+    await prisma.productImage.deleteMany();
+    await prisma.product.deleteMany();
+    await prisma.category.deleteMany();
+    await prisma.supplier.deleteMany();
+    await prisma.customer.deleteMany();
+    // Keep Roles, Permissions, Orgs, and Users for login consistency
 
     // 1. Create Roles & Permissions
     console.log('Creating roles & permissions...');
@@ -31,12 +53,6 @@ async function main() {
         create: { name: 'Admin', description: 'Administrator with full access' },
     });
 
-    await prisma.role.upsert({
-        where: { name: 'Staff' },
-        update: {},
-        create: { name: 'Staff', description: 'Staff with limited access' },
-    });
-
     // Assign all permissions to Admin
     const allPermissions = await prisma.permission.findMany();
     for (const perm of allPermissions) {
@@ -47,7 +63,38 @@ async function main() {
         });
     }
 
-    // 2. Create Organizations
+    // 2. Create Plans
+    console.log('Creating plans...');
+    const plans = [
+        {
+            name: 'Free',
+            slug: 'free',
+            priceMonthly: 0,
+            priceYearly: 0,
+            limits: { maxUsers: 1, maxWarehouses: 1, maxItems: 50 },
+            features: ["Up to 50 Items", "1 Warehouse"]
+        },
+        {
+            name: 'Pro',
+            slug: 'pro',
+            priceMonthly: 79000,
+            priceYearly: 790000,
+            limits: { maxUsers: 10, maxWarehouses: 5, maxItems: 100000 },
+            features: ["Unlimited Items", "Up to 5 Warehouses", "Advanced Analytics"]
+        }
+    ];
+
+    for (const p of plans) {
+        await prisma.plan.upsert({
+            where: { slug: p.slug },
+            update: p,
+            create: p
+        });
+    }
+
+    const proPlan = await prisma.plan.findUnique({ where: { slug: 'pro' } });
+
+    // 3. Create Organizations
     console.log('Creating organizations...');
     const org1 = await prisma.organization.upsert({
         where: { slug: 'maju-motor' },
@@ -61,19 +108,21 @@ async function main() {
         },
     });
 
-    const org2 = await prisma.organization.upsert({
-        where: { slug: 'otomotif-jaya' },
-        update: {},
-        create: {
-            name: 'CV Otomotif Jaya',
-            slug: 'otomotif-jaya',
-            address: 'Jl. Fatmawati No. 10, Jakarta Selatan',
-            phone: '021-12345678',
-            email: 'info@otojaya.com',
-        },
-    });
+    // 4. Create Subscription
+    console.log('Creating subscription...');
+    if (proPlan) {
+        await prisma.subscription.upsert({
+            where: { organizationId: org1.id },
+            update: { planId: proPlan.id },
+            create: {
+                organizationId: org1.id,
+                planId: proPlan.id,
+                status: 'ACTIVE',
+            }
+        });
+    }
 
-    // 3. Create Users
+    // 5. Create Users
     console.log('Creating users...');
     const hashedPassword = await bcrypt.hash('admin123', 10);
 
@@ -89,19 +138,7 @@ async function main() {
         },
     });
 
-    const user2 = await prisma.user.upsert({
-        where: { email: 'admin@otojaya.com' },
-        update: {},
-        create: {
-            name: 'Siti Aminah',
-            email: 'admin@otojaya.com',
-            password: hashedPassword,
-            roleId: adminRole.id,
-            organizationId: org2.id,
-        },
-    });
-
-    // 4. Create Warehouses
+    // 6. Create Warehouses (Upsert to avoid duplicates)
     console.log('Creating warehouses...');
     const wh1 = await prisma.warehouse.upsert({
         where: { organizationId_code: { organizationId: org1.id, code: 'WH-MAIN' } },
@@ -111,6 +148,7 @@ async function main() {
             code: 'WH-MAIN',
             organizationId: org1.id,
             address: 'Jl. Raya Bogor KM 30',
+            city: 'Depok',
         },
     });
 
@@ -122,439 +160,226 @@ async function main() {
             code: 'WH-BRANCH',
             organizationId: org1.id,
             address: 'Jl. Margonda Raya',
+            city: 'Depok',
         },
     });
 
-    const wh3 = await prisma.warehouse.upsert({
-        where: { organizationId_code: { organizationId: org2.id, code: 'WH-SHOW' } },
-        update: {},
-        create: {
-            name: 'Showroom',
-            code: 'WH-SHOW',
-            organizationId: org2.id,
-            address: 'Jl. Fatmawati No. 10',
+    // 7. Create Suppliers & Customers
+    console.log('Creating suppliers & customers...');
+    const supplier1 = await prisma.supplier.create({
+        data: {
+            name: 'PT Astra Otoparts',
+            email: 'sales@astra.co.id',
+            phone: '021-5551234',
+            organizationId: org1.id,
         },
     });
 
-    // 5. Create Suppliers
-    console.log('Creating suppliers...');
-    let supplier1 = await prisma.supplier.findFirst({
-        where: { name: 'PT Astra Otoparts', organizationId: org1.id },
+    const supplier2 = await prisma.supplier.create({
+        data: {
+            name: 'CV Sumber Makmur',
+            email: 'sales@sumbermakmur.com',
+            phone: '021-5555678',
+            organizationId: org1.id,
+        },
     });
-    if (!supplier1) {
-        supplier1 = await prisma.supplier.create({
-            data: {
-                name: 'PT Astra Otoparts',
-                email: 'sales@astra.co.id',
-                phone: '021-5551234',
-                organizationId: org1.id,
-            },
-        });
-    }
 
-    let supplier2 = await prisma.supplier.findFirst({
-        where: { name: 'CV Sumber Makmur', organizationId: org1.id },
+    const customer1 = await prisma.customer.create({
+        data: {
+            name: 'Slamet Raharjo',
+            email: 'slamet@mail.com',
+            phone: '08123456789',
+            address: 'Jl. Melati No. 5',
+            organizationId: org1.id,
+        },
     });
-    if (!supplier2) {
-        supplier2 = await prisma.supplier.create({
-            data: {
-                name: 'CV Sumber Makmur',
-                email: 'sales@sumbermakmur.com',
-                phone: '021-5555678',
-                organizationId: org1.id,
-            },
-        });
-    }
 
-    // 6. Create Categories
+    // 8. Create Categories
     console.log('Creating categories...');
-    const categoriesData = [
-        'Mesin & Komponen',
-        'Oli & Fluida',
-        'Sistem Rem',
-        'Suspensi & Kaki-kaki',
-        'Kelistrikan',
-        'Ban & Velg',
-        'Body & Eksterior',
-        'Interior & Kenyamanan',
-        'Aksesoris & Tools',
-    ];
+    const catOli = await prisma.category.create({
+        data: { name: 'Oli & Fluida', organizationId: org1.id }
+    });
+    const catKelistrikan = await prisma.category.create({
+        data: { name: 'Kelistrikan', organizationId: org1.id }
+    });
 
-    const categoriesMap = new Map();
+    // 9. Create Products & Batches
+    console.log('Creating products & inventory batches...');
 
-    for (const catName of categoriesData) {
-        let cat = await prisma.category.findFirst({
-            where: { name: catName, organizationId: org1.id },
-        });
-        if (!cat) {
-            cat = await prisma.category.create({
-                data: {
-                    name: catName,
-                    organizationId: org1.id,
-                    description: `Kategori untuk ${catName}`,
-                },
-            });
-        }
-        categoriesMap.set(catName, cat.id);
-    }
-
-    // 7. Create Products & Inventory
-    console.log('Creating products & inventory...');
-
-    const products = [
-        {
+    // Product 1: Busi NGK
+    const product1 = await prisma.product.create({
+        data: {
             name: 'Busi NGK CPR8EA-9',
             sku: 'NGK-CPR8EA-9',
-            category: 'Kelistrikan',
+            categoryId: catKelistrikan.id,
             unit: 'pcs',
-            cost: 15000,
-            price: 25000,
+            sellingPrice: 25000,
+            costPrice: 15500,
+            organizationId: org1.id,
+            createdById: user1.id,
             supplierId: supplier1.id,
-            attributes: { brand: 'NGK', vehicleType: 'motor' },
-        },
-        {
+        }
+    });
+
+    // Batch 1 (Old)
+    const batch1_1 = await prisma.inventoryItem.create({
+        data: {
+            productId: product1.id,
+            warehouseId: wh1.id,
+            supplierId: supplier1.id,
+            unitCost: 15000,
+            quantityOnHand: 20,
+            availableQty: 20,
+            batchNumber: 'BATCH-001',
+            receivedDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        }
+    });
+
+    // Batch 2 (New)
+    const batch1_2 = await prisma.inventoryItem.create({
+        data: {
+            productId: product1.id,
+            warehouseId: wh1.id,
+            supplierId: supplier1.id,
+            unitCost: 15500,
+            quantityOnHand: 50,
+            availableQty: 50,
+            batchNumber: 'BATCH-002',
+            receivedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        }
+    });
+
+    await prisma.inventoryMovement.createMany({
+        data: [
+            { productId: product1.id, warehouseId: wh1.id, inventoryItemId: batch1_1.id, movementType: MovementType.IN, quantity: 20, createdById: user1.id },
+            { productId: product1.id, warehouseId: wh1.id, inventoryItemId: batch1_2.id, movementType: MovementType.IN, quantity: 50, createdById: user1.id }
+        ]
+    });
+
+    // Product 2: Oli
+    const product2 = await prisma.product.create({
+        data: {
             name: 'Oli Yamalube Sport 1L',
             sku: 'OIL-YAM-SPT-1L',
-            category: 'Oli & Fluida',
+            categoryId: catOli.id,
             unit: 'liter',
-            cost: 45000,
-            price: 65000,
+            sellingPrice: 65000,
+            costPrice: 45000,
+            organizationId: org1.id,
+            createdById: user1.id,
             supplierId: supplier1.id,
-            attributes: { brand: 'Yamalube', viscosity: '10W-40' },
-        },
-        {
-            name: 'Kampas Rem Depan Mio',
-            sku: 'BRK-PAD-MIO-F',
-            category: 'Sistem Rem',
-            unit: 'set',
-            cost: 35000,
-            price: 55000,
-            supplierId: supplier2.id,
-            attributes: { brand: 'Yamaha Genuine Parts', compatibleModels: ['Mio', 'Fino'] },
-        },
-        {
-            name: 'Aki GS Astra GTZ5S',
-            sku: 'ACC-GS-GTZ5S',
-            category: 'Kelistrikan',
-            unit: 'pcs',
-            cost: 180000,
-            price: 250000,
-            supplierId: supplier1.id,
-            attributes: { brand: 'GS Astra', voltage: '12V', capacity: '3.5Ah' },
-        },
-        {
-            name: 'Ban IRC 80/90-14',
-            sku: 'TYR-IRC-809014',
-            category: 'Ban & Velg',
-            unit: 'pcs',
-            cost: 140000,
-            price: 195000,
-            supplierId: null,
-            attributes: { brand: 'IRC', size: '80/90-14', type: 'Tubeless' },
-        },
-        {
-            name: 'Shockbreaker Belakang Vario',
-            sku: 'SUS-SHK-VAR-R',
-            category: 'Suspensi & Kaki-kaki',
-            unit: 'pcs',
-            cost: 250000,
-            price: 350000,
-            supplierId: supplier2.id,
-            attributes: { brand: 'Honda Genuine Parts', compatibleModels: ['Vario 125', 'Vario 150'] },
-        },
-        {
-            name: 'Filter Udara Beat FI',
-            sku: 'FLT-AIR-BEAT',
-            category: 'Mesin & Komponen',
-            unit: 'pcs',
-            cost: 40000,
-            price: 60000,
-            supplierId: null,
-            attributes: { brand: 'Honda Genuine Parts' },
-        },
-        {
-            name: 'Lampu Depan LED H4',
-            sku: 'LGT-LED-H4',
-            category: 'Kelistrikan',
-            unit: 'pcs',
-            cost: 75000,
-            price: 125000,
-            supplierId: supplier2.id,
-            attributes: { brand: 'Osram', type: 'LED' },
-        },
-        {
-            name: 'Spion Tomok CNC',
-            sku: 'ACC-MIR-TMK',
-            category: 'Aksesoris & Tools',
-            unit: 'set',
-            cost: 85000,
-            price: 150000,
-            supplierId: null,
-            attributes: { material: 'Aluminum CNC', color: 'Black' },
-        },
-        {
-            name: 'Rantai Keteng Satria FU',
-            sku: 'ENG-CHN-SAT',
-            category: 'Mesin & Komponen',
-            unit: 'pcs',
-            cost: 90000,
-            price: 135000,
-            supplierId: supplier1.id,
-            attributes: { brand: 'Suzuki Genuine Parts' },
-        },
-    ];
-
-    for (const p of products) {
-        const product = await prisma.product.upsert({
-            where: {
-                organizationId_sku: { organizationId: org1.id, sku: p.sku },
-            },
-            update: {},
-            create: {
-                name: p.name,
-                sku: p.sku,
-                categoryId: categoriesMap.get(p.category),
-                unit: p.unit,
-                sellingPrice: p.price,
-                costPrice: p.cost,
-                organizationId: org1.id,
-                createdById: user1.id,
-                supplierId: p.supplierId,
-                customAttributes: p.attributes,
-            },
-        });
-
-        // Check if inventory setup exists (to avoid duplicate history/stock)
-        const existingInv = await prisma.inventoryItem.findUnique({
-            where: { productId_warehouseId: { productId: product.id, warehouseId: wh1.id } },
-        });
-
-        if (!existingInv) {
-            // Initial Price History
-            await prisma.productPriceHistory.createMany({
-                data: [
-                    {
-                        productId: product.id,
-                        priceType: PriceType.COST,
-                        price: p.cost,
-                        createdById: user1.id,
-                        notes: 'Initial cost price',
-                    },
-                    {
-                        productId: product.id,
-                        priceType: PriceType.SELLING,
-                        price: p.price,
-                        createdById: user1.id,
-                        notes: 'Initial selling price',
-                    },
-                ],
-            });
-
-            // Initial Stock (Movement IN)
-            const initialQty = Math.floor(Math.random() * 50) + 10; // 10-60 items
-
-            await prisma.inventoryMovement.create({
-                data: {
-                    productId: product.id,
-                    warehouseId: wh1.id,
-                    movementType: MovementType.IN,
-                    quantity: initialQty,
-                    createdById: user1.id,
-                    notes: 'Initial stock seeding',
-                },
-            });
-
-            // Update Inventory Item Cache
-            await prisma.inventoryItem.create({
-                data: {
-                    productId: product.id,
-                    warehouseId: wh1.id,
-                    quantityOnHand: initialQty,
-                    availableQty: initialQty,
-                },
-            });
         }
-    }
-
-    // 8. Create Plans
-    console.log('Creating plans...');
-
-    // Free
-    await prisma.plan.upsert({
-        where: { slug: 'free' },
-        update: {
-            name: 'Free',
-            description: 'For individuals exploring the system.',
-            priceMonthly: 0,
-            priceYearly: 0,
-            limits: { maxUsers: 1, maxWarehouses: 1, maxItems: 50 },
-            features: [
-                "Up to 50 Items",
-                "1 Warehouse",
-                "Community Support",
-                "Basic Dashboard"
-            ],
-            isActive: true
-        },
-        create: {
-            name: 'Free',
-            slug: 'free',
-            description: 'For individuals exploring the system.',
-            priceMonthly: 0,
-            priceYearly: 0,
-            limits: { maxUsers: 1, maxWarehouses: 1, maxItems: 50 },
-            features: [
-                "Up to 50 Items",
-                "1 Warehouse",
-                "Community Support",
-                "Basic Dashboard"
-            ],
-            isActive: true
-        },
     });
 
-    // Starter
-    await prisma.plan.upsert({
-        where: { slug: 'starter' },
-        update: {
-            name: 'Starter',
-            description: 'Perfect for small businesses just getting started.',
-            priceMonthly: 29000,
-            priceYearly: 290000,
-            limits: { maxUsers: 3, maxWarehouses: 1, maxItems: 1000 },
-            features: [
-                "Up to 1,000 Items",
-                "1 Warehouse",
-                "Basic Reporting",
-                "Email Support"
-            ],
-            isActive: true
-        },
-        create: {
-            name: 'Starter',
-            slug: 'starter',
-            description: 'Perfect for small businesses just getting started.',
-            priceMonthly: 29000,
-            priceYearly: 290000,
-            limits: { maxUsers: 3, maxWarehouses: 1, maxItems: 1000 },
-            features: [
-                "Up to 1,000 Items",
-                "1 Warehouse",
-                "Basic Reporting",
-                "Email Support"
-            ],
-            isActive: true
-        },
+    const batch2_1 = await prisma.inventoryItem.create({
+        data: {
+            productId: product2.id,
+            warehouseId: wh1.id,
+            supplierId: supplier1.id,
+            unitCost: 45000,
+            quantityOnHand: 100,
+            availableQty: 100,
+            batchNumber: 'BATCH-YML-001',
+            receivedDate: new Date(),
+        }
     });
 
-    // Pro
-    const proPlan = await prisma.plan.upsert({
-        where: { slug: 'pro' },
-        update: {
-            name: 'Pro',
-            description: 'For growing businesses needing advanced features.',
-            priceMonthly: 79000,
-            priceYearly: 790000,
-            limits: { maxUsers: 10, maxWarehouses: 5, maxItems: 100000 },
-            features: [
-                "Unlimited Items",
-                "Up to 5 Warehouses",
-                "Advanced Analytics",
-                "Priority Support",
-                "API Access"
-            ],
-            isActive: true
-        },
-        create: {
-            name: 'Pro',
-            slug: 'pro',
-            description: 'For growing businesses needing advanced features.',
-            priceMonthly: 79000,
-            priceYearly: 790000,
-            limits: { maxUsers: 10, maxWarehouses: 5, maxItems: 100000 },
-            features: [
-                "Unlimited Items",
-                "Up to 5 Warehouses",
-                "Advanced Analytics",
-                "Priority Support",
-                "API Access"
-            ],
-            isActive: true
-        },
+    await prisma.inventoryMovement.create({
+        data: { productId: product2.id, warehouseId: wh1.id, inventoryItemId: batch2_1.id, movementType: MovementType.IN, quantity: 100, createdById: user1.id }
     });
 
-    // Enterprise
-    await prisma.plan.upsert({
-        where: { slug: 'enterprise' },
-        update: {
-            name: 'Enterprise',
-            description: 'Custom solutions for large-scale operations.',
-            priceMonthly: 199000,
-            priceYearly: 1990000,
-            limits: { maxUsers: 100, maxWarehouses: 20, maxItems: 999999 },
-            features: [
-                "Unlimited Everything",
-                "Custom Integrations",
-                "Dedicated Account Manager",
-                "SLA Support",
-                "On-premise Deployment Option"
-            ],
-            isActive: true
-        },
-        create: {
-            name: 'Enterprise',
-            slug: 'enterprise',
-            description: 'Custom solutions for large-scale operations.',
-            priceMonthly: 199000,
-            priceYearly: 1990000,
-            limits: { maxUsers: 100, maxWarehouses: 20, maxItems: 999999 },
-            features: [
-                "Unlimited Everything",
-                "Custom Integrations",
-                "Dedicated Account Manager",
-                "SLA Support",
-                "On-premise Deployment Option"
-            ],
-            isActive: true
-        },
+    // 10. Create Purchase order
+    console.log('Creating purchase orders...');
+    await prisma.purchaseOrder.create({
+        data: {
+            organizationId: org1.id,
+            poNumber: 'PO-202312001',
+            supplierId: supplier1.id,
+            warehouseId: wh1.id,
+            status: PurchaseOrderStatus.COMPLETED,
+            subtotal: 1000000,
+            tax: 0,
+            total: 1000000,
+            createdById: user1.id,
+            items: {
+                create: [
+                    { productId: product1.id, quantity: 40, unitCost: 15500, lineTotal: 620000 }
+                ]
+            }
+        }
     });
 
-    console.log('Creating subscriptions...');
+    // 11. Create Sales order
+    console.log('Creating sales orders...');
+    await prisma.salesOrder.create({
+        data: {
+            organizationId: org1.id,
+            orderNumber: 'SO-202312001',
+            customerId: customer1.id,
+            warehouseId: wh1.id,
+            status: SalesOrderStatus.FULFILLED,
+            subtotal: 250000,
+            tax: 0,
+            total: 250000,
+            createdById: user1.id,
+            items: {
+                create: [
+                    { productId: product1.id, quantity: 10, unitPrice: 25000, lineTotal: 250000 }
+                ]
+            }
+        }
+    });
 
-    // Fetch plans to get IDs
-    const freePlan = await prisma.plan.findUnique({ where: { slug: 'free' } });
-    const proPlanRecord = await prisma.plan.findUnique({ where: { slug: 'pro' } });
+    // 12. Stock Adjustment
+    console.log('Creating adjustments...');
+    await prisma.stockAdjustment.create({
+        data: {
+            organizationId: org1.id,
+            productId: product2.id,
+            warehouseId: wh1.id,
+            adjustmentType: 'decrease',
+            quantity: 5,
+            reason: AdjustmentReason.DAMAGE,
+            createdById: user1.id,
+        }
+    });
 
-    if (freePlan) {
-        // Assign Free plan to Org 1
-        await prisma.subscription.upsert({
-            where: { organizationId: org1.id },
-            update: {},
-            create: {
-                organizationId: org1.id,
-                planId: freePlan.id,
-                status: 'ACTIVE',
-            },
-        });
-    }
+    // 13. Stock Transfer
+    console.log('Creating transfers...');
+    await prisma.stockTransfer.create({
+        data: {
+            organizationId: org1.id,
+            transferNumber: 'TRF-202312001',
+            fromWarehouseId: wh1.id,
+            toWarehouseId: wh2.id,
+            status: StockTransferStatus.COMPLETED,
+            createdById: user1.id,
+            items: {
+                create: [
+                    { productId: product1.id, quantity: 5 }
+                ]
+            }
+        }
+    });
 
-    if (proPlanRecord) {
-        // Assign Pro plan to Org 2
-        await prisma.subscription.upsert({
-            where: { organizationId: org2.id },
-            update: {},
-            create: {
-                organizationId: org2.id,
-                planId: proPlanRecord.id,
-                status: 'ACTIVE',
-            },
-        });
-    }
+    // 14. Stock Opname
+    console.log('Creating opnames...');
+    await prisma.stockOpname.create({
+        data: {
+            organizationId: org1.id,
+            opnameNumber: 'OPN-202312-01',
+            warehouseId: wh1.id,
+            status: StockOpnameStatus.COMPLETED,
+            createdById: user1.id,
+            items: {
+                create: [
+                    { productId: product1.id, systemQty: 60, actualQty: 58, difference: -2 }
+                ]
+            }
+        }
+    });
 
     console.log('✅ Database seeded successfully!');
-    console.log('Credentials:');
-    console.log('Motor Admin: admin@majumotor.com / admin123');
-    console.log('Mobil Admin: admin@otojaya.com / admin123');
 }
 
 main()

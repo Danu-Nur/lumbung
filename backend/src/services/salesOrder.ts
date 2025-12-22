@@ -111,22 +111,61 @@ export class SalesOrderService {
                 data: { status: SalesOrderStatus.FULFILLED }
             });
 
-            // Create Outbox Events for Stock Movements (Reliable Processing via Worker)
+            // Create Stock Movements using FIFO (First-In-First-Out) logic
             for (const item of order.items) {
-                await tx.inventoryMovement.create({
-                    data: {
+                let remainingToFulfill = item.quantity;
+
+                // 1. Get all available batches for this product in this warehouse (FIFO)
+                const batches = await tx.inventoryItem.findMany({
+                    where: {
                         productId: item.productId,
                         warehouseId: order.warehouseId,
-                        movementType: MovementType.OUT,
-                        quantity: item.quantity,
-                        referenceType: 'SalesOrder',
-                        referenceId: order.id,
-                        createdById: userId,
-                        notes: `Fulfillment of ${order.orderNumber}`
+                        availableQty: { gt: 0 }
+                    },
+                    orderBy: {
+                        receivedDate: 'asc'
                     }
                 });
 
-                // Trigger Stock Recalculation via Worker
+                const totalAvailable = batches.reduce((acc, b) => acc + b.availableQty, 0);
+                if (totalAvailable < remainingToFulfill) {
+                    const product = await tx.product.findUnique({ where: { id: item.productId } });
+                    throw new Error(`Insufficient stock for product ${product?.name || item.productId}. Required: ${remainingToFulfill}, Available: ${totalAvailable}`);
+                }
+
+                // 2. Deduct from batches sequentially
+                for (const batch of batches) {
+                    if (remainingToFulfill <= 0) break;
+
+                    const takeFromThisBatch = Math.min(batch.availableQty, remainingToFulfill);
+
+                    await tx.inventoryItem.update({
+                        where: { id: batch.id },
+                        data: {
+                            quantityOnHand: { decrement: takeFromThisBatch },
+                            availableQty: { decrement: takeFromThisBatch }
+                        }
+                    });
+
+                    // 3. Record movement linked to the specific batch
+                    await tx.inventoryMovement.create({
+                        data: {
+                            productId: item.productId,
+                            warehouseId: order.warehouseId,
+                            inventoryItemId: batch.id,
+                            movementType: MovementType.OUT,
+                            quantity: -takeFromThisBatch, // Negative for OUT
+                            referenceType: 'SalesOrder',
+                            referenceId: order.id,
+                            createdById: userId,
+                            notes: `Fulfillment of ${order.orderNumber} from Batch: ${batch.batchNumber || batch.id}`
+                        }
+                    });
+
+                    remainingToFulfill -= takeFromThisBatch;
+                }
+
+                // 4. Trigger Aggregate Stock Summary update
                 await outboxService.createEvent({
                     organizationId,
                     topic: 'inventory.movement.created',

@@ -8,19 +8,21 @@ import { ActionColumn } from "@/components/shared/action-column";
 import { DeleteConfirmationModal } from "@/components/shared/delete-confirmation-modal";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, ShoppingCart } from "lucide-react";
 
 interface InventoryActionsProps {
     product: SerializedProduct;
     warehouses: Array<{ id: string; name: string }>;
+    suppliers: Array<{ id: string; name: string }>;
     onSuccess?: () => void;
 }
 
 import { AdjustmentRowModal } from "@/components/domain/adjustments/adjustment-row-modal";
 
-export function InventoryActions({ product, warehouses, onSuccess }: InventoryActionsProps) {
+export function InventoryActions({ product, warehouses, suppliers, onSuccess }: InventoryActionsProps) {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [adjustmentOpen, setAdjustmentOpen] = useState(false);
+    const [purchaseOpen, setPurchaseOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -71,6 +73,16 @@ export function InventoryActions({ product, warehouses, onSuccess }: InventoryAc
                         label: t("stock.adjustment"),
                         onClick: () => setAdjustmentOpen(true),
                         icon: <ClipboardList className="h-4 w-4" />
+                    },
+                    {
+                        label: t("actions.purchase") || "Quick Purchase",
+                        onClick: () => {
+                            const params = new URLSearchParams(searchParams.toString());
+                            params.set('modal', 'purchase');
+                            params.set('id', product.id);
+                            router.push(`?${params.toString()}`, { scroll: false });
+                        },
+                        icon: <ShoppingCart className="h-4 w-4" />
                     }
                 ]}
             />

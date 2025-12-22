@@ -96,4 +96,4 @@ test_*.csv
 /proxy.ts.bak
 
 # Keep only microservices project
-# Everything should be in lumbung-microservices/
+/.agent

@@ -125,6 +125,11 @@ export const inventoryService = {
                                     productId: p.id,
                                     warehouseId: inv.warehouseId,
                                     quantityOnHand: inv.quantityOnHand,
+                                    unitCost: Number(inv.unitCost),
+                                    batchNumber: inv.batchNumber,
+                                    receivedDate: inv.receivedDate,
+                                    warehouse: inv.warehouse ? { id: inv.warehouse.id, name: inv.warehouse.name } : undefined,
+                                    supplier: inv.supplier ? { id: inv.supplier.id, name: inv.supplier.name } : undefined,
                                     updatedAt: inv.updatedAt
                                 });
                             }

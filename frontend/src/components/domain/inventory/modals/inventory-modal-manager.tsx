@@ -6,6 +6,7 @@ import { InventoryCreateModal } from "./inventory-create-modal";
 import { InventoryEditModal } from "./inventory-edit-modal";
 import { InventoryShowModal } from "./inventory-show-modal";
 import { InventoryStockModal } from "./inventory-stock-modal";
+import { PurchaseOrderCreateModal } from "@/components/domain/purchase-orders/purchase-order-create-modal";
 
 import { SerializedProduct } from "@/types/serialized";
 
@@ -28,6 +29,7 @@ export function InventoryModalManager({ products, categories, warehouses, suppli
     const editOpen = modal === "edit";
     const showOpen = modal === "show";
     const stockOpen = modal === "stock";
+    const purchaseOpen = modal === "purchase";
 
     const selectedProduct = id ? products.find((p) => p.id === id) : undefined;
 
@@ -79,6 +81,21 @@ export function InventoryModalManager({ products, categories, warehouses, suppli
                     />
                 </>
             )}
+            <PurchaseOrderCreateModal
+                open={purchaseOpen}
+                initialProductId={id || undefined}
+                products={products.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    sku: p.sku,
+                    costPrice: p.costPrice,
+                    supplierId: p.supplier?.id
+                }))}
+                suppliers={suppliers}
+                warehouses={warehouses}
+                onOpenChange={(open) => !open && handleClose()}
+                onSuccess={handleSuccess}
+            />
         </>
     );
 }

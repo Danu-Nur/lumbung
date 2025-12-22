@@ -46,7 +46,11 @@ export interface OfflineInventoryItem {
     id: string;
     productId: string;
     warehouseId: string;
-    quantityOnHand: number;
+    unitCost?: number;
+    batchNumber?: string | null;
+    receivedDate?: string;
+    warehouse?: { id: string; name: string };
+    supplier?: { id: string; name: string } | null;
     updatedAt: string;
 }
 

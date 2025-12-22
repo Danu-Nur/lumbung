@@ -200,7 +200,12 @@ export function InventoryListSection({ page, pageSize, search, modal, id, organi
                     ) : (
                         <>
                             <div className="relative w-full overflow-auto p-4">
-                                <InventoryTable data={serializedProducts} warehouses={warehouses} onSuccess={handleSuccess} />
+                                <InventoryTable
+                                    data={serializedProducts}
+                                    warehouses={warehouses}
+                                    suppliers={suppliers}
+                                    onSuccess={handleSuccess}
+                                />
                             </div>
                             <div className="p-4 border-t">
                                 <Pagination

@@ -20,7 +20,10 @@ export async function getDashboardStatsHandler(req: FastifyRequest, reply: Fasti
                     where: { organizationId, deletedAt: null },
                     include: {
                         inventoryItems: {
-                            select: { quantityOnHand: true }
+                            select: {
+                                quantityOnHand: true,
+                                unitCost: true
+                            }
                         }
                     }
                 }),
@@ -42,8 +45,11 @@ export async function getDashboardStatsHandler(req: FastifyRequest, reply: Fasti
             let totalStockValue = 0;
 
             products.forEach(product => {
-                const totalStock = product.inventoryItems.reduce((sum, item) => sum + item.quantityOnHand, 0);
-                totalStockValue += totalStock * Number(product.costPrice);
+                const totalStock = product.inventoryItems.reduce((sum, item) => {
+                    const val = item.quantityOnHand * Number(item.unitCost);
+                    totalStockValue += val;
+                    return sum + item.quantityOnHand;
+                }, 0);
 
                 if (totalStock <= 0) {
                     outOfStockCount++;

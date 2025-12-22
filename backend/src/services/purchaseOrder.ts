@@ -1,6 +1,7 @@
 import { prisma } from '../lib/prisma.js';
 import { PurchaseOrderStatus, MovementType } from '@prisma/client';
 import { outboxService } from './outbox.js';
+import { cache } from '../lib/cache.js';
 
 export class PurchaseOrderService {
     static async getOrders(organizationId: string, params: { page?: number; pageSize?: number; q?: string } = {}) {
@@ -90,30 +91,75 @@ export class PurchaseOrderService {
                 data: { status: PurchaseOrderStatus.COMPLETED }
             });
 
-            // Create Inventory Movements (IN)
+            // Create Inventory Movements (IN) and Create New Inventory Batch
             for (const item of order.items) {
+                // 1. Update Product's Cost Price as Last Reference and record history
+                await tx.product.update({
+                    where: { id: item.productId },
+                    data: { costPrice: item.unitCost }
+                });
+
+                await tx.productPriceHistory.create({
+                    data: {
+                        productId: item.productId,
+                        priceType: 'COST',
+                        price: item.unitCost,
+                        notes: `Updated from PO ${order.poNumber} (New Batch Received)`,
+                        createdById: userId
+                    }
+                });
+
+                // 2. Create New Inventory Batch (Strict Batch Tracking)
+                const inventoryItem = await tx.inventoryItem.create({
+                    data: {
+                        productId: item.productId,
+                        warehouseId: order.warehouseId,
+                        supplierId: order.supplierId,
+                        unitCost: item.unitCost,
+                        quantityOnHand: item.quantity,
+                        availableQty: item.quantity,
+                        batchNumber: order.poNumber,
+                        receivedDate: new Date()
+                    }
+                });
+
+                // 3. Record the stock movement linked to the batch
                 await tx.inventoryMovement.create({
                     data: {
                         productId: item.productId,
                         warehouseId: order.warehouseId,
+                        inventoryItemId: inventoryItem.id,
                         movementType: MovementType.IN,
                         quantity: item.quantity,
                         referenceType: 'PurchaseOrder',
                         referenceId: order.id,
                         createdById: userId,
-                        notes: `Receipt of ${order.poNumber}`
+                        notes: `Receipt of ${order.poNumber} (Batch ID: ${inventoryItem.id})`
                     }
                 });
 
-                // Trigger Stock Recalculation
+                // 4. Trigger Stock Recalculation (Aggregate to StockSummary)
                 await outboxService.createEvent({
                     organizationId,
                     topic: 'inventory.movement.created',
-                    payload: { productId: item.productId, warehouseId: order.warehouseId }
+                    payload: {
+                        productId: item.productId,
+                        warehouseId: order.warehouseId,
+                        inventoryItemId: inventoryItem.id
+                    }
                 }, tx);
             }
 
-            return updatedOrder;
+            const finalOrder = await tx.purchaseOrder.findUnique({
+                where: { id: updatedOrder.id },
+                include: { items: true }
+            });
+
+            // Invalidate cache
+            await cache.invalidatePattern(`tenant:${organizationId}:products:*`);
+            await cache.invalidate(`tenant:${organizationId}:inventory:stats`);
+
+            return finalOrder;
         });
     }
 }
