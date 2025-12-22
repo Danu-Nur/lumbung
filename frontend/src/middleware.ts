@@ -1,11 +1,8 @@
-import NextAuth from 'next-auth';
+import { auth } from '@/lib/auth';
 import createMiddleware from 'next-intl/middleware';
-import { authConfig } from './lib/auth.config';
 import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
-
-const { auth } = NextAuth(authConfig);
 
 const publicPages = [
     '/',
@@ -15,12 +12,11 @@ const publicPages = [
     '/pricing',
     '/contact',
     '/docs',
-    '/api/auth/signin', // Important for auth flow
 ];
 
 const authPages = ['/login', '/register'];
 
-export const proxy = auth((req) => {
+export default auth((req) => {
     const { nextUrl } = req;
     const isLoggedIn = !!req.auth;
 
@@ -31,6 +27,8 @@ export const proxy = auth((req) => {
         publicPages.some(p => p !== '/' && pathWithoutLocale.startsWith(p));
 
     const isAuthPage = authPages.includes(pathWithoutLocale);
+
+    console.log(`[Middleware] Path: ${nextUrl.pathname}, Public: ${isPublic}, User: ${req.auth?.user?.email || 'Guest'}`);
 
     if (isAuthPage && isLoggedIn) {
         return Response.redirect(new URL('/dashboard', nextUrl));

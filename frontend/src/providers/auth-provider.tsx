@@ -37,10 +37,11 @@ export function AuthProvider({
             if (token && typeof window !== 'undefined') {
                 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             }
+            console.log("[AuthProvider] Initializing user from session:", session.user.email);
             return {
                 id: session.user.id || '',
                 email: session.user.email || '',
-                role: (session.user as any).roleName || '',
+                role: (session.user as any).roleName || (session.user as any).role || '',
                 organizationId: (session.user as any).organizationId || '',
                 organizationName: (session.user as any).organizationName,
                 accessToken: token,
@@ -53,18 +54,16 @@ export function AuthProvider({
     const router = useRouter();
 
     useEffect(() => {
-        // Handle session updates (e.g. re-focus)
+        console.log("[AuthProvider] Session changed:", !!session, session?.user?.email);
         if (session?.user) {
             const token = (session.user as any).accessToken;
-            // We update state if it changed, though NextJS router refresh usually re-mounts or we rely on key
-            // But let's keep the sync logic here too just in case
             if (token) {
                 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             }
             setUser({
                 id: session.user.id || '',
                 email: session.user.email || '',
-                role: (session.user as any).roleName || '',
+                role: (session.user as any).roleName || (session.user as any).role || '',
                 organizationId: (session.user as any).organizationId || '',
                 organizationName: (session.user as any).organizationName,
                 accessToken: token,

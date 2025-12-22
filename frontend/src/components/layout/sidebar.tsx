@@ -16,7 +16,6 @@ import {
     Users,
     Building2,
     Layers,
-    LogOut,
     ChevronDown,
     ChevronRight,
     ClipboardList,
@@ -32,6 +31,7 @@ import {
 } from '@/components/ui/sheet';
 import { useState, useEffect } from 'react';
 import { BrandLogo } from './brand-logo';
+import { NavUser } from './nav-user';
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> { }
 
@@ -56,6 +56,14 @@ function isLinkActive(pathname: string | null, href: string): boolean {
     return current === href || current.startsWith(`${href}/`);
 }
 
+interface NavItem {
+    name: string;
+    href: string;
+    icon: any;
+    key?: string;
+    children?: { name: string; href: string; icon?: any }[];
+}
+
 export function Sidebar({ className }: SidebarProps) {
     const { user, logout } = useAuth();
     const pathname = usePathname();
@@ -78,7 +86,7 @@ export function Sidebar({ className }: SidebarProps) {
         setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
-    const navigation = [
+    const navigation: NavItem[] = [
         { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
         {
             name: t('inventory'),
@@ -115,36 +123,36 @@ export function Sidebar({ className }: SidebarProps) {
                         {tSidebar('logo')}
                     </span>
                 </Link> */}
-                    <BrandLogo href="/dashboard" />
+                <BrandLogo href="/dashboard" />
 
             </div>
-
             {/* Organization Info */}
-            <div className="px-4 py-4 border-b-2 border-black">
-                <div className="flex flex-col">
-                    <h2 className="text-sm font-semibold text-foreground truncate">
-                        {tSidebar('defaultOrg')}
-                    </h2>
-                    <p className="text-xs text-muted-foreground truncate">
-                        {user?.role || tSidebar('guest')}
-                    </p>
+            <div className="px-6 py-4 border-b-2 border-black bg-muted/30">
+                <div className="flex items-center space-x-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-none border-2 border-black bg-primary">
+                        <Building2 className="h-4 w-4 text-primary-foreground" />
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                        <h2 className="text-sm font-bold text-foreground truncate uppercase tracking-tighter">
+                            {user?.organizationName || tSidebar('defaultOrg')}
+                        </h2>
+                        <p className="text-[10px] font-medium text-muted-foreground truncate uppercase">
+                            {user?.role || (user ? tSidebar('member') : tSidebar('guest'))}
+                        </p>
+                    </div>
                 </div>
             </div>
 
             {/* Navigation */}
             <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                 {navigation.map((item) => {
-                    // @ts-ignore
                     if (item.children) {
-                        // @ts-ignore
                         const isExpanded = expanded[item.key || item.name];
-                        // @ts-ignore
                         const isChildActive = item.children.some(child => isLinkActive(pathname, child.href));
 
                         return (
                             <div key={item.name} className="space-y-1">
                                 <button
-                                    // @ts-ignore
                                     onClick={() => toggleExpand(item.key || item.name)}
                                     className={cn(
                                         'w-full flex items-center justify-between px-4 py-3 rounded-none transition-all border-2',
@@ -162,7 +170,6 @@ export function Sidebar({ className }: SidebarProps) {
 
                                 {isExpanded && (
                                     <div className="pl-6 space-y-1 border-l-2 border-black ml-4 mb-2">
-                                        {/* @ts-ignore */}
                                         {item.children.map(child => {
                                             let active = isLinkActive(pathname, child.href);
 
@@ -172,8 +179,7 @@ export function Sidebar({ className }: SidebarProps) {
                                             if (child.href === '/inventory' && active) {
                                                 const current = stripLocale(pathname);
                                                 // Check if any *other* sibling is active
-                                                // @ts-ignore
-                                                const isOtherSiblingActive = item.children.some(sibling =>
+                                                const isOtherSiblingActive = item.children?.some(sibling =>
                                                     sibling.href !== '/inventory' && isLinkActive(pathname, sibling.href)
                                                 );
 
@@ -225,18 +231,9 @@ export function Sidebar({ className }: SidebarProps) {
             </nav>
 
             {/* Footer */}
-            <div className="mt-auto">
-                <div className="p-4 border-t-2 border-black space-y-2">
-                    <Button
-                        variant="ghost"
-                        className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20 border-2 border-transparent hover:border-black rounded-none"
-                        onClick={logout}
-                    >
-                        <LogOut className="w-5 h-5 mr-3" />
-                        <span>{tSidebar('logout')}</span>
-                    </Button>
-                </div>
-                <div className="p-4 border-t-2 border-black space-y-2">
+            <div className="mt-auto border-t-2 border-black p-4">
+                <NavUser />
+                <div className="pt-4">
                     <p className="text-xs text-muted-foreground text-center">
                         {tSidebar('footer')}
                     </p>
@@ -322,31 +319,32 @@ export function MobileSidebar() {
                 </div>
 
                 {/* Organization Info */}
-                <div className="px-4 py-4 border-b-2 border-black">
-                    <div className="flex flex-col">
-                        <h2 className="text-sm font-semibold text-foreground truncate">
-                            {tSidebar('defaultOrg')}
-                        </h2>
-                        <p className="text-xs text-muted-foreground truncate">
-                            {user?.role || tSidebar('guest')}
-                        </p>
+                <div className="px-6 py-4 border-b-2 border-black bg-muted/30">
+                    <div className="flex items-center space-x-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-none border-2 border-black bg-primary">
+                            <Building2 className="h-4 w-4 text-primary-foreground" />
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                            <h2 className="text-sm font-bold text-foreground truncate uppercase tracking-tighter">
+                                {user?.organizationName || tSidebar('defaultOrg')}
+                            </h2>
+                            <p className="text-[10px] font-medium text-muted-foreground truncate uppercase">
+                                {user?.role || (user ? tSidebar('member') : tSidebar('guest'))}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
                 {/* Navigation */}
                 <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                     {navigation.map((item) => {
-                        // @ts-ignore
                         if (item.children) {
-                            // @ts-ignore
                             const isExpanded = expanded[item.key || item.name];
-                            // @ts-ignore
                             const isChildActive = item.children.some(child => isLinkActive(pathname, child.href));
 
                             return (
                                 <div key={item.name} className="space-y-1">
                                     <button
-                                        // @ts-ignore
                                         onClick={() => toggleExpand(item.key || item.name)}
                                         className={cn(
                                             'w-full flex items-center justify-between px-4 py-3 rounded-none transition-all border-2',
@@ -364,15 +362,13 @@ export function MobileSidebar() {
 
                                     {isExpanded && (
                                         <div className="pl-6 space-y-1 border-l-2 border-black ml-4 mb-2">
-                                            {/* @ts-ignore */}
                                             {item.children.map(child => {
                                                 let active = isLinkActive(pathname, child.href);
 
                                                 // Special handling for root inventory path
                                                 if (child.href === '/inventory' && active) {
                                                     const current = stripLocale(pathname);
-                                                    // @ts-ignore
-                                                    const isOtherSiblingActive = item.children.some(sibling =>
+                                                    const isOtherSiblingActive = item.children?.some(sibling =>
                                                         sibling.href !== '/inventory' && isLinkActive(pathname, sibling.href)
                                                     );
 
@@ -428,18 +424,9 @@ export function MobileSidebar() {
 
 
                 {/* Footer */}
-                <div className='mt-auto'>
-                    <div className="p-4 border-t-2 border-black space-y-2 mt-auto">
-                        <Button
-                            variant="ghost"
-                            className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20 border-2 border-transparent hover:border-black rounded-none"
-                            onClick={logout}
-                        >
-                            <LogOut className="w-5 h-5 mr-3" />
-                            <span>{tSidebar('logout')}</span>
-                        </Button>
-                    </div>
-                    <div className="p-4 border-t-2 border-black space-y-2">
+                <div className='mt-auto border-t-2 border-black p-4'>
+                    <NavUser />
+                    <div className="pt-4">
                         <p className="text-xs text-muted-foreground text-center">
                             {tSidebar('footer')}
                         </p>

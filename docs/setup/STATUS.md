@@ -1,84 +1,58 @@
-# ✅ Microservices Setup Complete
+# ✅ Proyek Lumbung - Status Implementasi
 
-## What Was Fixed
+## Update Terkini (22 Desember 2024)
 
-### Issue
-The frontend pricing page was trying to access the database directly via Prisma, which violates the microservices architecture.
+### 1. Sistem Inventaris Berbasis Batch (Batch Tracking)
+- **Status**: ✅ Selesai
+- **Detail**: Proyek kini mendukung pelacakan stok per batch.
+  - Setiap batch memiliki `unitCost`, `batchNumber`, `receivedDate`, dan `supplierId`.
+  - Tabel Inventaris di frontend kini menampilkan dropdown rincian batch.
+  - Perhitungan total stok dikonsolidasikan dari semua batch yang tersedia.
+  - Backend sudah disesuaikan untuk mengembalikan data produk beserta rincian batch rinciannya.
 
-### Solution
-1. **Created Backend API Endpoints**:
-   - `GET /api/plans` - Returns all subscription plans
-   - `GET /api/subscriptions/:organizationId` - Returns organization subscription
+### 2. Perbaikan Autentikasi & Tampilan Sidebar
+- **Status**: ✅ Selesai
+- **Detail**:
+  - **Middleware**: Mengaktifkan `middleware.ts` untuk sinkronisasi sesi server-client dan proteksi rute.
+  - **Sidebar**: Sekarang menampilkan nama Organisasi dan Role user yang asli (dinamis) alih-alih hardcoded.
+  - **Topbar**: User email dan role muncul dengan benar setelah login.
+  - **Session Consistency**: Middleware kini menggunakan instansi `auth` yang sama dengan backend untuk menghindari duplikasi sesi.
 
-2. **Refactored Frontend**:
-   - Updated `subscriptionService.ts` to call backend API instead of Prisma
-   - All services now use the backend API for data access
+### 3. Data Seed Idempotent
+- **Status**: ✅ Selesai
+- **Detail**: Script `seed.ts` diperbarui untuk mengisi data test yang lengkap (Purchase Orders, Sales Orders, Batches, Movements) dan bisa dijalankan berulang kali tanpa error duplikasi.
 
-3. **Seeded Database**:
-   - Created 4 subscription plans: Free, Basic, Pro, Enterprise
-   - Plans are now available via the API
+## Kondisi Saat Ini
 
-## Current Status
+### ✅ Selesai / Berjalan
+- [x] Arsitektur Microservices (Frontend & Backend terpisah)
+- [x] JWT Authentication terintegrasi NextAuth v5
+- [x] Local Caching (Dexie.js) untuk offline support (Data batch sudah ikut ter-cache)
+- [x] Manajemen Kategori & Gudang (Neo-Brutalist UI)
+- [x] Pelacakan Stok per Batch (FIFO ready)
 
-### ✅ Working
-- Backend API running on port 4000
-- Frontend running on port 3000
-- Database seeded with subscription plans
-- All API endpoints functional
+### 📋 Sedang Dikerjakan / Akan Datang
+- [ ] Implementasi FIFO otomatis pada pembuatan Sales Order
+- [ ] Pelaporan Nilai Inventaris (Asset Value) berdasarkan riwayat batch
+- [ ] UI untuk Pembuatan Sales Order yang mendukung pemilihan batch manual (opsional)
 
-### 📋 Available Plans
-1. **Free** - Rp 0/month
-   - 2 users, 1 warehouse, 100 products
-   
-2. **Basic** - Rp 99,000/month
-   - 5 users, 3 warehouses, 1,000 products
-   
-3. **Pro** - Rp 299,000/month
-   - 20 users, 10 warehouses, 10,000 products
-   
-4. **Enterprise** - Rp 999,000/month
-   - Unlimited everything
+## Perintah Penting (Quick Commands)
 
-## Quick Commands
-
-### Rebuild Backend
+### Update Database & Seed
 ```bash
-docker compose up -d --build backend
+# Di folder backend
+npx prisma db push
+npm run seed
 ```
 
-### Seed Plans Again
+### Jalankan Development Mode
 ```bash
-docker exec -it lumbung-microservices-backend-1 npm run seed:plans
+# Root folder
+npm run dev
 ```
 
-### Check Backend Logs
-```bash
-docker logs lumbung-microservices-backend-1 --tail 50 -f
+## Arsitektur Data Flow
 ```
-
-### Test API Endpoints
-```bash
-# Get all plans
-curl http://localhost:4000/api/plans
-
-# Health check
-curl http://localhost:4000/health
+User -> Frontend (3000) -> Middleware (Auth & i18n) -> API Backend (4000) -> DB
 ```
-
-## Next Steps
-1. ✅ Backend API is ready
-2. ✅ Frontend is configured
-3. ✅ Database is seeded
-4. 🔄 Test the pricing page - it should now load successfully
-5. 📝 Create more seed data as needed (roles, permissions, demo users)
-
-## Architecture
-```
-Frontend (Next.js - Port 3000)
-    ↓ HTTP Request
-Backend API (Fastify - Port 4000)
-    ↓ Prisma
-Database (PostgreSQL - Port 5432)
-```
-
-All data access flows through the backend API - no direct database access from the frontend!
+Data inventaris sekarang bersifat **Batch-Centric**, di mana satu Produk dapat memiliki banyak `InventoryItem` (Batch) di gudang yang berbeda atau sama.

@@ -2,8 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Warehouse } from "@prisma/client";
-import { WarehouseCreateModal } from "./warehouse-create-modal";
-import { WarehouseEditModal } from "./warehouse-edit-modal";
+import { WarehouseModal } from "./warehouse-modal";
 import { WarehouseShowModal } from "./warehouse-show-modal";
 
 interface WarehouseModalManagerProps {
@@ -17,11 +16,10 @@ export function WarehouseModalManager({ warehouses }: WarehouseModalManagerProps
     const modal = searchParams.get("modal");
     const id = searchParams.get("id");
 
-    const createOpen = modal === "create";
-    const editOpen = modal === "edit";
+    const warehouseModalOpen = modal === "create" || modal === "edit";
     const showOpen = modal === "show";
 
-    const selectedWarehouse = id ? warehouses.find((w) => w.id === id) : undefined;
+    const selectedWarehouse = id ? warehouses.find((w) => w.id === id) : null;
 
     const handleClose = () => {
         const params = new URLSearchParams(searchParams.toString());
@@ -37,26 +35,19 @@ export function WarehouseModalManager({ warehouses }: WarehouseModalManagerProps
 
     return (
         <>
-            <WarehouseCreateModal
-                open={createOpen}
+            <WarehouseModal
+                open={warehouseModalOpen}
                 onOpenChange={(open) => !open && handleClose()}
+                warehouse={modal === "edit" ? selectedWarehouse : null}
                 onSuccess={handleSuccess}
             />
 
             {selectedWarehouse && (
-                <>
-                    <WarehouseEditModal
-                        open={editOpen}
-                        onOpenChange={(open) => !open && handleClose()}
-                        warehouse={selectedWarehouse}
-                        onSuccess={handleSuccess}
-                    />
-                    <WarehouseShowModal
-                        open={showOpen}
-                        onOpenChange={(open) => !open && handleClose()}
-                        warehouse={selectedWarehouse}
-                    />
-                </>
+                <WarehouseShowModal
+                    open={showOpen}
+                    onOpenChange={(open) => !open && handleClose()}
+                    warehouse={selectedWarehouse}
+                />
             )}
         </>
     );

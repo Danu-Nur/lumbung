@@ -130,6 +130,7 @@
         "about": "About",
         "profile": "Profile",
         "guest": "Guest",
+        "member": "Member",
         "logout": "Logout"
     },
     "help": {
@@ -158,7 +159,8 @@
         "logout": "Logout",
         "profile": "Profile",
         "defaultOrg": "Default Organization",
-        "guest": "Guest"
+        "guest": "Guest",
+        "member": "Member"
     },
     "errors": {
         "required": "This field is required",
@@ -196,6 +198,10 @@
     "topbar": {
         "profile": "Profile",
         "settings": "Settings",
-        "logout": "Logout"
+        "logout": "Logout",
+        "account": "Account",
+        "billing": "Billing",
+        "notifications": "Notifications",
+        "upgrade": "Upgrade to Pro"
     }
 }

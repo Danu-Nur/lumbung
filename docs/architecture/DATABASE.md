@@ -37,22 +37,21 @@
   - Has many `ProductImage`.
   - `ProductPriceHistory`: Menyimpan riwayat perubahan harga (`SELLING` & `COST`).
 
-### C. Inventory Domain (Movement-Based)
+### C. Inventory Domain (Batch-Centric)
 **Models**
-- `Warehouse`
-- `InventoryItem`
-- `InventoryMovement`
-- `StockAdjustment`
-- `StockTransfer`
-- `StockTransferItem`
-- `StockOpname`
-- `StockOpnameItem`
+- `Warehouse`: Physical storage location.
+- `InventoryItem`: **Batch record**. Representasi stok per batch per `Product` per `Warehouse`.
+  - Fields: `quantityOnHand`, `unitCost`, `batchNumber`, `receivedDate`, `supplierId`.
+- `InventoryMovement`: **Source of Truth**. Append-only log untuk setiap perubahan stok (IN/OUT/ADJUST).
+  - Link langsung ke `InventoryItem` (Batch) untuk tracking HPP/COGS yang akurat.
+- `StockAdjustment`: Penyesuaian stok manual terhadap batch tertentu.
+- `StockTransfer`: Memindahkan stok (batch) dari `fromWarehouse` ke `toWarehouse`.
+- `StockOpname`: Proses audit fisik per batch.
 
 **Important Relations**
-- `InventoryItem`: Aggregate/Cache table. `quantityOnHand` per `Product` per `Warehouse`.
-- `InventoryMovement`: **Source of Truth**. Append-only log untuk setiap perubahan stok (IN/OUT/ADJUST).
-- `StockTransfer`: Memindahkan stok dari `fromWarehouse` ke `toWarehouse`.
-- `StockOpname`: Proses audit fisik. Mencatat `systemQty` vs `actualQty`.
+- `InventoryItem`: Kini bukan sekadar summary, tapi record batch individual.
+- `InventoryMovement`: Mencatat histori pergerakan stok dengan referensi ke batch asal (`inventoryItemId`).
+- `StockTransfer`: Mendukung pemindahan stok antar gudang dengan tetap mempertahankan data batch asli.
 
 ### D. Sales Domain
 **Models**
@@ -119,18 +118,12 @@ The database is pre-populated with the following dummy data for development and 
     -   CV Sumber Makmur
 -   **Categories**: 9 Automotive categories (e.g., *Mesin*, *Oli*, *Ban*, *Kelistrikan*).
 
-### D. Inventory Examples
-The seed script creates **10 stock products** with random initial details:
+### D. Inventory Examples (Batch-Aware)
+Script seed kini menciptakan **10 produk stok** dengan skenario batch yang realistis:
 
-1.  **Busi NGK CPR8EA-9** (Kelistrikan) - Supplier: Astra
-2.  **Oli Yamalube Sport 1L** (Oli) - Supplier: Astra
-3.  **Kampas Rem Depan Mio** (Rem) - Supplier: Sumber Makmur
-4.  **Aki GS Astra GTZ5S** (Kelistrikan) - Supplier: Astra
-5.  **Ban IRC 80/90-14** (Ban) - Supplier: *None*
-6.  **Shockbreaker Vario** (Suspensi) - Supplier: Sumber Makmur
-7.  **Filter Udara Beat** (Mesin) - Supplier: *None*
-8.  **Lampu Depan LED H4** (Kelistrikan) - Supplier: Sumber Makmur
-9.  **Spion Tomok CNC** (Aksesoris) - Supplier: *None*
-10. **Rantai Keteng Satria** (Mesin) - Supplier: Astra
+1.  **Pelacakan Multi-Batch**: Satu produk (seperti *Busi NGK* atau *Oli Yamalube*) memiliki beberapa batch masukan dengan `unitCost` yang berbeda, mensimulasikan fluktuasi harga pasar.
+2.  **Detail Batch**: Setiap batch mencatat `batchNumber` (e.g., `LOT-2024-xxx`), `receivedDate` (tanggal masuk), dan `supplierId` asal.
+3.  **Distribusi Gudang**: Stok tersebar di `WH-MAIN` dan `WH-BRANCH` untuk menguji fitur transfer stok.
+4.  **Histori Lengkap**: Selain stok akhir, script juga men-generate riwayat `InventoryMovement` (IN dari PO, OUT dari Sales Order, Adjustment) sehingga dashboard analytics memiliki data historis yang valid.
 
-*Note: Initial stock quantities are randomized (10-60 units) in `WH-MAIN`.*
+*Note: Initial stock quantities are randomized (10-100 units) across multiple batches to support FIFO logic testing.*

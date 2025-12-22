@@ -13,9 +13,6 @@ import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 
 export function Topbar() {
-    const { user, logout } = useAuth();
-    const [showDropdown, setShowDropdown] = useState(false);
-    const t = useTranslations('common.topbar');
     const tNav = useTranslations('common.nav');
     const pathname = usePathname();
 
@@ -55,7 +52,7 @@ export function Topbar() {
             <div className="flex items-center space-x-2 sm:space-x-4">
                 {/* Help Button */}
                 <Link href="/help" title="Help / Panduan">
-                    <button className="p-2 rounded-md hover:bg-muted transition-colors">
+                    <button className="p-2 rounded-md hover:bg-muted transition-colors border-2 border-transparent hover:border-black">
                         <HelpCircle className="w-5 h-5 text-muted-foreground" />
                     </button>
                 </Link>
@@ -65,50 +62,6 @@ export function Topbar() {
 
                 {/* Theme Toggle */}
                 <ThemeToggle />
-
-                {/* User Menu */}
-                {user && (
-                    <div className="relative">
-                        <button
-                            onClick={() => setShowDropdown(!showDropdown)}
-                            className="flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-2 rounded-lg hover:bg-muted transition-colors"
-                        >
-                            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                                <User className="w-4 h-4 text-primary-foreground" />
-                            </div>
-                            <div className="text-left hidden md:block">
-                                <p className="text-sm font-medium text-foreground">
-                                    {user.email}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                    {user.role}
-                                </p>
-                            </div>
-                            <ChevronDown className="w-4 h-4 text-muted-foreground hidden sm:block" />
-                        </button>
-
-                        {/* Dropdown */}
-                        {showDropdown && (
-                            <>
-                                <div
-                                    className="fixed inset-0 z-40"
-                                    onClick={() => setShowDropdown(false)}
-                                />
-                                <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg z-50">
-                                    <div className="p-2">
-                                        <button
-                                            onClick={logout}
-                                            className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
-                                        >
-                                            <LogOut className="w-4 h-4" />
-                                            <span>{t('logout')}</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                )}
             </div>
         </header>
     );

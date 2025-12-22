@@ -54,6 +54,26 @@ export const authConfig = {
 
             return baseUrl;
         },
+
+        authorized({ auth, request: { nextUrl } }) {
+            const isLoggedIn = !!auth?.user;
+            const isOnDashboard = nextUrl.pathname.includes('/dashboard') ||
+                nextUrl.pathname.includes('/inventory') ||
+                nextUrl.pathname.includes('/sales-orders') ||
+                nextUrl.pathname.includes('/purchase-orders') ||
+                nextUrl.pathname.includes('/settings');
+
+            const isOnAuthPage = nextUrl.pathname.includes('/login') ||
+                nextUrl.pathname.includes('/register');
+
+            if (isOnDashboard) {
+                if (isLoggedIn) return true;
+                return false; // Redirect unauthenticated users to login page
+            } else if (isLoggedIn && isOnAuthPage) {
+                return Response.redirect(new URL('/dashboard', nextUrl));
+            }
+            return true;
+        },
     },
     providers: [], // Providers added in auth.ts
     trustHost: true,

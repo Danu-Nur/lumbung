@@ -2,8 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Category } from "@prisma/client";
-import { CategoryCreateModal } from "./category-create-modal";
-import { CategoryEditModal } from "./category-edit-modal";
+import { CategoryModal } from "./category-modal";
 import { CategoryShowModal } from "./category-show-modal";
 
 interface CategoryModalManagerProps {
@@ -17,11 +16,10 @@ export function CategoryModalManager({ categories }: CategoryModalManagerProps) 
     const modal = searchParams.get("modal");
     const id = searchParams.get("id");
 
-    const createOpen = modal === "create";
-    const editOpen = modal === "edit";
+    const categoryModalOpen = modal === "create" || modal === "edit";
     const showOpen = modal === "show";
 
-    const selectedCategory = id ? categories.find((c) => c.id === id) : undefined;
+    const selectedCategory = id ? categories.find((c) => c.id === id) : null;
 
     const handleClose = () => {
         const params = new URLSearchParams(searchParams.toString());
@@ -37,26 +35,19 @@ export function CategoryModalManager({ categories }: CategoryModalManagerProps) 
 
     return (
         <>
-            <CategoryCreateModal
-                open={createOpen}
+            <CategoryModal
+                open={categoryModalOpen}
                 onOpenChange={(open) => !open && handleClose()}
+                category={modal === "edit" ? selectedCategory : null}
                 onSuccess={handleSuccess}
             />
 
             {selectedCategory && (
-                <>
-                    <CategoryEditModal
-                        open={editOpen}
-                        onOpenChange={(open) => !open && handleClose()}
-                        category={selectedCategory}
-                        onSuccess={handleSuccess}
-                    />
-                    <CategoryShowModal
-                        open={showOpen}
-                        onOpenChange={(open) => !open && handleClose()}
-                        category={selectedCategory}
-                    />
-                </>
+                <CategoryShowModal
+                    open={showOpen}
+                    onOpenChange={(open) => !open && handleClose()}
+                    category={selectedCategory}
+                />
             )}
         </>
     );

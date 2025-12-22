@@ -2,9 +2,11 @@ import { auth } from '@/lib/auth';
 import { InventoryListSection } from '@/components/domain/inventory/sections/inventory-list-section';
 import { getQueryClient } from '@/lib/query';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import api from '@/lib/api';
 import { dashboardService } from '@/lib/services/dashboardService';
 import { inventoryService } from '@/lib/services/inventoryService';
+import { categoryService } from '@/lib/services/categoryService';
+import { warehouseService } from '@/lib/services/warehouseService';
+import { supplierService } from '@/lib/services/supplierService';
 
 export default async function InventoryPage({
     searchParams,
@@ -26,8 +28,6 @@ export default async function InventoryPage({
 
     // Prefetch critical data on server for instant hydration
     if (orgId && token) {
-        const authHeader = { Authorization: `Bearer ${token}` };
-
         await Promise.allSettled([
             // 1. Products (Inventory)
             queryClient.prefetchQuery({
@@ -42,24 +42,15 @@ export default async function InventoryPage({
             // 3. Lookups
             queryClient.prefetchQuery({
                 queryKey: ['categories'],
-                queryFn: async () => {
-                    const res = await api.get('/categories', { headers: authHeader });
-                    return res.data.categories || [];
-                }
+                queryFn: () => categoryService.listCategories(orgId, token)
             }),
             queryClient.prefetchQuery({
                 queryKey: ['warehouses'],
-                queryFn: async () => {
-                    const res = await api.get('/warehouses', { headers: authHeader });
-                    return res.data.warehouses || [];
-                }
+                queryFn: () => warehouseService.listWarehouses(orgId, token)
             }),
             queryClient.prefetchQuery({
                 queryKey: ['suppliers'],
-                queryFn: async () => {
-                    const res = await api.get('/suppliers', { headers: authHeader });
-                    return res.data.suppliers || [];
-                }
+                queryFn: () => supplierService.listSuppliers(orgId, token)
             })
         ]);
     }

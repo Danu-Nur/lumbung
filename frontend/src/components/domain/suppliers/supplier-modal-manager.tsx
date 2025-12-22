@@ -2,8 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Supplier } from "@prisma/client";
-import { SupplierCreateModal } from "./supplier-create-modal";
-import { SupplierEditModal } from "./supplier-edit-modal";
+import { SupplierModal } from "./supplier-modal";
 import { SupplierShowModal } from "./supplier-show-modal";
 
 interface SupplierModalManagerProps {
@@ -17,11 +16,10 @@ export function SupplierModalManager({ suppliers }: SupplierModalManagerProps) {
     const modal = searchParams.get("modal");
     const id = searchParams.get("id");
 
-    const createOpen = modal === "create";
-    const editOpen = modal === "edit";
+    const supplierModalOpen = modal === "create" || modal === "edit";
     const showOpen = modal === "show";
 
-    const selectedSupplier = id ? suppliers.find((s) => s.id === id) : undefined;
+    const selectedSupplier = id ? suppliers.find((s) => s.id === id) : null;
 
     const handleClose = () => {
         const params = new URLSearchParams(searchParams.toString());
@@ -37,26 +35,19 @@ export function SupplierModalManager({ suppliers }: SupplierModalManagerProps) {
 
     return (
         <>
-            <SupplierCreateModal
-                open={createOpen}
+            <SupplierModal
+                open={supplierModalOpen}
                 onOpenChange={(open) => !open && handleClose()}
+                supplier={modal === "edit" ? selectedSupplier : null}
                 onSuccess={handleSuccess}
             />
 
             {selectedSupplier && (
-                <>
-                    <SupplierEditModal
-                        open={editOpen}
-                        onOpenChange={(open) => !open && handleClose()}
-                        supplier={selectedSupplier}
-                        onSuccess={handleSuccess}
-                    />
-                    <SupplierShowModal
-                        open={showOpen}
-                        onOpenChange={(open) => !open && handleClose()}
-                        supplier={selectedSupplier}
-                    />
-                </>
+                <SupplierShowModal
+                    open={showOpen}
+                    onOpenChange={(open) => !open && handleClose()}
+                    supplier={selectedSupplier}
+                />
             )}
         </>
     );

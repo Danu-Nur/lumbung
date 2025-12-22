@@ -131,6 +131,7 @@
         "about": "Tentang",
         "profile": "Profil",
         "guest": "Tamu",
+        "member": "Member",
         "logout": "Keluar"
     },
     "help": {
@@ -159,7 +160,8 @@
         "logout": "Keluar",
         "profile": "Profil",
         "defaultOrg": "Organisasi Default",
-        "guest": "Tamu"
+        "guest": "Tamu",
+        "member": "Member"
     },
     "errors": {
         "required": "Kolom ini wajib diisi",
@@ -197,6 +199,10 @@
     "topbar": {
         "profile": "Profil",
         "settings": "Pengaturan",
-        "logout": "Keluar"
+        "logout": "Keluar",
+        "account": "Akun",
+        "billing": "Penagihan",
+        "notifications": "Notifikasi",
+        "upgrade": "Upgrade ke Pro"
     }
 }
