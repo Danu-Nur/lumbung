@@ -1,6 +1,7 @@
 import { prisma } from '../lib/prisma.js';
 import { AdjustmentReason } from '@prisma/client';
 import { cache } from '../lib/cache.js';
+import { serializeData } from '../lib/serialize.js';
 
 export interface CreateStockAdjustmentData {
     productId: string;
@@ -165,7 +166,7 @@ export class InventoryService {
             prisma.product.count({ where })
         ]);
 
-        return { products, total };
+        return { products: serializeData(products), total };
     }
 
     static async getAdjustments(organizationId: string, params: { page?: number; pageSize?: number; q?: string } = {}) {

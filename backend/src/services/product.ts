@@ -1,5 +1,6 @@
 import { prisma } from '../lib/prisma.js';
 import { cache } from '../lib/cache.js';
+import { serializeData } from '../lib/serialize.js';
 
 export interface CreateProductData {
     name: string;
@@ -120,7 +121,7 @@ export class ProductService {
                 prisma.product.count({ where })
             ]);
 
-            return { products, total };
+            return { products: serializeData(products), total };
         }, 60); // 60 seconds TTL
     }
 

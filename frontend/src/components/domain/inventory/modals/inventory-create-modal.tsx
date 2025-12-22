@@ -29,7 +29,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { CategoryCreateModal } from "@/components/domain/categories/category-create-modal";
-import { WarehouseCreateModal } from "@/components/domain/warehouses/warehouse-create-modal";
+import { WarehouseModal } from "@/components/domain/warehouses/warehouse-modal";
 
 interface InventoryCreateModalProps {
     open: boolean;
@@ -125,7 +125,7 @@ export function InventoryCreateModal({
                 <DialogContent className="sm:max-w-[800px] p-0 border-2 border-black dark:border-white shadow-neo dark:shadow-neo-white rounded-none bg-white dark:bg-neo-dark max-h-[90vh] flex flex-col">
                     <div className="bg-neo-green border-b-2 border-black dark:border-white p-3 flex justify-between items-center text-black">
                         <div className="flex flex-col">
-                            <h2 className="text-lg font-bold">{t("form.createTitle")}</h2>
+                            <DialogTitle className="text-lg font-bold">{t("form.createTitle")}</DialogTitle>
                             <span className="text-[10px] uppercase font-black tracking-widest opacity-80">{t("form.createDescription")}</span>
                         </div>
                         <button onClick={() => onOpenChange(false)} className="w-6 h-6 bg-white dark:bg-black border border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black flex items-center justify-center transition-colors text-xs rounded-none">✕</button>
@@ -396,7 +396,7 @@ export function InventoryCreateModal({
                 }}
             />
 
-            <WarehouseCreateModal
+            <WarehouseModal
                 open={warehouseModalOpen}
                 onOpenChange={setWarehouseModalOpen}
                 onSuccess={() => {

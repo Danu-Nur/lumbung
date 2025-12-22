@@ -52,6 +52,7 @@ export interface OfflineInventoryItem {
     warehouse?: { id: string; name: string };
     supplier?: { id: string; name: string } | null;
     updatedAt: string;
+    quantityOnHand: number;
 }
 
 export interface OfflineOrder {

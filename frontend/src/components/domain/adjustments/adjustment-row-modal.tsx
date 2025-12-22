@@ -39,6 +39,8 @@ import { useTranslations } from "next-intl";
 import { adjustmentFormSchema, AdjustmentFormValues } from "@/lib/validations/adjustment";
 import { SerializedProduct } from "@/types/serialized";
 import { Badge } from "@/components/ui/badge";
+import { WarehouseModal } from "@/components/domain/warehouses/warehouse-modal";
+import { Plus } from "lucide-react";
 
 interface AdjustmentRowModalProps {
     open: boolean;
@@ -62,6 +64,12 @@ export function AdjustmentRowModal({
     const tValidation = useTranslations("common.validation");
     const [history, setHistory] = useState<any[]>([]);
     const [loadingHistory, setLoadingHistory] = useState(false);
+    const [createWarehouseOpen, setCreateWarehouseOpen] = useState(false);
+
+    const handleCreateWarehouseSuccess = () => {
+        queryClient.invalidateQueries({ queryKey: ["warehouses"] });
+        setCreateWarehouseOpen(false);
+    };
 
     const formSchema = z.object({
         productId: z.string().min(1, tValidation("required")),
@@ -156,7 +164,7 @@ export function AdjustmentRowModal({
             <DialogContent className="sm:max-w-[700px] p-0 border-2 border-black dark:border-white shadow-neo dark:shadow-neo-white rounded-none bg-white dark:bg-neo-dark">
                 <div className="bg-neo-yellow border-b-2 border-black dark:border-white p-3 flex justify-between items-center text-black">
                     <div className="flex flex-col">
-                        <h2 className="text-lg font-bold">{t("form.createTitle")}</h2>
+                        <DialogTitle className="text-lg font-bold">{t("form.createTitle")}</DialogTitle>
                         <span className="text-[10px] uppercase font-black tracking-widest opacity-80">{product.name} ({product.sku})</span>
                     </div>
                     <button onClick={() => onOpenChange(false)} className="w-6 h-6 bg-white dark:bg-black border border-black dark:border-white shadow-neo-hover dark:shadow-neo-hover-white text-black dark:text-white hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] flex items-center justify-center transition-all text-xs rounded-none">✕</button>
@@ -190,19 +198,30 @@ export function AdjustmentRowModal({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-xs font-black uppercase tracking-wider">{t("form.warehouse")}</FormLabel>
-                                                    <FormControl>
-                                                        <select
-                                                            className="flex h-10 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-yellow/10 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white"
-                                                            {...field}
+                                                    <div className="flex gap-2">
+                                                        <FormControl>
+                                                            <select
+                                                                className="flex h-10 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-yellow/10 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white"
+                                                                {...field}
+                                                            >
+                                                                <option value="">{t("form.selectWarehouse")}</option>
+                                                                {warehouses.map((warehouse) => (
+                                                                    <option key={warehouse.id} value={warehouse.id}>
+                                                                        {warehouse.name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </FormControl>
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="icon"
+                                                            className="h-10 w-10 shrink-0 border-2 border-black dark:border-white rounded-none shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all bg-neo-yellow text-black"
+                                                            onClick={() => setCreateWarehouseOpen(true)}
                                                         >
-                                                            <option value="">{t("form.selectWarehouse")}</option>
-                                                            {warehouses.map((warehouse) => (
-                                                                <option key={warehouse.id} value={warehouse.id}>
-                                                                    {warehouse.name}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    </FormControl>
+                                                            <Plus className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -357,6 +376,11 @@ export function AdjustmentRowModal({
                     </TabsContent>
                 </Tabs>
             </DialogContent>
+            <WarehouseModal
+                open={createWarehouseOpen}
+                onOpenChange={setCreateWarehouseOpen}
+                onSuccess={handleCreateWarehouseSuccess}
+            />
         </Dialog>
     );
 }

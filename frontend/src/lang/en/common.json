@@ -104,6 +104,9 @@
         "date": "Date",
         "total": "Total"
     },
+    "status": {
+        "loading": "Loading..."
+    },
     "paginations": {
         "first": "First",
         "last": "Last",

@@ -31,6 +31,7 @@ import { SupplierCreateModal } from "@/components/domain/suppliers/supplier-crea
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { LineItemsForm } from "@/components/shared/form/line-items-form";
+import { WarehouseModal } from "@/components/domain/warehouses/warehouse-modal";
 
 const lineItemSchema = z.object({
     productId: z.string().min(1, "Product is required"),
@@ -69,6 +70,7 @@ export function PurchaseOrderCreateModal({
     const t = useTranslations("purchases");
     const tCommon = useTranslations("common");
     const [isSupplierDialogOpen, setIsSupplierDialogOpen] = useState(false);
+    const [createWarehouseOpen, setCreateWarehouseOpen] = useState(false);
     const [localSuppliers, setLocalSuppliers] = useState(suppliers);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -140,6 +142,11 @@ export function PurchaseOrderCreateModal({
         }
     };
 
+    const handleCreateWarehouseSuccess = () => {
+        setCreateWarehouseOpen(false);
+        router.refresh();
+    };
+
     return (
         <>
             <SupplierCreateModal
@@ -151,7 +158,7 @@ export function PurchaseOrderCreateModal({
                 <DialogContent className="sm:max-w-[900px] p-0 border-2 border-black dark:border-white shadow-neo dark:shadow-neo-white rounded-none bg-white dark:bg-neo-dark max-h-[90vh] flex flex-col">
                     <div className="bg-neo-blue border-b-2 border-black dark:border-white p-3 flex justify-between items-center text-white">
                         <div className="flex flex-col">
-                            <h2 className="text-lg font-bold">{t("form.createTitle")}</h2>
+                            <DialogTitle className="text-lg font-bold">{t("form.createTitle")}</DialogTitle>
                             <span className="text-[10px] uppercase font-black tracking-widest opacity-80">{t("form.createDescription")}</span>
                         </div>
                         <button onClick={() => onOpenChange(false)} className="w-6 h-6 bg-white dark:bg-black border border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black flex items-center justify-center transition-colors text-xs rounded-none">✕</button>
@@ -195,31 +202,46 @@ export function PurchaseOrderCreateModal({
                                             </FormItem>
                                         )}
                                     />
-
                                     <FormField
                                         control={form.control}
                                         name="warehouseId"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="font-bold dark:text-white uppercase text-xs tracking-wider">{t("form.warehouse")}</FormLabel>
-                                                <FormControl>
-                                                    <select
-                                                        className="flex h-12 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-blue/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white font-medium"
-                                                        {...field}
+                                                <div className="flex gap-2">
+                                                    <FormControl>
+                                                        <select
+                                                            className="flex h-12 w-full rounded-none bg-white dark:bg-gray-800 px-3 py-2 text-sm border-2 border-black dark:border-white focus:outline-none focus:bg-neo-blue/5 focus:shadow-neo-sm dark:focus:shadow-neo-sm-white transition-all dark:text-white font-medium"
+                                                            {...field}
+                                                        >
+                                                            <option value="">{t("form.selectWarehouse")}</option>
+                                                            {warehouses.map((warehouse) => (
+                                                                <option key={warehouse.id} value={warehouse.id}>
+                                                                    {warehouse.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </FormControl>
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="icon"
+                                                        className="h-12 w-12 shrink-0 border-2 border-black dark:border-white rounded-none shadow-neo-sm dark:shadow-neo-sm-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all bg-neo-yellow text-black"
+                                                        onClick={() => setCreateWarehouseOpen(true)}
                                                     >
-                                                        <option value="">{t("form.selectWarehouse")}</option>
-                                                        {warehouses.map((warehouse) => (
-                                                            <option key={warehouse.id} value={warehouse.id}>
-                                                                {warehouse.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </FormControl>
+                                                        <Plus className="w-5 h-5" />
+                                                    </Button>
+                                                </div>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                 </div>
+                                <WarehouseModal
+                                    open={createWarehouseOpen}
+                                    onOpenChange={setCreateWarehouseOpen}
+                                    onSuccess={handleCreateWarehouseSuccess}
+                                />
 
                                 {initialProductId && fields.length > 0 ? (
                                     <div className="border-2 border-black dark:border-white p-4 space-y-4 bg-neo-blue/5">
@@ -315,6 +337,11 @@ export function PurchaseOrderCreateModal({
                     </div>
                 </DialogContent>
             </Dialog>
+            <WarehouseModal
+                open={createWarehouseOpen}
+                onOpenChange={setCreateWarehouseOpen}
+                onSuccess={handleCreateWarehouseSuccess}
+            />
         </>
     );
 }

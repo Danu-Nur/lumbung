@@ -84,7 +84,7 @@ export function SupplierCreateModal({
             <DialogContent className="sm:max-w-[500px] p-0 border-2 border-black dark:border-white shadow-neo dark:shadow-neo-white rounded-none bg-white dark:bg-neo-dark overflow-hidden">
                 <div className="bg-neo-green border-b-2 border-black dark:border-white p-3 flex justify-between items-center text-black">
                     <div className="flex flex-col">
-                        <h2 className="text-lg font-bold uppercase">{t("form.createTitle")}</h2>
+                        <DialogTitle className="text-lg font-bold uppercase">{t("form.createTitle")}</DialogTitle>
                         <span className="text-[10px] uppercase font-black tracking-widest opacity-80">{t("form.createDescription")}</span>
                     </div>
                     <button

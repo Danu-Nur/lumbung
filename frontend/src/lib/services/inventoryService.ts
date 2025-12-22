@@ -1,6 +1,7 @@
 import api from "@/lib/api";
 import { db } from "@/lib/db";
 import { CreateInventoryMovementParams } from "@/types/domain";
+import { serializeProduct } from "@/lib/utils/serialization";
 
 export const inventoryService = {
     /**
@@ -100,6 +101,11 @@ export const inventoryService = {
 
             // Backend typically serves product list for inventory at /products
             const response = await api.get('/products', config);
+
+            // Ensure data is serialized (convert Decimals to numbers) to prevent "Only plain objects..." errors in Next.js Server Components
+            if (response.data?.products) {
+                response.data.products = response.data.products.map((p: any) => serializeProduct(p));
+            }
 
             // Background: Update local cache with latest data (Browser only)
             if (typeof window !== 'undefined' && response.data.products) {

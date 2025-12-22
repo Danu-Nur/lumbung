@@ -31,7 +31,7 @@ export function InventoryModalManager({ products, categories, warehouses, suppli
     const stockOpen = modal === "stock";
     const purchaseOpen = modal === "purchase";
 
-    const selectedProduct = id ? products.find((p) => p.id === id) : undefined;
+    const selectedProduct = id ? products.find((p: SerializedProduct) => p.id === id) : undefined;
 
     const handleClose = () => {
         const params = new URLSearchParams(searchParams.toString());

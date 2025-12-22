@@ -105,6 +105,9 @@
         "date": "Tanggal",
         "total": "Total"
     },
+    "status": {
+        "loading": "Memuat..."
+    },
     "paginations": {
         "first": "Pertama",
         "last": "Terakhir",
