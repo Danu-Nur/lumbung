@@ -23,8 +23,8 @@
     "// 1. Force Reset & Push Schema": "",
     "// 2. Generate Client (Backend) -> Biar Types aman sebelum seed": "",
     "// 3. Seeding Data": "",
-    "// 4. Clear Redis Cache": "",
-    "db:fresh": "npm run db:push -- --force-reset && npm run db:generate && npm run db:seed && npm run cache:clear",
+    "db:fresh": "npm run db:push -- --force-reset && npm run db:generate && npm run db:seed",
+    "// Note: Run 'npm run cache:clear' manually after if Docker is available": "",
     "// --- Utility ---": "",
     "postinstall": "npm run db:generate",
     "test": "echo \"Error: no test specified\" && exit 1"

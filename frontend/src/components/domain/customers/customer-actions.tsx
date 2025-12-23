@@ -6,7 +6,7 @@ import { Customer } from "@prisma/client";
 import { deleteCustomer } from "@/features/customers/actions";
 import { ActionColumn } from "@/components/shared/action-column";
 import { DeleteConfirmationModal } from "@/components/shared/delete-confirmation-modal";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 
 interface CustomerActionsProps {

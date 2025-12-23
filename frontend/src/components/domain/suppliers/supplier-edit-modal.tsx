@@ -25,7 +25,7 @@ import {
 import { updateSupplier } from "@/features/suppliers/actions";
 import { useRouter } from "next/navigation";
 import { Supplier } from "@prisma/client";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 
 const formSchema = z.object({

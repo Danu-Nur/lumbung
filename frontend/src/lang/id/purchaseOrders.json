@@ -1,0 +1,18 @@
+{
+    "title": "Pesanan Pembelian: {poNumber}",
+    "show": {
+        "sendOrder": "Kirim ke Pemasok",
+        "receiveItems": "Terima Barang",
+        "sendSuccess": "Pesanan berhasil dikirim ke pemasok",
+        "receiveSuccess": "Barang berhasil diterima! Stock telah diperbarui.",
+        "supplier": "Pemasok",
+        "warehouse": "Gudang Tujuan",
+        "orderItems": "Daftar Barang Pesanan",
+        "product": "Produk",
+        "qty": "Jumlah",
+        "cost": "Harga Beli",
+        "total": "Total Harga",
+        "received": "Sudah Diterima",
+        "notes": "Catatan"
+    }
+}

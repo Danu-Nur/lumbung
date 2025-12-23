@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { receivePurchaseOrder, updatePurchaseOrderStatus } from "@/features/purchase-orders/actions";
 import { Package, CheckCircle } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
@@ -64,8 +64,18 @@ export function PurchaseOrderShowModal({
                             <p className="text-muted-foreground">{formatDate(order.orderDate)}</p>
                         </div>
                         <div className="flex space-x-2">
-                            {/* Simplified workflow: DRAFT can be directly received */}
-                            {(order.status === 'DRAFT' || order.status === 'SENT') && (
+                            {/* Step 1: Send order to supplier (DRAFT → SENT) */}
+                            {order.status === 'DRAFT' && (
+                                <Button
+                                    size="sm"
+                                    onClick={() => handleAction(async () => await updatePurchaseOrderStatus(order.id, 'SENT'), t("show.sendSuccess"))}
+                                >
+                                    <Package className="w-4 h-4 mr-2" />
+                                    {t("show.sendOrder")}
+                                </Button>
+                            )}
+                            {/* Step 2: Receive items from supplier (SENT → COMPLETED) */}
+                            {order.status === 'SENT' && (
                                 <Button
                                     size="sm"
                                     onClick={() => handleAction(async () => await receivePurchaseOrder(order.id), t("show.receiveSuccess"))}

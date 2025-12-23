@@ -26,7 +26,7 @@ import { createStockAdjustment } from "@/features/inventory/actions";
 import { useRouter } from "next/navigation";
 import { InventoryItem, Warehouse } from "@prisma/client";
 import { SerializedProduct } from "@/types/serialized";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";

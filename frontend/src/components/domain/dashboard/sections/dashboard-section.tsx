@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { toast } from '@/components/ui/sonner';
 import { dashboardService } from '@/lib/services/dashboardService';
 import { FinancialStatsRow } from '@/components/domain/dashboard/financial-stats-row';
 import { OperationalStatsRow } from '@/components/domain/dashboard/operational-stats-row';
@@ -62,6 +63,42 @@ export function DashboardSection({ organizationId, accessToken }: DashboardSecti
 
     return (
         <div className="space-y-8 h-full w-full flex flex-col">
+            {/* Toast Test Section - Development Only */}
+            {/* <section className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-sm p-4 bg-gray-50 dark:bg-gray-900/50">
+                <div className="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 className="font-black text-sm uppercase text-gray-700 dark:text-gray-300">Test Toast Notifications</h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Klik tombol untuk test notifikasi</p>
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <button
+                        onClick={() => toast.success("Berhasil!", { description: "Data telah disimpan" })}
+                        className="bg-[#00FFA3] text-black border-2 border-black dark:border-white py-2 px-3 font-bold text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all active:translate-x-[2px] active:translate-y-[2px] rounded-sm flex items-center justify-center gap-1.5"
+                    >
+                        <span>✓</span> Success
+                    </button>
+                    <button
+                        onClick={() => toast.error("Error!", { description: "Koneksi terputus" })}
+                        className="bg-[#FF5C00] text-white border-2 border-black dark:border-white py-2 px-3 font-bold text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all active:translate-x-[2px] active:translate-y-[2px] rounded-sm flex items-center justify-center gap-1.5"
+                    >
+                        <span>!</span> Error
+                    </button>
+                    <button
+                        onClick={() => toast.info("Info", { description: "Update tersedia" })}
+                        className="bg-[#334EFF] text-white border-2 border-black dark:border-white py-2 px-3 font-bold text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all active:translate-x-[2px] active:translate-y-[2px] rounded-sm flex items-center justify-center gap-1.5"
+                    >
+                        <span>i</span> Info
+                    </button>
+                    <button
+                        onClick={() => toast.warning("Perhatian!", { description: "Stock hampir habis" })}
+                        className="bg-[#FFDE00] text-black border-2 border-black dark:border-white py-2 px-3 font-bold text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all active:translate-x-[2px] active:translate-y-[2px] rounded-sm flex items-center justify-center gap-1.5"
+                    >
+                        <span>⚠</span> Warning
+                    </button>
+                </div>
+            </section> */}
+
             <section>
                 <FinancialStatsRow data={financialStats} />
             </section>

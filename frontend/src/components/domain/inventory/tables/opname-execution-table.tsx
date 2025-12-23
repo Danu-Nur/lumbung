@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useTranslations } from "next-intl";
 import { saveOpnameItem } from "@/lib/actions/opname";
 import { cn } from "@/lib/utils"; // Import cn
-import { toast } from "sonner"; // Import toast
+import { toast } from '@/components/ui/sonner'; // Import toast
 
 interface OpnameExecutionTableProps {
     items: SerializedStockOpnameItem[];

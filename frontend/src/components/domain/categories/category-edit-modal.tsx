@@ -25,7 +25,7 @@ import {
 import { updateCategory } from "@/features/categories/actions";
 import { useRouter } from "next/navigation";
 import { Category } from "@prisma/client";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 
 const formSchema = z.object({

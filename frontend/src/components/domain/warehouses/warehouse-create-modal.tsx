@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { createWarehouse } from "@/features/warehouses/actions";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 
 const formSchema = z.object({

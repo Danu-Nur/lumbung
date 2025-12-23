@@ -25,7 +25,7 @@ import {
 import { createProduct } from "@/features/inventory/actions";
 import { useRouter } from "next/navigation";
 import { Category, Warehouse } from "@prisma/client";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { CategoryCreateModal } from "@/components/domain/categories/category-create-modal";

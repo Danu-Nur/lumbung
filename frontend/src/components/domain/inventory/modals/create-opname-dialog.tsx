@@ -35,7 +35,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea"; // Assuming exists
 import { createOpname } from "@/lib/actions/opname";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 
 
 

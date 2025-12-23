@@ -6,7 +6,7 @@ import { SerializedProduct } from "@/types/serialized";
 import { deleteProduct } from "@/features/inventory/actions";
 import { ActionColumn } from "@/components/shared/action-column";
 import { DeleteConfirmationModal } from "@/components/shared/delete-confirmation-modal";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 import { ClipboardList, ShoppingCart } from "lucide-react";
 

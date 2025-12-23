@@ -6,7 +6,7 @@ import { Warehouse } from "@prisma/client";
 import { deleteWarehouse } from "@/features/warehouses/actions";
 import { ActionColumn } from "@/components/shared/action-column";
 import { DeleteConfirmationModal } from "@/components/shared/delete-confirmation-modal";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 
 interface WarehouseActionsProps {

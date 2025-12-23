@@ -26,7 +26,7 @@ import {
 import { updateWarehouse } from "@/features/warehouses/actions";
 import { useRouter } from "next/navigation";
 import { Warehouse } from "@prisma/client";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 
 const formSchema = z.object({

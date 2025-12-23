@@ -13,7 +13,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { confirmSalesOrder, fulfillSalesOrder, cancelSalesOrder } from "@/features/sales-orders/actions";
 import Link from "next/link";
 import { CheckCircle, XCircle, FileText } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 

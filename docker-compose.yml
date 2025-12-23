@@ -47,6 +47,9 @@ services:
     image: public.ecr.aws/docker/library/redis:7-alpine
     ports:
       - "6379:6379"
+    command: redis-server --save "" --appendonly no
+    # --save "" = Disable RDB snapshots (no auto-save to disk)
+    # --appendonly no = Disable AOF (Append Only File) persistence
 
 volumes:
   postgres_data:

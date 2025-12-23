@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { createCategory, updateCategory } from "@/features/categories/actions";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 import { Category } from "@prisma/client";
 import { cn } from "@/lib/utils";

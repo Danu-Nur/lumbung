@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
 import { sendTransfer, completeTransfer } from "@/features/transfers/actions";
 import { CheckCircle } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 

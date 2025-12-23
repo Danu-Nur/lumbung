@@ -28,7 +28,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import { CustomerCreateModal } from "@/components/domain/customers/customer-create-modal";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 import { LineItemsForm } from "@/components/shared/form/line-items-form";
 

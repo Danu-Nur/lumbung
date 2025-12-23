@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ActionColumn } from '@/components/shared/action-column';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from 'next-intl';
 
 import { UserWithRole } from "@/types/serialized";

@@ -26,7 +26,7 @@ import { createTransfer } from "@/features/transfers/actions";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 import { LineItemsForm } from "@/components/shared/form/line-items-form";
 

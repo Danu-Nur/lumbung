@@ -50,30 +50,11 @@ export async function receivePurchaseOrder(orderId: string) {
         throw new Error('Unauthorized');
     }
 
-    // Fetch order to get items for "Receive All"
-    const order = await prisma.purchaseOrder.findUnique({
-        where: { id: orderId },
-        include: { items: true },
-    });
-
-    if (!order) throw new Error('Order not found');
-
-    const receivedItems = order.items.map(item => ({
-        productId: item.productId,
-        quantity: item.quantity - item.receivedQty, // Receive remaining quantity
-    })).filter(item => item.quantity > 0);
-
-    if (receivedItems.length === 0) {
-        throw new Error('All items already received');
-    }
-
-    await purchaseOrderService.createPurchaseReceipt({
-        purchaseOrderId: orderId,
-        organizationId: session.user.organizationId!,
-        receivedItems,
-        notes: 'Full receipt via action',
-        userId: session.user.id,
-    }, (session.user as any).accessToken);
+    // Call backend to complete the order (creates batches, adds stock, updates status)
+    await purchaseOrderService.completeOrder(
+        orderId,
+        (session.user as any).accessToken
+    );
 
     revalidatePath('/purchase-orders');
     revalidatePath(`/purchase-orders/${orderId}`);

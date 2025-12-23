@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDateTime } from "@/lib/utils";
 import { reverseStockAdjustment } from "@/features/adjustments/actions";
 import { RotateCcw } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ActionColumn } from "@/components/shared/action-column";
 import { DeleteConfirmationModal } from "@/components/shared/delete-confirmation-modal";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 import { cancelSalesOrder } from "@/features/sales-orders/actions";
 

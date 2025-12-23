@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/table";
 import { createStockAdjustment, getStockHistory } from "@/features/adjustments/actions";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from '@/components/ui/sonner';
 import { useTranslations } from "next-intl";
 import { adjustmentFormSchema, AdjustmentFormValues } from "@/lib/validations/adjustment";
 import { SerializedProduct } from "@/types/serialized";
